@@ -19,7 +19,6 @@
 - [ND01 — Embedded & Hardware](#nd01--embedded--hardware)
 - [ND02 — Application Developers](#nd02--application-developers)
 - [ND03 — Automation & Robotics](#nd03--automation--robotics)
-- [Repository Structure](#-repository-structure)
 - [How to Read](#-how-to-read)
 
 ---
@@ -63,19 +62,7 @@
 
 ---
 
-## 🗂️ Repository Structure
-
-```text
-kmutt-nd69/
-├── nd1/docs/weekNN/   🔧 embedded track
-├── nd2/docs/weekNN/   🌐 application track
-└── nd3/docs/weekNN/   🏭 automation track
-        └── lessons/   # NN-topic.md + images/
-```
-
----
-
-## 📖 How to Read
+##  How to Read
 
 > [!TIP]
 > **แต่ละบทอ่านอิสระได้** — lesson มีหมายเลขนำหน้า (`01-`, `02-`, …)
