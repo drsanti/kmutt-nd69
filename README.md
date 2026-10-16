@@ -1,9 +1,11 @@
-# 🤖 KMUTT ND69
+# KMUTT ND69
 
 ![Course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![Tracks](https://img.shields.io/badge/tracks-3-2e8b57?style=flat-square)
 ![Status](https://img.shields.io/badge/status-active-brightgreen?style=flat-square)
 ![Language](https://img.shields.io/badge/lang-TH%20%2B%20EN-orange?style=flat-square)
+
+![alt text](images/cover.png)
 
 > เอกสารประกอบการเรียนการสอน — จาก hardware จริง สู่ software ที่เข้าใจโลกกายภาพ
 
