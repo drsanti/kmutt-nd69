@@ -60,7 +60,7 @@
 
 - **Arduino / ESP32 / Raspberry Pi console** — serial monitor คือ
   "console ตัวแรก" ของทุก board
-- ** flashing tool** — burn firmware ใหม่ลงชิปผ่าน serial มาตลอด
+- **flashing tool** — burn firmware ใหม่ลงชิปผ่าน serial มาตลอด
 
 ## เว็บเพจที่ใช้ Web Serial จริงแล้ววันนี้
 
