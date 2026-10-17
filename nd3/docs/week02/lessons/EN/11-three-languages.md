@@ -112,12 +112,12 @@ Same idea as the lesson on services. One request, one response, and the C versio
 
 ## What is shared, and what is not
 
-| | C (through the ABI) | Rust | Python (later, or through the ABI) |
-|---|---|---|---|
-| Where it sits | The binary door, and hosts that can link it | Core services. C++ is the other shipped SDK. | Prototypes, tools, and AI-side code |
-| Memory | You manage all of it | The compiler checks it | The runtime manages it |
-| How much code | The most | In between | The least |
-| What does not change | The same node, publisher, subscriber, service, and schema | | |
+|                      | C (through the ABI)                                       | Rust                                         | Python (later, or through the ABI)  |
+| -------------------- | --------------------------------------------------------- | -------------------------------------------- | ----------------------------------- |
+| Where it sits        | The binary door, and hosts that can link it               | Core services. C++ is the other shipped SDK. | Prototypes, tools, and AI-side code |
+| Memory               | You manage all of it                                      | The compiler checks it                       | The runtime manages it              |
+| How much code        | The most                                                  | In between                                   | The least                           |
+| What does not change | The same node, publisher, subscriber, service, and schema |                                              |                                     |
 
 The choice of language follows the place in the graph, not a preference. A constrained host that can link the ABI uses C. Core logic uses Rust, or the C++ SDK. A tool, or a future learning script, can be Python on the same ABI. They understand each other because **the schema is the same.**
 
@@ -131,10 +131,10 @@ Do not read the C column as "the microcontroller speaks robotos." If the device 
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| What is the same pattern in every language? | Create a node, create a publisher or a subscription, then publish in a loop or wait for a callback. |
-| What lets the languages interoperate? | The schema and the topic name. The data contract is not owned by a language. |
-| How is C different? | You manage handles and memory yourself. It is the ABI other languages bind to, not the language the board must run. |
-| Where does Python fit? | Prototypes, tools, and the AI side. Short to write and easy to read. It is not a second core SDK. |
-| How do you pick a language? | By the node's place. The ABI or Rust or C++ at the core and at hosts that can link it. Python for tools. A bridge, not the SDK, for a board that cannot run the middleware. |
+| Question                                    | You should be able to answer                                                                                                                                                |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What is the same pattern in every language? | Create a node, create a publisher or a subscription, then publish in a loop or wait for a callback.                                                                         |
+| What lets the languages interoperate?       | The schema and the topic name. The data contract is not owned by a language.                                                                                                |
+| How is C different?                         | You manage handles and memory yourself. It is the ABI other languages bind to, not the language the board must run.                                                         |
+| Where does Python fit?                      | Prototypes, tools, and the AI side. Short to write and easy to read. It is not a second core SDK.                                                                           |
+| How do you pick a language?                 | By the node's place. The ABI or Rust or C++ at the core and at hosts that can link it. Python for tools. A bridge, not the SDK, for a board that cannot run the middleware. |

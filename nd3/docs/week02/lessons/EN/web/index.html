@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ND03 · Week 02</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="bar">
+    <p class="course">ND03 · Week 02</p>
+    <p class="slide-title" id="slide-title"></p>
+    <p class="count" id="slide-count"></p>
+  </header>
+
+  <main class="stage">
+    <div class="frame" id="frame">
+      <img id="slide" alt="" draggable="false">
+      <canvas id="laser" aria-hidden="true"></canvas>
+      <button class="hit prev" id="prev" type="button" aria-label="Previous slide"></button>
+      <button class="hit next" id="next" type="button" aria-label="Next slide"></button>
+    </div>
+  </main>
+
+  <footer class="bar foot">
+    <div class="ticks" id="ticks" role="tablist" aria-label="Slides"></div>
+    <p class="hint">Arrows move · I index · F fullscreen</p>
+  </footer>
+
+  <div class="index" id="index" hidden>
+    <div class="index-card" role="dialog" aria-modal="true" aria-labelledby="index-title">
+      <header class="index-head">
+        <h2 id="index-title">Lessons</h2>
+        <button type="button" id="index-close" aria-label="Close index">Close</button>
+      </header>
+      <div class="index-body" id="index-body"></div>
+    </div>
+  </div>
+
+  <p class="live" id="live" aria-live="polite"></p>
+  <script src="deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+:root {
+  --bg: #02060e;
+  --ink: #d7e6f2;
+  --muted: #7f93a8;
+  --cyan: #7ee7ff;
+  --line: rgba(126, 231, 255, 0.28);
+  --bar: 44px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  display: grid;
+  grid-template-rows: var(--bar) 1fr auto;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(2, 8, 16, 0.92);
+}
+
+.foot {
+  border-bottom: 0;
+  border-top: 1px solid var(--line);
+  min-height: 42px;
+}
+
+.course, .count, .hint, .slide-title {
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.course, .count {
+  flex: 0 0 auto;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.slide-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hint {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.stage {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 10px 16px;
+}
+
+.frame {
+  position: relative;
+  width: min(100%, calc((100vh - var(--bar) - 62px) * 1672 / 941));
+  aspect-ratio: 1672 / 941;
+  cursor: none;
+  background: #000;
+  box-shadow: 0 0 0 1px rgba(126, 231, 255, 0.18);
+}
+
+.frame img,
+.frame canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.frame img {
+  object-fit: contain;
+  user-select: none;
+}
+
+.frame canvas {
+  pointer-events: none;
+}
+
+.hit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: none;
+}
+
+.hit.prev { left: 0; }
+.hit.next { right: 0; }
+
+.hit:focus-visible {
+  outline: 1px solid var(--cyan);
+  outline-offset: -2px;
+}
+
+.ticks {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ticks button {
+  flex: 1 1 0;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(126, 231, 255, 0.18);
+  cursor: pointer;
+}
+
+.ticks button[aria-selected="true"] {
+  background: var(--cyan);
+}
+
+.ticks button:focus-visible {
+  outline: 1px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.index {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(2, 6, 14, 0.72);
+}
+
+.index[hidden] { display: none; }
+
+.index-card {
+  width: min(720px, 100%);
+  max-height: min(80vh, 760px);
+  display: flex;
+  flex-direction: column;
+  background: #071018;
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.index-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.index-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.index-head button,
+.index-body button {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.index-head button {
+  padding: 4px 8px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.index-body {
+  overflow: auto;
+  padding: 8px 10px 16px;
+}
+
+.act {
+  margin: 14px 8px 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.index-body button.lesson {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.index-body button.lesson[aria-current="true"] {
+  background: rgba(126, 231, 255, 0.08);
+  border-color: var(--line);
+}
+
+.index-body button.lesson:hover {
+  background: rgba(126, 231, 255, 0.06);
+}
+
+.num {
+  color: var(--cyan);
+  font-variant-numeric: tabular-nums;
+}
+
+.live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@media (max-width: 720px) {
+  .hint { display: none; }
+  .slide-title { font-size: 13px; }
+}
