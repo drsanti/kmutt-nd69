@@ -1,6 +1,6 @@
 # Messages and Schema
 
-![A typed message carried on a topic, with the same schema on every node](../images/03-messages-and-schema.png)
+![A typed message carried on a topic, with the same schema on every node](./images/03-messages-and-schema.png)
 
 A topic is only a name until you say what flows through it. The thing that flows is a **message**. The definition of that message is a **schema**. This lesson is why a flat tag table does not survive a system that several teams will change.
 
@@ -54,13 +54,13 @@ That is why a large system can collect data without a new integration project pe
 
 ## Messages you will actually see
 
-| Kind | Fields that keep showing up |
-|---|---|
-| Sensor reading | value, unit, timestamp, quality |
-| Pose | x, y, z, orientation, and the frame those numbers are in |
-| Command | target, mode, parameters |
-| Status or event | state, code, human-readable detail, timestamp |
-| Health | battery, temperature, error flags |
+| Kind            | Fields that keep showing up                              |
+| --------------- | -------------------------------------------------------- |
+| Sensor reading  | value, unit, timestamp, quality                          |
+| Pose            | x, y, z, orientation, and the frame those numbers are in |
+| Command         | target, mode, parameters                                 |
+| Status or event | state, code, human-readable detail, timestamp            |
+| Health          | battery, temperature, error flags                        |
 
 Timestamp and source identity are not optional decoration. A sample without a time cannot be aligned with another sample. A sample without an identity cannot be traced to a device when you later build a dataset, a maintenance record, or a replay. Quality belongs in the same list: a number from a sensor that has faulted must not look like a number from a sensor that is healthy. Downstream logic, including a twin, has to be able to reject it.
 
@@ -109,10 +109,10 @@ The class is the picture of the contract. On the wire, a real system encodes tha
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| How is a message different from a tag? | A tag is a name, an address, and a raw type. A message is a structure that carries its meaning and its context. |
-| What is a schema? | The definition of that structure. One contract, checked in every language. |
-| Can you add a field? | Yes, if old readers still understand the old fields. Changing an existing field is a new version. |
-| Why can a twin or a recorder consume this easily? | They decode the schema. They do not carry a private parser per device. |
-| What should a message always carry? | A timestamp, the identity of the source, and a quality. A number alone has no context. |
+| Question                                          | You should be able to answer                                                                                    |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| How is a message different from a tag?            | A tag is a name, an address, and a raw type. A message is a structure that carries its meaning and its context. |
+| What is a schema?                                 | The definition of that structure. One contract, checked in every language.                                      |
+| Can you add a field?                              | Yes, if old readers still understand the old fields. Changing an existing field is a new version.               |
+| Why can a twin or a recorder consume this easily? | They decode the schema. They do not carry a private parser per device.                                          |
+| What should a message always carry?               | A timestamp, the identity of the source, and a quality. A number alone has no context.                          |

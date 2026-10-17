@@ -1,6 +1,6 @@
 # What a Digital Twin Is
 
-![A live model bound to one real machine, fed by a stream and able to answer a question back](../images/09-digital-twin.png)
+![A live model bound to one real machine, fed by a stream and able to answer a question back](./images/09-digital-twin.png)
 
 "Digital twin" gets applied to any picture of a machine. This lesson fixes the definition for an automation engineer: what earns the name, and what is only borrowing it.
 

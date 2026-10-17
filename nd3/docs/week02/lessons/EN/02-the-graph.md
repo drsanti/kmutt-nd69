@@ -1,6 +1,6 @@
 # The Graph — Nodes and Topics
 
-![A sensor node publishing to a topic that a display and an alarm both subscribe to](../images/02-the-graph.png)
+![A sensor node publishing to a topic that a display and an alarm both subscribe to](./images/02-the-graph.png)
 
 This is the lesson the rest of the week stands on. A node is a small program with one job. A topic is a named channel, not an address. The graph is every node plus every topic you can see at once. If those three sentences stay sharp, services, schema, and the twin have somewhere to sit.
 
@@ -36,12 +36,12 @@ ROS and robotos break that one program into many small programs. They do not cal
 
 Set next to a fieldbus, the change is not the cable. It is who initiates, and who has to be edited when the system grows.
 
-| Fieldbus (poll) | Topic (publish / subscribe) |
-|---|---|
+| Fieldbus (poll)                          | Topic (publish / subscribe)                                       |
+| ---------------------------------------- | ----------------------------------------------------------------- |
 | The master asks every point, every cycle | The publisher pushes when it has a value. Subscribers receive it. |
-| The master knows every slave | The publisher knows no subscriber. The two sides are decoupled. |
-| A new device means editing the master | A new node publishes or subscribes to a topic that already exists |
-| One cycle time bounds everything | Each node has its own rate |
+| The master knows every slave             | The publisher knows no subscriber. The two sides are decoupled.   |
+| A new device means editing the master    | A new node publishes or subscribes to a topic that already exists |
+| One cycle time bounds everything         | Each node has its own rate                                        |
 
 ## Why a robot wants this
 
@@ -94,11 +94,11 @@ This is why a small middleware matters. A graph that only runs on the big machin
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| What is a node? | A small program with one job, running on its own, as one vertex of the graph. |
-| What is a topic? | A named channel. Producers publish into it. Consumers subscribe out of it. |
-| How is that different from a fieldbus poll? | Values are pushed when they exist, not asked for every cycle. Producer and consumer do not know each other. |
-| How do you add a device? | Add a node and connect it to an existing topic. Do not edit the nodes already running. |
-| What happens when a node dies? | The rest of the graph stays up. You lose only what depended on that node — so that dependency has to be safe. |
-| Can a small device join? | Yes. It usually joins through a bridge that translates a small channel onto the graph. |
+| Question                                    | You should be able to answer                                                                                  |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| What is a node?                             | A small program with one job, running on its own, as one vertex of the graph.                                 |
+| What is a topic?                            | A named channel. Producers publish into it. Consumers subscribe out of it.                                    |
+| How is that different from a fieldbus poll? | Values are pushed when they exist, not asked for every cycle. Producer and consumer do not know each other.   |
+| How do you add a device?                    | Add a node and connect it to an existing topic. Do not edit the nodes already running.                        |
+| What happens when a node dies?              | The rest of the graph stays up. You lose only what depended on that node — so that dependency has to be safe. |
+| Can a small device join?                    | Yes. It usually joins through a bridge that translates a small channel onto the graph.                        |

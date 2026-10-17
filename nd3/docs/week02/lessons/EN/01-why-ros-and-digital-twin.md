@@ -1,6 +1,6 @@
 # Why Automation Moves to a ROS-Style Architecture and a Digital Twin
 
-![From a scan-based cell to a graph of nodes feeding a living twin](../images/01-why-ros-and-digital-twin.png)
+![From a scan-based cell to a graph of nodes feeding a living twin](./images/01-why-ros-and-digital-twin.png)
 
 Automation has already changed its stack more than once: relay logic, then PLCs, then DCS, fieldbus, and SCADA. Each time, the people who learned the new middle layer kept the work. The physical plant did not become optional. The way software sat between the sensor and the decision did.
 
@@ -12,25 +12,25 @@ This week teaches that architecture. It does not ask you to write the code yet. 
 
 The control knowledge does not expire. It changes its address.
 
-| You already know | What it is in the new stack |
-|---|---|
-| PID and the control loop | Still the core of every actuator. A robot is dozens of those loops, nested. |
-| Sensors and actuators | The same devices, attached to a node instead of only to an I/O card. |
-| Safety and interlocks | More important, not less. The machine now moves through a space people occupy. |
-| Reading a process | The same skill. The data is a stream of messages, not a flat tag. |
+| You already know           | What it is in the new stack                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| PID and the control loop   | Still the core of every actuator. A robot is dozens of those loops, nested.                             |
+| Sensors and actuators      | The same devices, attached to a node instead of only to an I/O card.                                    |
+| Safety and interlocks      | More important, not less. The machine now moves through a space people occupy.                          |
+| Reading a process          | The same skill. The data is a stream of messages, not a flat tag.                                       |
 | Fieldbus, Modbus, Profibus | The same idea — a shared medium and a shared language — with a different transport and a typed payload. |
 
 What changes is the middle. Between the sensor and the decision there used to be a scan cycle, a fieldbus, and a ladder program in one controller. There is now a set of **distributed software nodes that talk by message**. The loop that must be on time stays close to the actuator. The coordination moves onto the graph.
 
 ## The gap to close
 
-| Familiar | New | The actual difference |
-|---|---|---|
-| A scan cycle that inspects everything on one clock | **Event-driven** nodes, each with its own clock | There is no central scan. A node runs when it has work. |
-| A fieldbus master polling each point | **Publish / subscribe** | The producer pushes. The consumer does not ask. |
-| A flat tag table | **A typed message and a schema** | The data has a structure, a unit, and a version. That structure is the contract. |
-| One PLC for the cell | **A graph of nodes**, possibly on more than one computer | Part of the graph can sit at the edge. Part can sit elsewhere. No single program holds every tag. |
-| An HMI watching tags | **An inspector watching the graph** | You see structure and flow, not only the current number. |
+| Familiar                                           | New                                                      | The actual difference                                                                             |
+| -------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| A scan cycle that inspects everything on one clock | **Event-driven** nodes, each with its own clock          | There is no central scan. A node runs when it has work.                                           |
+| A fieldbus master polling each point               | **Publish / subscribe**                                  | The producer pushes. The consumer does not ask.                                                   |
+| A flat tag table                                   | **A typed message and a schema**                         | The data has a structure, a unit, and a version. That structure is the contract.                  |
+| One PLC for the cell                               | **A graph of nodes**, possibly on more than one computer | Part of the graph can sit at the edge. Part can sit elsewhere. No single program holds every tag. |
+| An HMI watching tags                               | **An inspector watching the graph**                      | You see structure and flow, not only the current number.                                          |
 
 ## ROS is the common language, and robotos is the way in
 
@@ -77,11 +77,11 @@ By the end of the week you will not have shipped a node. You will be able to nam
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| What changed in this round? | The middle layer. A scan and a fieldbus become distributed nodes and publish/subscribe. |
-| Did the old knowledge expire? | No. PID, safety, and process sense are the scarce base. They move onto a new architecture. |
-| What is ROS? | The standard robot middleware. Nodes, topics, and services are the shared language. |
-| What is robotos? | A middleware with the same concepts as ROS 2, small enough for the edge, and the stack this course uses. |
-| How is a twin different from a simulation? | A twin is bound to one real machine and kept in sync with it. A simulation answers a general "what if." |
-| Why learn both? | The middleware carries the stream. The twin is alive only because that stream exists. |
+| Question                                   | You should be able to answer                                                                             |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| What changed in this round?                | The middle layer. A scan and a fieldbus become distributed nodes and publish/subscribe.                  |
+| Did the old knowledge expire?              | No. PID, safety, and process sense are the scarce base. They move onto a new architecture.               |
+| What is ROS?                               | The standard robot middleware. Nodes, topics, and services are the shared language.                      |
+| What is robotos?                           | A middleware with the same concepts as ROS 2, small enough for the edge, and the stack this course uses. |
+| How is a twin different from a simulation? | A twin is bound to one real machine and kept in sync with it. A simulation answers a general "what if."  |
+| Why learn both?                            | The middleware carries the stream. The twin is alive only because that stream exists.                    |

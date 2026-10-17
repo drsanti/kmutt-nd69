@@ -1,6 +1,6 @@
 # Parameters and Lifecycle
 
-![A node moving from unconfigured to inactive to active, with its own parameters](../images/05-parameters-and-lifecycle.png)
+![A node moving from unconfigured to inactive to active, with its own parameters](./images/05-parameters-and-lifecycle.png)
 
 A PLC program has a state, stop or run, and it has values you can tune. A node has the same two ideas, drawn more carefully. A **parameter** is a setting the node owns. A **lifecycle** is the sequence of states the node is allowed to be in. Neither one is a topic.
 
@@ -72,11 +72,11 @@ Each node has its own small state machine. A supervisor coordinates them. The ro
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| How is a parameter different from a topic? | A parameter is a setting the node owns, changed on purpose. A topic is a stream of data. |
+| Question                                        | You should be able to answer                                                                         |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| How is a parameter different from a topic?      | A parameter is a setting the node owns, changed on purpose. A topic is a stream of data.             |
 | Can you change a parameter while the node runs? | Yes. Through the node's interface. You do not stop and recompile, and you cannot poke a raw address. |
-| Which lifecycle states matter? | Unconfigured, then inactive, then active, plus shutdown and error. |
-| Why is configure separate from activate? | So the node is fully set up before it is allowed to act. Download, then run. |
-| What does a lifecycle give a large system? | An ordered bring-up, a clean shutdown, and a state to recover into. |
-| Who commands the lifecycle? | A supervisor or orchestrator. The same role as a master sequencing a cell. |
+| Which lifecycle states matter?                  | Unconfigured, then inactive, then active, plus shutdown and error.                                   |
+| Why is configure separate from activate?        | So the node is fully set up before it is allowed to act. Download, then run.                         |
+| What does a lifecycle give a large system?      | An ordered bring-up, a clean shutdown, and a state to recover into.                                  |
+| Who commands the lifecycle?                     | A supervisor or orchestrator. The same role as a master sequencing a cell.                           |

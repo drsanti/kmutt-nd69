@@ -1,6 +1,6 @@
 # Observing and Debugging a Distributed System
 
-![An inspector showing the live graph, a decoded message stream, and a recording that can be replayed](../images/07-observe-and-debug.png)
+![An inspector showing the live graph, a decoded message stream, and a recording that can be replayed](./images/07-observe-and-debug.png)
 
 On a PLC, debugging means opening the one program and watching the ladder and the tag table. A graph has no such place. The tools that show you the running system are part of the architecture, not an accessory you add when something breaks.
 

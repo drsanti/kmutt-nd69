@@ -1,6 +1,6 @@
 # QoS and Determinism
 
-![A hard real-time loop kept inside one node, with publish/subscribe used only for coordination](../images/08-qos-and-determinism.png)
+![A hard real-time loop kept inside one node, with publish/subscribe used only for coordination](./images/08-qos-and-determinism.png)
 
 The question from anyone who has tuned a scan time: "What about the clock? My loop has to land every millisecond." This lesson answers it directly. Publish/subscribe is not that clock. Quality of service is how you say, per topic, what you are willing to lose.
 
@@ -37,12 +37,12 @@ A setpoint that arrives late is a degraded command. A torque command that arrive
 
 A useful middleware lets you set the delivery contract on each topic. The knobs that matter at this level:
 
-| Knob | The choice | What it is for |
-|---|---|---|
-| Reliability | Deliver reliably, with acknowledgement and retry, or send once and accept loss | A mode or an alarm, versus a fast sensor stream |
-| History | Keep only the latest, or keep the last N | Whether a slow consumer needs more than the newest sample |
-| Durability | Does a subscriber who joins later still see the last value? | A configuration that must be waiting for the next node to start |
-| Deadline | Do you expect a maximum gap between messages? | Detecting that a stream has gone slower than the contract, not guaranteeing the network |
+| Knob        | The choice                                                                     | What it is for                                                                          |
+| ----------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Reliability | Deliver reliably, with acknowledgement and retry, or send once and accept loss | A mode or an alarm, versus a fast sensor stream                                         |
+| History     | Keep only the latest, or keep the last N                                       | Whether a slow consumer needs more than the newest sample                               |
+| Durability  | Does a subscriber who joins later still see the last value?                    | A configuration that must be waiting for the next node to start                         |
+| Deadline    | Do you expect a maximum gap between messages?                                  | Detecting that a stream has gone slower than the contract, not guaranteeing the network |
 
 The point of the table is that **one setting for the whole system is the wrong setting for most of the data.**
 
@@ -70,11 +70,11 @@ That split is the reason a small middleware still has a sharp edge. What must be
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| Is publish/subscribe hard real time? | No. It is an event-driven coordination layer. It is not the clock. |
-| Where does a tight loop live? | Inside one node, on one machine. A motor loop or a safety interlock does not cross the network. |
-| What does QoS let you choose? | Reliability, history, durability, and a deadline, per topic. |
-| Does fast telemetry need reliable delivery? | No. You want the latest sample more than you want every sample. |
-| What does a configuration or a mode need? | Reliable delivery, and durability so a late subscriber still sees the current value. |
-| What is the layering rule? | The hard loop stays in the node. Coordination goes through the middleware. |
+| Question                                    | You should be able to answer                                                                    |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Is publish/subscribe hard real time?        | No. It is an event-driven coordination layer. It is not the clock.                              |
+| Where does a tight loop live?               | Inside one node, on one machine. A motor loop or a safety interlock does not cross the network. |
+| What does QoS let you choose?               | Reliability, history, durability, and a deadline, per topic.                                    |
+| Does fast telemetry need reliable delivery? | No. You want the latest sample more than you want every sample.                                 |
+| What does a configuration or a mode need?   | Reliable delivery, and durability so a late subscriber still sees the current value.            |
+| What is the layering rule?                  | The hard loop stays in the node. Coordination goes through the middleware.                      |

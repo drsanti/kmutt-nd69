@@ -1,6 +1,6 @@
 # TF — Frames and Transforms
 
-![A tree of frames from the map down through the robot base, the wrist, the tool, and the camera](../images/06-tf-frames.png)
+![A tree of frames from the map down through the robot base, the wrist, the tool, and the camera](./images/06-tf-frames.png)
 
 The lessons so far have been about how nodes talk. This one is about space. A robot has to know where something is, and "where" is meaningless until you say relative to what. A PLC cell rarely asks that question, because the machine is bolted down. A robot asks it on every sample.
 

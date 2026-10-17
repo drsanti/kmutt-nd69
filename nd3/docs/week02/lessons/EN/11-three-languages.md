@@ -1,6 +1,6 @@
 # The Same Concepts in Three Languages
 
-![One graph, with nodes written in C, Rust, and Python sharing a schema](../images/11-three-languages.png)
+![One graph, with nodes written in C, Rust, and Python sharing a schema](./images/11-three-languages.png)
 
 A middleware earns its place when the same idea can be written in more than one language. The graph, the node, and the topic are not a Python idea or a Rust idea. This lesson shows one pattern — create a node, publish, subscribe — in three languages, so the concept stays put while the syntax changes.
 

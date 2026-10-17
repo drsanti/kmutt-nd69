@@ -1,16 +1,16 @@
 # Services and Actions
 
-![A short request/response beside a long goal with feedback, cancel, and a result](../images/04-services-and-actions.png)
+![A short request/response beside a long goal with feedback, cancel, and a result](./images/04-services-and-actions.png)
 
 A topic is a stream. "Do this" is not a stream. This lesson adds the other two ways a node can talk: a **service**, which is a short request and a response, and an **action**, which is a long piece of work you can watch and cancel.
 
 ## Three shapes, and a rule for picking one
 
-| Shape | Character | Use it for |
-|---|---|---|
-| **Topic** | A stream. It flows whether or not anyone asked. | Telemetry, sensor samples, state updates |
-| **Service** | Request, then response. It finishes quickly. | A read, a setting, a short trigger |
-| **Action** | A goal, then feedback, then a result. It takes time. | A move, a long cycle, anything you may need to abort |
+| Shape       | Character                                            | Use it for                                           |
+| ----------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| **Topic**   | A stream. It flows whether or not anyone asked.      | Telemetry, sensor samples, state updates             |
+| **Service** | Request, then response. It finishes quickly.         | A read, a setting, a short trigger                   |
+| **Action**  | A goal, then feedback, then a result. It takes time. | A move, a long cycle, anything you may need to abort |
 
 One rule covers the choice: **if it does not finish immediately, it is not a service.** Actions exist because that case is common on a robot and a service handles it badly.
 
@@ -70,14 +70,14 @@ goal.on_result(lambda r: log(r.status))   # success / failure / cancelled
 
 ## Picking the tool on real jobs
 
-| Job | Tool | Why |
-|---|---|---|
-| A sensor updating continuously | Topic | It is a stream. Nobody is asking. |
+| Job                                  | Tool    | Why                                                       |
+| ------------------------------------ | ------- | --------------------------------------------------------- |
+| A sensor updating continuously       | Topic   | It is a stream. Nobody is asking.                         |
 | Turn an output on, or reset an alarm | Service | It finishes immediately, and you need an acknowledgement. |
-| Read a parameter or a configuration | Service | One question, one answer. |
-| Move a robot to a pose | Action | It takes time. You need progress and a way to abort. |
-| Run a long production cycle | Action | Progress is continuous, and abort has to be explicit. |
-| Report that something happened | Topic | The event is pushed. It is not a reply. |
+| Read a parameter or a configuration  | Service | One question, one answer.                                 |
+| Move a robot to a pose               | Action  | It takes time. You need progress and a way to abort.      |
+| Run a long production cycle          | Action  | Progress is continuous, and abort has to be explicit.     |
+| Report that something happened       | Topic   | The event is pushed. It is not a reply.                   |
 
 The short form: **fast, with a short reply → service. Slow, and you must see the middle → action. Flows on its own → topic.**
 
@@ -91,10 +91,10 @@ A useful test is the failure you are willing to sit through. If the server never
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| How do a topic and a service differ? | A topic is a stream with no specific peer and no reply. A service is one request and one response. |
-| When do you need an action? | When the work takes time and the caller must see progress or cancel it. |
-| What does an action contain? | A goal, a stream of feedback, cancel, and one result. |
-| What familiar thing is a service? | A short function call across a node boundary. |
-| Why is a service wrong for a long job? | There is no progress and no cancel. The caller waits blind, and the server cannot stop cleanly. |
+| Question                               | You should be able to answer                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| How do a topic and a service differ?   | A topic is a stream with no specific peer and no reply. A service is one request and one response. |
+| When do you need an action?            | When the work takes time and the caller must see progress or cancel it.                            |
+| What does an action contain?           | A goal, a stream of feedback, cancel, and one result.                                              |
+| What familiar thing is a service?      | A short function call across a node boundary.                                                      |
+| Why is a service wrong for a long job? | There is no progress and no cancel. The caller waits blind, and the server cannot stop cleanly.    |

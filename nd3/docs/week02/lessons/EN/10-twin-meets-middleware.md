@@ -1,6 +1,6 @@
 # The Twin on the Middleware
 
-![The real machine publishing state to a twin, and a previewed command returning through the same graph](../images/10-twin-meets-middleware.png)
+![The real machine publishing state to a twin, and a previewed command returning through the same graph](./images/10-twin-meets-middleware.png)
 
 This lesson puts the week together. The twin is alive because it is a consumer on the graph, and the next concrete step is a real board joining that same graph.
 
@@ -102,10 +102,10 @@ an ESP32-S3 board, as a real node ────┘                            (10
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| How does the twin sit on the graph? | As a consumer, like any other node. It subscribes to state topics. |
-| What is virtual commissioning? | New logic, tested on a twin that is fed by real state, before you stop the line to deploy it. |
-| How is a command through the twin safer? | Preview the result, confirm, then send. The twin is a sandbox. The real interlock stays on the machine. |
-| How does the board join the graph? | Sensors and actuators, a small channel, a bridge node, then the robotos graph. |
-| What does this week leave you with? | The model: node, topic, schema, service, action, parameter, TF, observation, QoS, and a twin. Hands-on is next. |
+| Question                                 | You should be able to answer                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| How does the twin sit on the graph?      | As a consumer, like any other node. It subscribes to state topics.                                              |
+| What is virtual commissioning?           | New logic, tested on a twin that is fed by real state, before you stop the line to deploy it.                   |
+| How is a command through the twin safer? | Preview the result, confirm, then send. The twin is a sandbox. The real interlock stays on the machine.         |
+| How does the board join the graph?       | Sensors and actuators, a small channel, a bridge node, then the robotos graph.                                  |
+| What does this week leave you with?      | The model: node, topic, schema, service, action, parameter, TF, observation, QoS, and a twin. Hands-on is next. |
