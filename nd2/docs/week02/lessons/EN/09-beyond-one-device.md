@@ -1,6 +1,6 @@
 # When One Device Is Not Enough
 
-![A gateway holding the device connection and fanning telemetry out to several applications](../images/09-beyond-one-device.png)
+![A gateway holding the device connection and fanning telemetry out to several applications](./images/09-beyond-one-device.png)
 
 Every lesson so far has been **point to point**: one application, one nearby device. That shape is simple, and it is the right shape for a large class of tools. It stops being the right shape as soon as a second person needs to watch, or the device needs to keep recording after the tab is closed.
 
@@ -8,14 +8,14 @@ This lesson names the limit and the next piece of architecture. It does not buil
 
 ## Where point to point runs out
 
-| You want | Can point to point do it? |
-|---|---|
+| You want                                                  | Can point to point do it?                                                  |
+| --------------------------------------------------------- | -------------------------------------------------------------------------- |
 | Several applications watching one device at the same time | No. A serial port has one owner. A BLE peripheral usually has one central. |
-| Reach from anywhere | No. You have to be near the device. |
-| A page, a phone, and a desktop tool at once | No. One client at a time. |
-| History while nobody is looking | No. Close the tab and the samples stop being recorded. |
-| Many devices in one view | Poorly. You would open a link per device, on one machine, by hand. |
-| The system keeps working while the user is offline | No. Close the application and the conversation stops. |
+| Reach from anywhere                                       | No. You have to be near the device.                                        |
+| A page, a phone, and a desktop tool at once               | No. One client at a time.                                                  |
+| History while nobody is looking                           | No. Close the tab and the samples stop being recorded.                     |
+| Many devices in one view                                  | Poorly. You would open a link per device, on one machine, by hand.         |
+| The system keeps working while the user is offline        | No. Close the application and the conversation stops.                      |
 
 Both limits reduce to two facts: **one owner per connection**, and **the client has to be nearby**.
 
@@ -106,11 +106,11 @@ That is later work. The standing point of this week is smaller and finished: **a
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| What can point to point not do? | Many simultaneous viewers, remote reach, and recording while nobody is watching. |
-| What is a gateway? | The process that owns the device link and serves many applications. |
-| What else does a middle tier give you? | Fan-out, history, access control, protocol translation, and decoupling. |
-| What does it cost? | Another component, another latency hop, a network dependency, and a process whose failure looks like a device failure. |
-| When is point to point enough? | Nearby, one device, one application, and no need to keep recording after the client leaves. |
-| What is the next step after that? | A shared fabric: devices publish, applications subscribe, and a schema is the contract between them. |
+| Question                               | You should be able to answer                                                                                           |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| What can point to point not do?        | Many simultaneous viewers, remote reach, and recording while nobody is watching.                                       |
+| What is a gateway?                     | The process that owns the device link and serves many applications.                                                    |
+| What else does a middle tier give you? | Fan-out, history, access control, protocol translation, and decoupling.                                                |
+| What does it cost?                     | Another component, another latency hop, a network dependency, and a process whose failure looks like a device failure. |
+| When is point to point enough?         | Nearby, one device, one application, and no need to keep recording after the client leaves.                            |
+| What is the next step after that?      | A shared fabric: devices publish, applications subscribe, and a schema is the contract between them.                   |

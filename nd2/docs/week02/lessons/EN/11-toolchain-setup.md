@@ -1,17 +1,17 @@
 # Toolchain Setup — Node.js, Vite, TypeScript, and the Web Platform
 
-![The development toolchain: Node.js, Vite, TypeScript, and the browser APIs under the page](../images/11-toolchain-setup.png)
+![The development toolchain: Node.js, Vite, TypeScript, and the browser APIs under the page](./images/11-toolchain-setup.png)
 
 The previous lesson showed the shape of a device page. This lesson is the gate in front of building it: install the toolchain, and know which slice of the web platform the page actually uses. You do not need to be a front-end specialist. You need a current Node.js, a Vite project that serves a secure context, and enough TypeScript and DOM to read the sketch you just saw.
 
 ## What you install, and why
 
-| Piece | What it does | Why it is here |
-|---|---|---|
-| **Node.js** | A JavaScript runtime on the machine, plus npm | The toolchain runs on it. You are not shipping Node to the user. The user receives a page. |
-| **Vite** | Development server, production build, and the project runner | Create the page, serve it on localhost, and build static files later. |
-| **TypeScript** | Types on top of JavaScript | Make telemetry, commands, and handlers explicit. The browser still runs JavaScript. Vite transpiles. |
-| **Web platform** | DOM, events, `fetch`, and the hardware APIs | The language the browser gives you. The device page is built on it, not beside it. |
+| Piece            | What it does                                                 | Why it is here                                                                                       |
+| ---------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| **Node.js**      | A JavaScript runtime on the machine, plus npm                | The toolchain runs on it. You are not shipping Node to the user. The user receives a page.           |
+| **Vite**         | Development server, production build, and the project runner | Create the page, serve it on localhost, and build static files later.                                |
+| **TypeScript**   | Types on top of JavaScript                                   | Make telemetry, commands, and handlers explicit. The browser still runs JavaScript. Vite transpiles. |
+| **Web platform** | DOM, events, `fetch`, and the hardware APIs                  | The language the browser gives you. The device page is built on it, not beside it.                   |
 
 Vite+ is the unified toolchain from the VoidZero team — the same group behind Vite — aimed at folding the dev server, the test runner, and the linter into one tool instead of a pile of separate CLIs. The scaffold below uses the current Vite create command, which is the path this course standardizes on. If your environment already provides the Vite+ runner, the workflow you care about is unchanged: a dev server on localhost, TypeScript understood without a hand-written compiler pipeline, and a production build that is static files.
 
@@ -113,10 +113,10 @@ When that list is true, build the page from the previous lesson: a connect butto
 
 ## Week checklist
 
-| Question | You should be able to answer |
-|---|---|
-| What do you install? | Current Node.js LTS, then a Vite project that serves the page. |
-| Why does localhost matter? | It is a secure context, so Web Serial and Web Bluetooth work during development. |
-| How much TypeScript? | Types, interfaces, `async` / `await`, callbacks, and modules. Not the advanced type system. |
-| Which web APIs is the page made of? | DOM, events, `fetch`, and `console` — and, on top of the same platform, Web Serial and Web Bluetooth. |
-| When are you ready to write the application? | When the done criteria are checked. The LED and sound-level page is the first thing you build. |
+| Question                                     | You should be able to answer                                                                          |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| What do you install?                         | Current Node.js LTS, then a Vite project that serves the page.                                        |
+| Why does localhost matter?                   | It is a secure context, so Web Serial and Web Bluetooth work during development.                      |
+| How much TypeScript?                         | Types, interfaces, `async` / `await`, callbacks, and modules. Not the advanced type system.           |
+| Which web APIs is the page made of?          | DOM, events, `fetch`, and `console` — and, on top of the same platform, Web Serial and Web Bluetooth. |
+| When are you ready to write the application? | When the done criteria are checked. The LED and sound-level page is the first thing you build.        |

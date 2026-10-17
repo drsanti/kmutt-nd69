@@ -1,21 +1,21 @@
 # Choosing the Channel — Serial, BLE, and Wi-Fi
 
-![Three channels from one device: a cable, a short-range radio, and a network path](../images/06-choosing-the-channel.png)
+![Three channels from one device: a cable, a short-range radio, and a network path](./images/06-choosing-the-channel.png)
 
 You now have two direct channels: a cable, and a short-range radio. This lesson adds the third, which is the one that changes the shape of the system: **Wi-Fi, through a network**. The three are not substitutes. Each one was built for a different constraint, and the product context picks the channel before anyone picks a protocol.
 
 ## Three channels, three shapes
 
-| | **Serial (cable)** | **BLE (short-range radio)** | **Wi-Fi (network)** |
-|---|---|---|---|
-| Shape | Point to point, a direct pipe | Point to point, wireless | Through a network. Not a direct browser pipe. |
-| Range | The length of the cable, on the order of meters | On the order of ten meters, and walls count | Wherever the network reaches |
-| Bandwidth | Enough for logs and moderate streams | Low. Small payloads. | The highest of the three |
-| Energy on the device | Not the concern | The most economical radio | The most expensive radio |
-| What must already exist | One cable | The two devices near each other | Infrastructure: an access point, and usually a service |
-| Reach from far away | No | No | **Yes. This is the difference that matters.** |
-| Many devices, one view | One port, one owner | Typically one link at a time | **Many devices, through a shared service** |
-| A heavy stream (raw audio) | Yes | **No** | Yes, if the path can carry it |
+|                            | **Serial (cable)**                              | **BLE (short-range radio)**                 | **Wi-Fi (network)**                                    |
+| -------------------------- | ----------------------------------------------- | ------------------------------------------- | ------------------------------------------------------ |
+| Shape                      | Point to point, a direct pipe                   | Point to point, wireless                    | Through a network. Not a direct browser pipe.          |
+| Range                      | The length of the cable, on the order of meters | On the order of ten meters, and walls count | Wherever the network reaches                           |
+| Bandwidth                  | Enough for logs and moderate streams            | Low. Small payloads.                        | The highest of the three                               |
+| Energy on the device       | Not the concern                                 | The most economical radio                   | The most expensive radio                               |
+| What must already exist    | One cable                                       | The two devices near each other             | Infrastructure: an access point, and usually a service |
+| Reach from far away        | No                                              | No                                          | **Yes. This is the difference that matters.**          |
+| Many devices, one view     | One port, one owner                             | Typically one link at a time                | **Many devices, through a shared service**             |
+| A heavy stream (raw audio) | Yes                                             | **No**                                      | Yes, if the path can carry it                          |
 
 One constraint is specific enough to state on its own. Web Bluetooth exposes GATT — read, write, notify, indicate — and does not expose a BLE audio profile. **A page cannot carry raw audio over Web Bluetooth.** It can receive a value the device already reduced, such as a sound level or a "level crossed a threshold" event. Raw audio needs the cable, or Wi-Fi through a service that can carry a real stream.
 
@@ -80,11 +80,11 @@ The previous two lessons went down into the cable and the radio. This lesson add
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| Remote reach, or many devices at once? | Wi-Fi through a network service. Serial and BLE cannot do that job. |
-| Mobile, and the battery matters? | BLE. |
-| Most stable, on site or on the bench? | Serial. |
-| How is the Wi-Fi path different? | It is not point to point from the page. The page speaks to a service. The browser will not open a raw socket to the device. |
-| Which three questions decide? | How far, does it move, and who pays for the radio. |
-| How many channels should a serious device have? | More than one. Choose per situation. The capability surface stays the same. |
+| Question                                        | You should be able to answer                                                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Remote reach, or many devices at once?          | Wi-Fi through a network service. Serial and BLE cannot do that job.                                                         |
+| Mobile, and the battery matters?                | BLE.                                                                                                                        |
+| Most stable, on site or on the bench?           | Serial.                                                                                                                     |
+| How is the Wi-Fi path different?                | It is not point to point from the page. The page speaks to a service. The browser will not open a raw socket to the device. |
+| Which three questions decide?                   | How far, does it move, and who pays for the radio.                                                                          |
+| How many channels should a serious device have? | More than one. Choose per situation. The capability surface stays the same.                                                 |

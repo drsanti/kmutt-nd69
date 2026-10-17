@@ -1,6 +1,6 @@
 # Anatomy of a Monitor and Control Application
 
-![Four layers: transport, connection, bindings, and the user interface](../images/08-app-anatomy.png)
+![Four layers: transport, connection, bindings, and the user interface](./images/08-app-anatomy.png)
 
 You have the channels (serial, BLE, Wi-Fi through a service) and the conversation (telemetry, command, event). This lesson describes what the application looks like inside, as layers rather than as a code listing. The same anatomy fits a page, a desktop tool, or a mobile client. The week builds it as a web page.
 
@@ -111,11 +111,11 @@ The page is ordinary web software, with types:
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| What are the main parts? | Transport, connection manager, telemetry binding, command dispatcher, plus UI and state. |
-| What is the transport abstraction? | One interface above serial, BLE, and the network path. Upper layers do not know which pipe they have. |
-| What is shadow state? | The application's picture of the device. It is updated from telemetry and events. It is not invented by the UI. |
-| What must a reconnect do? | Refresh state from the device. The previous shadow cannot be trusted. |
-| Why have a dispatcher? | To queue, coalesce, acknowledge, time out, and stop a user gesture from flooding the pipe. |
-| Why is Vite on localhost convenient? | Localhost is a secure context. Web Serial and Web Bluetooth run in development without HTTPS. |
+| Question                             | You should be able to answer                                                                                    |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| What are the main parts?             | Transport, connection manager, telemetry binding, command dispatcher, plus UI and state.                        |
+| What is the transport abstraction?   | One interface above serial, BLE, and the network path. Upper layers do not know which pipe they have.           |
+| What is shadow state?                | The application's picture of the device. It is updated from telemetry and events. It is not invented by the UI. |
+| What must a reconnect do?            | Refresh state from the device. The previous shadow cannot be trusted.                                           |
+| Why have a dispatcher?               | To queue, coalesce, acknowledge, time out, and stop a user gesture from flooding the pipe.                      |
+| Why is Vite on localhost convenient? | Localhost is a secure context. Web Serial and Web Bluetooth run in development without HTTPS.                   |

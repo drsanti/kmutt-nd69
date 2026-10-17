@@ -1,6 +1,6 @@
 # A First Application — LED Command and a Sound Level
 
-![A single page with a color control, a live sound meter, and a connection status](../images/10-first-app-led-and-audio.png)
+![A single page with a color control, a live sound meter, and a connection status](./images/10-first-app-led-and-audio.png)
 
 This is the first time the week looks like an application. The page does two things at once: **send a command that sets the LED color**, and **show a live level of nearby sound**. One path leaves the page. The other path enters it. Everything else — framing, baud, GATT — stays under an API the page does not implement.
 
@@ -14,12 +14,12 @@ The previous lesson named four layers. This demo uses all of them:
 UI:         [color control]   [sound meter]   [status + connect]
                  │                 │                  │
 dispatcher       │  LED command    │                  │
-binding          │            audio level            │
-                 └──────── connection manager ───────┘
-                                  │
-                         transport: Web Serial
-                                  │
-                                device
+binding          │            audio level             │
+                 └──────── connection manager ────────┘
+                                   │
+                          transport: Web Serial
+                                   │
+                                 device
 ```
 
 - **Command path.** The user picks a color. The dispatcher sends one command. The board changes the LED.
@@ -92,7 +92,7 @@ If the control you have only offers `input`, coalesce in the dispatcher: keep th
 ```ts
 // pseudo-API
 device.telemetry.subscribe("audio.level", (level) => {
-  meter.value = level;          // 0–100, already in meaningful units
+  meter.value = level; // 0–100, already in meaningful units
   meterText.text = `${level}%`;
 });
 ```
@@ -147,11 +147,11 @@ Each of those is a new use of the same three operations. If an idea requires the
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| Why does connect live in a click handler? | Web APIs require a user gesture before they will open a device. |
-| How do command and telemetry differ here? | A command is sent and finished. Telemetry is a subscription that receives a stream of values. |
-| Why not send the color on every drag frame? | The pipe and the device are the constrained side. Send when the user commits. |
-| Where are the bytes? | Inside the library. The page sees connect, send, and subscribe. |
-| How do you debug a failure? | The two directions fail independently. If both fail, suspect the session. |
-| How do you add another capability? | Another subscription or another command, in the same shape. |
+| Question                                    | You should be able to answer                                                                  |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Why does connect live in a click handler?   | Web APIs require a user gesture before they will open a device.                               |
+| How do command and telemetry differ here?   | A command is sent and finished. Telemetry is a subscription that receives a stream of values. |
+| Why not send the color on every drag frame? | The pipe and the device are the constrained side. Send when the user commits.                 |
+| Where are the bytes?                        | Inside the library. The page sees connect, send, and subscribe.                               |
+| How do you debug a failure?                 | The two directions fail independently. If both fail, suspect the session.                     |
+| How do you add another capability?          | Another subscription or another command, in the same shape.                                   |

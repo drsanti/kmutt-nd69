@@ -1,6 +1,6 @@
 # From Capabilities to Cooperation
 
-![An application and a device splitting real-time work from heavy thinking](../images/07-cooperation-design.png)
+![An application and a device splitting real-time work from heavy thinking](./images/07-cooperation-design.png)
 
 The channel is settled enough to use. The next question is how the two machines share the work. Cooperation design is the set of rules for that split: which direction each message travels, who is allowed to spend the small machine's budget, and who owns the truth when the link drops.
 
@@ -8,11 +8,11 @@ The channel is settled enough to use. The next question is how the two machines 
 
 Every device interface, on every channel, reduces to three directions:
 
-| Direction | Name | Examples |
-|---|---|---|
-| Device → application | **Telemetry** | Values the device emits on its own: battery, motion, sound level. A periodic stream, or a push when the value changes. |
-| Application → device | **Command** | An instruction to act: set the LED color, play a tone, enable or disable a feature. |
-| Device → application, when something happens | **Event** | A fact that occurred on the device: a touch, a fault, a state transition. It is not the reply to a command. It is an occurrence. |
+| Direction                                    | Name          | Examples                                                                                                                         |
+| -------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Device → application                         | **Telemetry** | Values the device emits on its own: battery, motion, sound level. A periodic stream, or a push when the value changes.           |
+| Application → device                         | **Command**   | An instruction to act: set the LED color, play a tone, enable or disable a feature.                                              |
+| Device → application, when something happens | **Event**     | A fact that occurred on the device: a touch, a fault, a state transition. It is not the reply to a command. It is an occurrence. |
 
 The mistake at the start is to treat telemetry and events as the same stream. They are not.
 
@@ -43,12 +43,12 @@ Polling still has a narrow use: a one-shot read of a value you need immediately 
 
 The standing rule: **the device is the constrained peer, and the application spends its budget.**
 
-| Budget on the small side | What it means | What you do about it |
-|---|---|---|
-| Memory | The receive and send buffers are tiny | Keep payloads small. Do not send a document where a struct will do. |
-| Bandwidth | The pipe or the radio is narrow | Do not request telemetry faster than the channel can carry, or faster than you can display. |
-| Power | A battery, or a small supply | Every byte that moves costs energy. Ask for what you will use. |
-| Compute | A small microcontroller | Do not make it run the analysis. Let it sample, filter lightly, and report. |
+| Budget on the small side | What it means                         | What you do about it                                                                        |
+| ------------------------ | ------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Memory                   | The receive and send buffers are tiny | Keep payloads small. Do not send a document where a struct will do.                         |
+| Bandwidth                | The pipe or the radio is narrow       | Do not request telemetry faster than the channel can carry, or faster than you can display. |
+| Power                    | A battery, or a small supply          | Every byte that moves costs energy. Ask for what you will use.                              |
+| Compute                  | A small microcontroller               | Do not make it run the analysis. Let it sample, filter lightly, and report.                 |
 
 Practices that follow:
 
@@ -63,14 +63,14 @@ Practices that follow:
 
 This is the architecture decision, not a performance tweak.
 
-| Work | The side that should own it | Why |
-|---|---|---|
-| Read a sensor on a real-time cadence | **Device** | It is next to the physics. The loop cannot wait for a round trip. |
-| Act immediately | **Device** | A stop, a limit, a local interlock has to run even if the page is gone. |
-| Keep a long history | **Application, or a service** | Storage and retention live on the large side. |
-| Visualize and analyze | **Application** | The display, the memory, and the charting belong here. |
-| Heavy logic, including a model | **Application or cloud** | The compute budget is here. The device sends features, not a training loop. |
-| Keep operating after the application exits | **Device** | A device that only works while a tab is open is a peripheral of the tab. |
+| Work                                       | The side that should own it   | Why                                                                         |
+| ------------------------------------------ | ----------------------------- | --------------------------------------------------------------------------- |
+| Read a sensor on a real-time cadence       | **Device**                    | It is next to the physics. The loop cannot wait for a round trip.           |
+| Act immediately                            | **Device**                    | A stop, a limit, a local interlock has to run even if the page is gone.     |
+| Keep a long history                        | **Application, or a service** | Storage and retention live on the large side.                               |
+| Visualize and analyze                      | **Application**               | The display, the memory, and the charting belong here.                      |
+| Heavy logic, including a model             | **Application or cloud**      | The compute budget is here. The device sends features, not a training loop. |
+| Keep operating after the application exits | **Device**                    | A device that only works while a tab is open is a peripheral of the tab.    |
 
 One rule covers the table. **The device answers the world immediately. The application thinks, stores, and displays.** Do not put a heavy decision on the small side. Do not put a real-time loop on the large side and hope the network keeps the deadline.
 
@@ -101,11 +101,11 @@ Carry the same model over Serial or over BLE. The three directions sit above the
 
 ## Checklist
 
-| Question | You should be able to answer |
-|---|---|
-| How is telemetry different from an event? | Telemetry is a series of samples. An event is one occurrence. |
-| Poll or subscribe? | Subscribe. The application receives. It does not interview the device on a timer. |
-| Why not stream telemetry as fast as possible? | Every byte spends the constrained side's budget. Match the rate to how fast the quantity changes. |
-| Where does heavy logic live? | On the application or in the cloud. The device does the real-time work. |
-| Does the device keep running if the page dies? | Yes. It owns its state. The application holds a shadow of that state. |
-| What should a reconnect do first? | Refresh state from the device. The old shadow may be stale. |
+| Question                                       | You should be able to answer                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| How is telemetry different from an event?      | Telemetry is a series of samples. An event is one occurrence.                                     |
+| Poll or subscribe?                             | Subscribe. The application receives. It does not interview the device on a timer.                 |
+| Why not stream telemetry as fast as possible?  | Every byte spends the constrained side's budget. Match the rate to how fast the quantity changes. |
+| Where does heavy logic live?                   | On the application or in the cloud. The device does the real-time work.                           |
+| Does the device keep running if the page dies? | Yes. It owns its state. The application holds a shadow of that state.                             |
+| What should a reconnect do first?              | Refresh state from the device. The old shadow may be stale.                                       |
