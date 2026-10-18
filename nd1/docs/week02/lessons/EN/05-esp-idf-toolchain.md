@@ -10,6 +10,32 @@ Identify the responsibilities of the framework and build tools, understand compo
 
 ## Framework and abstraction layers
 
+Each layer calls the one beneath it:
+
+```
+            ┌───────────┐
+            │ your code │
+            └─────┬─────┘
+                  │
+                  ▼
+      ┌───────────────────────┐
+      │ Arduino API           │
+      │ always calls downward │
+      └───────────┬───────────┘
+                  │
+                  ▼
+┌───────────────────────────────────┐
+│ ESP-IDF                           │
+│ official API + FreeRTOS + drivers │
+└─────────────────┬─────────────────┘
+                  │
+                  ▼
+  ┌───────────────────────────────┐
+  │ hardware                      │
+  │ registers, peripherals, radio │
+  └───────────────────────────────┘
+```
+
 ESP-IDF is Espressif's official development framework. It combines drivers, system services, networking libraries, configuration facilities, and FreeRTOS integration. Arduino-ESP32 builds on ESP-IDF and provides an additional application API. Arduino applications can use tasks and many underlying IDF services; `setup()` and `loop()` do not impose a fundamental single-task limitation.
 
 For this course, direct ESP-IDF development makes hardware configuration, buffer placement, component dependencies, and scheduling decisions visible. This is particularly useful when integrating the board's display, codec, USB connection, and networking stack.

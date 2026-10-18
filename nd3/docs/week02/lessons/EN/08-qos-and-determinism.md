@@ -17,14 +17,19 @@ The admission up front: **a pub/sub middleware is not a hard real-time loop.** I
 The architecture used on real robots splits the problem by how much jitter it can stand:
 
 ```
-hard real time (the period is the contract)
-    └─ inside one node, on one machine
-       motor loop, safety, encoder read
-       a process, or an MCU, with nothing networked in the loop
+┌─────────────────────────────┐
+│ hard real time              │
+│ the period is the contract  │
+│ one node, one machine       │
+│ motor loop, safety, encoder │
+└─────────────────────────────┘
 
-soft coordination (fast, and jitter is acceptable)
-    └─ publish/subscribe between nodes
-       telemetry, a mode change, supervision, a path
+┌──────────────────────────────┐
+│ soft coordination            │
+│ fast, jitter is acceptable   │
+│ publish / subscribe          │
+│ telemetry, mode, supervision │
+└──────────────────────────────┘
 ```
 
 - **The loop that must be on time stays inside one node.** Motor control, a PID, a safety interlock: one machine, one task, no network in the round trip.

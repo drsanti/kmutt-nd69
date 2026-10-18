@@ -20,10 +20,26 @@ The ES3C28P has BLE in the hardware. Whether a page can use it depends on the fi
 Serial gave you a raw byte pipe and left framing to you. BLE does not hand you the pipe. It hands you a tree:
 
 ```
-device
- └─ service              a group of related capabilities
-     └─ characteristic   one data point inside that group
-         operations: read, write, notify, indicate
+        ┌────────┐
+        │ device │
+        └────┬───┘
+             │
+             ▼
+┌─────────────────────────┐
+│ service                 │
+│ a group of capabilities │
+└────────────┬────────────┘
+             │
+             ▼
+    ┌────────────────┐
+    │ characteristic │
+    │ one data point │
+    └────────┬───────┘
+             │
+             ▼
+ ┌───────────────────────┐
+ │ read / write / notify │
+ └───────────────────────┘
 ```
 
 - A **service** is a capability group. A device may expose a Battery Service, a Device Information Service, and one or more custom services that belong to the product. Each service has a UUID. Standard services use 16-bit UUIDs assigned by the Bluetooth SIG (`0x180F` is Battery). Custom services use 128-bit UUIDs that the product defines.
@@ -52,17 +68,23 @@ BLE is event-driven in the protocol. Serial becomes event-driven only after you 
 
 ## How a wireless session actually starts
 
+From the gesture until the link drops:
+
 ```
-user presses a button (gesture)
-  → requestDevice({ filters }) opens the browser picker
-  → the browser shows peripherals whose advertisements match the filter
-  → the user selects one
-  → gatt.connect()
-  → getPrimaryService / getCharacteristic for the UUIDs you need
-  → startNotifications() on each characteristic you intend to follow
-  → characteristicvaluechanged events arrive
-  → the link drops on its own (range, interference, power saving)
-  → the application reconnects, or it tells the user the link is gone
+┌──────┐                        ┌─────────┐                        ┌────────────┐
+│ page │                        │ browser │                        │ peripheral │
+└───┬──┘                        └────┬────┘                        └──────┬─────┘
+    │                                │                                    │
+    │ requestDevice ────────────────►│                                    │
+    │◄─────────────────── one device │                                    │
+    │ gatt.connect ─────────────────►│                                    │
+    │                                │ connect ──────────────────────────►│
+    │ startNotifications ───────────►│                                    │
+    │                                │ subscribe ────────────────────────►│
+    │                                │◄─────────────────────────── notify │
+    │◄──────────────────────── value │                                    │
+    │                                │◄─────────────────────── link drops │
+    │◄───────────────── disconnected │                                    │
 ```
 
 Compared with serial:

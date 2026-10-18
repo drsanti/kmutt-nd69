@@ -20,6 +20,15 @@ The professional split is between people who produce digital output — text, im
 
 ## Sense, decide, act
 
+The loop a hardware-facing program actually runs:
+
+```
+┌───────┐      ┌───────────┐      ┌─────────┐
+│ sense │ ───► │ decide    │ ───► │ act     │
+│ read  │      │ your code │      │ command │
+└───────┘      └───────────┘      └─────────┘
+```
+
 Ordinary application work generates information for a person to read: a page, a report, an image, a message. The last step is display.
 
 Hardware-facing work is a closed loop with a machine:

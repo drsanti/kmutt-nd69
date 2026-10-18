@@ -13,13 +13,13 @@
 
 ```
 ┌─────────────────────────────────────────┐
-│                UI / app state           │  ← ผู้ใช้เห็นและกด
+│            UI and application state     │  what the user sees and operates
 ├─────────────────────────────────────────┤
-│  telemetry binding    command dispatcher│  ← เชื่อมข้อมูล
+│   telemetry binding    command dispatch │  turn bytes into meaning, and back
 ├─────────────────────────────────────────┤
-│           connection manager            │  ← เชื่อม/ขาด/ต่อใหม่
+│           connection manager            │  connect, drop, reconnect
 ├─────────────────────────────────────────┤
-│        transport (Serial / BLE / WiFi)  │  ← ช่องทางจริง
+│      transport (Serial / BLE / Wi-Fi)   │  the actual channel
 └─────────────────────────────────────────┘
 ```
 
@@ -86,8 +86,8 @@ UI ──► telemetry binding / dispatcher ──► connection manager
                                               │
                     ┌─────────────────────────┼─────────────────┐
                     ▼                         ▼                 ▼
-                Serial transport         BLE transport    network transport
-                (Web Serial)            (Web Bluetooth)   (ผ่าน service)
+              Serial transport          BLE transport     network transport
+              (Web Serial)              (Web Bluetooth)   (through a service)
 ```
 
 - เพราะ telemetry/command/event เป็น concept เดียวกันบนทุกช่องทาง

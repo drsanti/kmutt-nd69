@@ -10,6 +10,22 @@ Read touch data through a shared I2C bus, transform panel coordinates into UI co
 
 ## Touch controller responsibilities
 
+One I2C bus, two chips:
+
+```
+         ┌─────────────────┐
+         │ I2C             │
+         │ SDA 16 / SCL 15 │
+         └────────┬────────┘
+                  │
+        ┌─────────┴─────────┐
+        ▼                   ▼
+┌──────────────┐    ┌──────────────┐
+│ FT6336G      │    │ ES8311       │
+│ touch @ 0x38 │    │ codec @ 0x18 │
+└──────────────┘    └──────────────┘
+```
+
 The FT6336G performs capacitive sensing and exposes interpreted contact information through registers. The MCU reads coordinates and status rather than measuring the panel's electrode capacitance directly. The ESP32-S3's individual capacitive touch inputs serve a different purpose and are not substitutes for a two-dimensional touch-panel controller.
 
 | Signal            | Board assignment from the course notes |

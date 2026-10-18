@@ -89,6 +89,25 @@ A high-priority task that remains continuously ready can starve other work. Core
 
 ## Choose communication by purpose
 
+Two tasks do not share a variable. They hand items through a queue:
+
+```
+┌────────┐             ┌───────┐                ┌────────┐
+│ task A │ ── send ──► │ queue │ ── receive ──► │ task B │
+└────────┘             └───────┘                └────────┘
+```
+
+One item, in order:
+
+```
+┌────────┐                  ┌───────┐                  ┌────────┐
+│ task A │                  │ queue │                  │ task B │
+└────┬───┘                  └───┬───┘                  └────┬───┘
+     │                          │                           │
+     │ send item ──────────────►│                           │
+     │                          │ deliver item ────────────►│
+```
+
 | Mechanism         | Suitable purpose                                |
 | ----------------- | ----------------------------------------------- |
 | Queue             | Transfer bounded items with explicit ownership  |

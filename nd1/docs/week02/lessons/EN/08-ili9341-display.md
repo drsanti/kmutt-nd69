@@ -26,6 +26,27 @@ Board wiring is fixed by PCB traces. A shared SPI bus is technically possible wi
 
 ## Commands and rectangular writes
 
+The panel is another SPI device on the chip:
+
+```
+┌─────────────┐            ┌───────────┐
+│ ESP32-S3    │ ── SPI ──► │ ILI9341   │
+│ FSPI / SPI2 │            │ 240 x 320 │
+└─────────────┘            └───────────┘
+```
+
+One frame write is three commands, in this order:
+
+```
+┌──────────┐                         ┌─────────┐
+│ ESP32-S3 │                         │ ILI9341 │
+└─────┬────┘                         └────┬────┘
+      │                                   │
+      │ CASET 0x2A, columns ─────────────►│
+      │ PASET 0x2B, rows ────────────────►│
+      │ RAMWR 0x2C, pixels ──────────────►│
+```
+
 DC selects whether transmitted bytes represent a command or its parameters/pixel data. A typical rectangular update sets the column and row bounds, then starts a memory write:
 
 ```text

@@ -35,14 +35,31 @@ This is the conceptual break with a tag. The data has a time and a frame inside 
 The frames of a system form a **tree**. One parent each, no cycles:
 
 ```
-map
- └─ robot_base
-     └─ arm_base
-         └─ wrist
-             ├─ tool        (the gripper)
-             └─ camera
- └─ conveyor_frame
-     └─ target_object
+                       ┌─────┐
+                       │ map │
+                       └──┬──┘
+                          │
+                 ┌────────┴─────────┐
+                 ▼                  ▼
+          ┌────────────┐   ┌────────────────┐
+          │ robot_base │   │ conveyor_frame │
+          └──────┬─────┘   └────────┬───────┘
+                 │                  │
+                 ▼                  ▼
+           ┌──────────┐     ┌───────────────┐
+           │ arm_base │     │ target_object │
+           └─────┬────┘     └───────────────┘
+                 │
+                 ▼
+             ┌───────┐
+             │ wrist │
+             └───┬───┘
+                 │
+         ┌───────┴────────┐
+         ▼                ▼
+┌────────────────┐   ┌────────┐
+│ tool (gripper) │   │ camera │
+└────────────────┘   └────────┘
 ```
 
 - You can walk the tree in either direction: camera to wrist to arm base to robot base to map. A point in the camera becomes a point in the map by composing the transforms on that path.

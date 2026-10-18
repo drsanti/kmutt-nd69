@@ -36,6 +36,27 @@ Disabling interrupts for an entire LED chain can create unacceptable latency for
 
 ## RMT transmission
 
+The pulses come from a peripheral, not from a CPU loop:
+
+```
+┌────────┐                 ┌─────────────┐
+│ RMT    │ ── waveform ──► │ WS2812      │
+│ GPIO42 │                 │ GRB, 24 bit │
+└────────┘                 └─────────────┘
+```
+
+One frame is the bits, then a reset:
+
+```
+┌─────┐                        ┌────────┐
+│ RMT │                        │ WS2812 │
+└──┬──┘                        └────┬───┘
+   │                                │
+   │ bit 0, short high ────────────►│
+   │ bit 1, long high ─────────────►│
+   │ reset, low > 50 us ───────────►│
+```
+
 RMT represents a waveform as timed high/low symbols and emits them using a hardware clock. An encoder translates color bits into those symbols. The application submits a transfer and observes the driver's completion rules.
 
 RMT reduces timing sensitivity, but it still has resource and scheduling constraints. Long transmissions may require refill interrupts or supported DMA operation. Correct driver configuration and adequate buffering remain necessary under load. See the [RMT driver documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3/esp32s3/api-reference/peripherals/rmt.html).

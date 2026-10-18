@@ -10,6 +10,28 @@ Separate audio control from sample transport, calculate serial-audio clocks and 
 
 ## Signal-chain responsibilities
 
+Three paths share the codec:
+
+```
+speaker out
+┌──────────┐          ┌────────┐      ┌─────────┐      ┌─────────┐
+│ ESP32-S3 │ ─ I2S ─► │ ES8311 │ ───► │ FM8002E │ ───► │ speaker │
+└──────────┘          │ DAC    │      │ amp     │      └─────────┘
+                      └────────┘      └─────────┘
+
+speaker in
+┌──────────┐      ┌───────────┐          ┌──────────┐
+│ MEMS mic │ ───► │ ES8311    │ ─ I2S ─► │ ESP32-S3 │
+└──────────┘      │ ADC + PGA │          └──────────┘
+                  └───────────┘
+
+control
+┌──────────┐          ┌───────────┐
+│ ESP32-S3 │ ─ I2C ─► │ ES8311    │
+└──────────┘          │ registers │
+                      └───────────┘
+```
+
 The board notes identify an ES8311 codec, an FM8002E speaker amplifier, and an LMA2718B381 analog MEMS microphone. The codec converts between PCM samples and analog audio; the amplifier supplies speaker drive; the microphone produces the analog capture signal.
 
 ```text

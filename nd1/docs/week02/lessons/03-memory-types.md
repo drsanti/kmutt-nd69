@@ -88,9 +88,21 @@ run ได้โดยไม่ copy มา RAM — เพราะ ESP32-S3 ม
 space**:
 
 ```
-CPU ──► address ──► cache/ MMU ───┬─► SRAM (ตรง ๆ)
-        (virtual)                 ├─► Flash (ผ่าน cache, XIP)
-                                  └─► PSRAM (ผ่าน cache)
+                   ┌─────┐
+                   │ CPU │
+                   └──┬──┘
+                      │ address (virtual)
+                      ▼
+               ┌─────────────┐
+               │ cache / MMU │
+               └──────┬──────┘
+                      │
+    ┌─────────────────┴──────────────────┐
+    ▼                 ▼                  ▼
+┌─────────┐   ┌──────────────────┐   ┌─────────────┐
+│ SRAM    │   │ Flash            │   │ PSRAM       │
+│ direct  │   │ via cache, XIP   │   │ via cache   │
+└─────────┘   └──────────────────┘   └─────────────┘
 ```
 
 - flash และ PSRAM ถูก map เข้า address space เดียวกัน — pointer

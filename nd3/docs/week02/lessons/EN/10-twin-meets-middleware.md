@@ -9,13 +9,12 @@ This lesson puts the week together. The twin is alive because it is a consumer o
 A twin needs a live state stream. On a graph, that stream is a set of topics:
 
 ```
-┌──────────────┐   state topics    ┌──────────────┐
-│ real machine │ ────────────────► │ digital twin │
-│   (nodes)    │                   │    (alive)   │
-└──────────────┘                   └──────┬───────┘
-      ▲                                   │
-      │         command, after preview    │
-      └───────────────────────────────────┘
+┌──────────────┐                     ┌──────────────┐
+│ real machine │ ── state topics ──► │ digital twin │
+│ (nodes)      │                     │ (alive)      │
+└───────┬──────┘                     └───────┬──────┘
+        ▲ command, after preview             │
+        └────────────────────────────────────┘
 ```
 
 - The real machine publishes state. The twin subscribes, the way any other consumer would.
@@ -69,10 +68,12 @@ Everything above is the model. Next week it becomes a board.
 **An ESP32-S3 board — the kind already used on the embedded side of this course — becomes a real node at the edge of a robotos graph.**
 
 ```
-sensors on the board ──► firmware ──► a small channel (serial, BLE, or Wi-Fi)
-        ──► bridge node ──► robotos graph ──► twin / inspector / application
-                                                                    │
-command back:  twin or app ──► robotos ──► bridge ──► the board acts ◄┘
+┌─────────┐    ┌──────────┐    ┌────────────┐    ┌────────┐    ┌─────────┐    ┌────────────┐
+│ sensors │ ─► │ firmware │ ─► │ channel    │ ─► │ bridge │ ─► │ robotos │ ─► │ twin / app │
+└────┬────┘    └──────────┘    │ serial/BLE │    └────┬───┘    └────┬────┘    └──────┬─────┘
+     │                         └────────────┘         │             │                │
+     ▲ command back                                   ▲             ▲                │
+     └────────────────────────────────────────────────┴─────────────┴────────────────┘
 ```
 
 - The board's sensors and actuators are a **small node at the edge of the graph**. That was the claim in the graph lesson: a small device can sit on the same graph as a large machine.
@@ -85,19 +86,26 @@ Next week you will do that with your hands. Connect the board, watch its topics 
 ## What this week has been
 
 ```
-The old world                    The new world
-─────────────                    ─────────────
-scan cycle            ─►         event-driven nodes                 (02)
-fieldbus poll         ─►         topics, publish and subscribe      (02)
-tag table             ─►         typed messages and a schema        (03)
-a command word        ─►         a service, or an action            (04)
-PLC states            ─►         parameters and a lifecycle         (05)
-a wiring diagram      ─►         a TF frame tree                    (06)
-trends and a historian─►         inspect, record, and replay        (07)
-the hard loop         ─►         QoS, and a split between layers    (08)
-a SCADA screen        ─►         a living digital twin              (09)
-                                      ▲
-an ESP32-S3 board, as a real node ────┘                            (10, then hands-on)
+┌───────────────────┐      ┌────────────────────────────────┐
+│ the old world     │      │ the new world                  │
+├───────────────────┤      ├────────────────────────────────┤
+│ scan cycle        │ ───► │ event-driven nodes (02)        │
+│ fieldbus poll     │ ───► │ topics, publish/subscribe (02) │
+│ tag table         │ ───► │ typed messages, schema (03)    │
+│ a command word    │ ───► │ a service or an action (04)    │
+│ PLC states        │ ───► │ parameters, lifecycle (05)     │
+│ a wiring diagram  │ ───► │ a TF frame tree (06)           │
+│ trends, historian │ ───► │ inspect, record, replay (07)   │
+│ the hard loop     │ ───► │ QoS, split the layers (08)     │
+│ a SCADA screen    │ ───► │ a living digital twin (09)     │
+└───────────────────┘      └────────────────┬───────────────┘
+                                            ▲
+                                            │
+                                 ┌──────────┴──────────┐
+                                 │ an ESP32-S3 board   │
+                                 │ as a real node      │
+                                 │ (10, then hands-on) │
+                                 └─────────────────────┘
 ```
 
 ## Checklist

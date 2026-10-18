@@ -55,6 +55,15 @@ The product pattern is consistent. Web Serial earns its place on jobs that are *
 
 ## Four verbs a device offers over serial
 
+A device on a serial pipe offers four kinds of work:
+
+```
+┌───────────────┐   ┌──────────────────┐   ┌───────────┐   ┌────────────────┐
+│ monitor       │   │ configure        │   │ command   │   │ service        │
+│ read a stream │   │ change a setting │   │ do it now │   │ flash / repair │
+└───────────────┘   └──────────────────┘   └───────────┘   └────────────────┘
+```
+
 Across that range of machines, the traffic collapses into four verbs:
 
 | Verb          | Meaning                                 | Examples                                                            |

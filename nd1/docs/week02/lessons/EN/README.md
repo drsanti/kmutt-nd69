@@ -8,6 +8,14 @@ Lessons 01–05 establish the processor, memory, and framework model. Lessons 06
 
 Each lesson includes learning objectives, engineering explanations, and practical verification or review exercises. Code fragments illustrate the stated concept and are not complete firmware projects unless explicitly identified as such.
 
+## Table of contents
+
+- [Presentation](web/README.md)
+- [Open the deck](web/index.html)
+- [Illustrations](images/README.md)
+- [Thai lessons](../README.md)
+- [Week 02 index](../../README.md)
+
 ## Lessons
 
 | Number | Topic |
@@ -38,6 +46,6 @@ Historical heap measurements and reported fixes are identified as observations f
 
 Technical refinements include native USB versus bridge reset behavior; capability allocation versus size-based preference; conditional PSRAM/DMA support; SDMMC GPIO routing versus fixed PCB wiring; RGB565 channel widths and byte order; GPIO3 boot strapping; and synchronization beyond `volatile`.
 
-The existing illustrations remain linked from the parent `images` directory. Embedded Thai labels and any source-image inaccuracies have not been edited. Refer to the English prose for the revised technical explanation.
+The illustrations for this edition are in [`images/`](images/README.md). Embedded Thai labels and any source-image inaccuracies have not been edited. Refer to the English prose for the revised technical explanation.
 
 [Original Week 02 index](../../README.md)

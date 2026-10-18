@@ -15,15 +15,24 @@
 จากบทก่อนหน้า app มีชั้นชัดเจน — demo นี้ใช้ทุกชั้น:
 
 ```
-UI:        [color picker]  [sound meter]  [status + connect btn]
-            │                │                    │
-dispatcher  │  led cmd →     │                    │
-binding     │           audio level →            │
-            └──── connection manager ────────────┘
-                          │
-                    transport: Web Serial
-                          │
-                        device
+┌───────────────┐    ┌─────────────┐    ┌─────────┐
+│ color control │    │ sound meter │    │ status  │
+│ LED command   │    │ audio level │    │ connect │
+└───────┬───────┘    └──────┬──────┘    └────┬────┘
+        │                   │                │
+        └─────────────────┬──────────────────┘
+                          ▼
+               ┌────────────────────┐
+               │ connection manager │
+               └──────────┬─────────┘
+                          ▼
+                   ┌────────────┐
+                   │ Web Serial │
+                   └──────┬─────┘
+                          ▼
+                     ┌────────┐
+                     │ device │
+                     └────────┘
 ```
 
 - **command path**: user เลือกสี → dispatcher → ส่งคำสั่งเดียว →
@@ -111,8 +120,8 @@ device.telemetry.subscribe("audio.level", (level) => {
 ตอนนี้หน้าเดียวมีทั้งสองทิศ:
 
 ```
-user ลากสี ──command──► device เปลี่ยน LED       (app→device)
-device ฟังเสียง ──telemetry──► meter ขยับ        (device→app)
+user commits a color ── command ──► device changes the LED     (application → device)
+device hears sound    ── telemetry ► the meter moves           (device → application)
 ```
 
 - กดเปิดเพลงดัง ๆ → LED เดิมที่ตั้งไว้ + meter กระโดด — เห็น

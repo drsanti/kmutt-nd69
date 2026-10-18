@@ -11,13 +11,12 @@ middleware และขั้นต่อไปคือเอา board จร�
 topic โดยตรง:
 
 ```
-┌──────────┐   topic (state)   ┌──────────────┐
-│ เครื่องจริง │ ────────────────► │ digital twin │
-│ (nodes)  │                   │  (มีชีวิต)      │
-└──────────┘                   └─────┬────────┘
-      ▲                              │
-      │        command/preview       │
-      └──────────────────────────────┘
+┌──────────────┐                     ┌──────────────┐
+│ real machine │ ── state topics ──► │ digital twin │
+│ (nodes)      │                     │ (alive)      │
+└───────┬──────┘                     └───────┬──────┘
+        ▲ command, after preview             │
+        └────────────────────────────────────┘
 ```
 
 - เครื่องจริง publish สถานะ → twin subscribe เหมือน consumer ธรรมดา
@@ -44,8 +43,8 @@ subscriber ใน graph เดียวกัน — ถ้าระบบ middl
 นี่คือ use case ที่จับต้องได้ที่สุดสำหรับคน automation:
 
 ```
-logic/program ใหม่ ──► ทดสอบบน twin ──► ผ่านแล้วค่อยลงเครื่องจริง
-                        (ไม่เสี่ยง)
+new logic or a new program ──► run it against the twin ──► deploy to the machine only after it passes
+                               (the line is still running)
 ```
 
 - ทดสอบ robot program / cell sequence / PLC logic ใหม่กับ twin
@@ -79,10 +78,12 @@ node จริงใน graph ของ robotos**
 เส้นทางของข้อมูลที่จะทำจริง:
 
 ```
-sensor บน board ──► firmware ──► ช่องทางเล็ก (serial/BLE/WiFi)
-     ──► bridge node ──► robotos graph ──► twin / inspector / app
-                                                               │
-command กลับ:  twin/app ──► robotos ──► bridge ──► board ทำจริง ◄┘
+┌─────────┐    ┌──────────┐    ┌────────────┐    ┌────────┐    ┌─────────┐    ┌────────────┐
+│ sensors │ ─► │ firmware │ ─► │ channel    │ ─► │ bridge │ ─► │ robotos │ ─► │ twin / app │
+└────┬────┘    └──────────┘    │ serial/BLE │    └────┬───┘    └────┬────┘    └──────┬─────┘
+     │                         └────────────┘         │             │                │
+     ▲ command back                                   ▲             ▲                │
+     └────────────────────────────────────────────────┴─────────────┴────────────────┘
 ```
 
 - **sensor/actuator บน board = node ตัวเล็กที่ขอบ graph** — ตามที่
@@ -102,19 +103,26 @@ command กลับ:  twin/app ──► robotos ──► bridge ──► boa
 ## ภาพรวมที่คุณได้จาก week นี้
 
 ```
-โลกเดิม                         โลกใหม่
-─────────                      ──────────
-scan cycle         ─►          event-driven nodes (02)
-fieldbus poll      ─►          topic pub/sub push (02)
-tag table          ─►          typed message + schema (03)
-command word       ─►          service / action (04)
-PLC states         ─►          parameter + lifecycle (05)
-wiring layout      ─►          TF frame tree (06)
-trend/historian    ─►          inspect + record/replay (07)
-hard loop          ─►          QoS + แยกชั้น (08)
-SCADA screen       ─►          digital twin มีชีวิต (09)
-                                    ▲
-board ESP32-S3 เป็น node จริง ────────┘ (10 → hands-on)
+┌───────────────────┐      ┌────────────────────────────────┐
+│ the old world     │      │ the new world                  │
+├───────────────────┤      ├────────────────────────────────┤
+│ scan cycle        │ ───► │ event-driven nodes (02)        │
+│ fieldbus poll     │ ───► │ topics, publish/subscribe (02) │
+│ tag table         │ ───► │ typed messages, schema (03)    │
+│ a command word    │ ───► │ a service or an action (04)    │
+│ PLC states        │ ───► │ parameters, lifecycle (05)     │
+│ a wiring diagram  │ ───► │ a TF frame tree (06)           │
+│ trends, historian │ ───► │ inspect, record, replay (07)   │
+│ the hard loop     │ ───► │ QoS, split the layers (08)     │
+│ a SCADA screen    │ ───► │ a living digital twin (09)     │
+└───────────────────┘      └────────────────┬───────────────┘
+                                            ▲
+                                            │
+                                 ┌──────────┴──────────┐
+                                 │ an ESP32-S3 board   │
+                                 │ as a real node      │
+                                 │ (10, then hands-on) │
+                                 └─────────────────────┘
 ```
 
 ## Checklist

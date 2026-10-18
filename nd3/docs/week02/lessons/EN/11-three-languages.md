@@ -8,6 +8,21 @@ The samples are design sketches. They are close to the shape of a real API and t
 
 ## Why more than one language
 
+Three languages, one graph:
+
+```
+┌─────────────┐    ┌──────┐    ┌───────────────────┐
+│ C / C++     │    │ Rust │    │ Python            │
+│ ABI and SDK │    │ SDK  │    │ sketch of the ABI │
+└──────┬──────┘    └───┬──┘    └─────────┬─────────┘
+       │               │                 │
+       └────────────────┬────────────────┘
+                        ▼
+                  ┌───────────┐
+                  │ one graph │
+                  └───────────┘
+```
+
 In a real plant, nodes are written in the language that fits the job:
 
 - **C**, through the C ABI the middleware exposes. This is the stable binary door. Other languages, and small hosts that can link a C library, enter here.

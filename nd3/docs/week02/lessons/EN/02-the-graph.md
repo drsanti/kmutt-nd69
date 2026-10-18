@@ -19,15 +19,17 @@ That design has earned forty years. It stops scaling when the system is several 
 ROS and robotos break that one program into many small programs. They do not call each other. They meet at a topic.
 
 ```
-┌─────────┐    publish    ┌────────────┐    subscribe   ┌─────────┐
-│ sensor  │ ────────────► │/temperature│ ────────────►  │ display │
-│  node   │               │   (topic)  │                │  node   │
-└─────────┘               └────────────┘                └─────────┘
-                              │                          ▲
-                              └──────────── subscribe ───┤
-                                                         │ alarm  │
-                                                         │  node  │
-                                                         └────────┘
+┌──────────┐  publish     ┌──────────────┐   subscribe   ┌──────────┐
+│  sensor  │ ───────────► │ /temperature │ ────────────► │ display  │
+│   node   │              │    (topic)   │               │   node   │
+└──────────┘              └──────┬───────┘               └──────────┘
+                                 │
+                                 │ subscribe
+                                 ▼
+                          ┌────────────┐
+                          │   alarm    │
+                          │    node    │
+                          └────────────┘
 ```
 
 - A **node** is a process with one job: read a sensor, run a control step, drive a motor, draw a display. Nothing in the graph grants it a turn. It runs on its own schedule.

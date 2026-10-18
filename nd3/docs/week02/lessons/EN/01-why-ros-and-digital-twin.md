@@ -24,6 +24,15 @@ What changes is the middle. Between the sensor and the decision there used to be
 
 ## The gap to close
 
+What changed is the middle:
+
+```
+┌─────────────┐      ┌────────────────┐
+│ scan cycle  │ ───► │ nodes + topics │
+│ one program │      │ publish        │
+└─────────────┘      └────────────────┘
+```
+
 | Familiar                                           | New                                                      | The actual difference                                                                             |
 | -------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | A scan cycle that inspects everything on one clock | **Event-driven** nodes, each with its own clock          | There is no central scan. A node runs when it has work.                                           |

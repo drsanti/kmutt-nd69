@@ -13,13 +13,27 @@ framework จาก Espressif เอง อยู่บน **FreeRTOS kernel**
 framework คนละตัวกัน
 
 ```
-โค้ดของคุณ
-   │
-Arduino API ──► (ยังเรียกลงข้างล่างเสมอ)
-   │
-ESP-IDF ──────► official API + FreeRTOS + driver ครบ
-   │
-hardware ─────► register, peripheral, radio
+            ┌───────────┐
+            │ your code │
+            └─────┬─────┘
+                  │
+                  ▼
+      ┌───────────────────────┐
+      │ Arduino API           │
+      │ always calls downward │
+      └───────────┬───────────┘
+                  │
+                  ▼
+┌───────────────────────────────────┐
+│ ESP-IDF                           │
+│ official API + FreeRTOS + drivers │
+└─────────────────┬─────────────────┘
+                  │
+                  ▼
+  ┌───────────────────────────────┐
+  │ hardware                      │
+  │ registers, peripherals, radio │
+  └───────────────────────────────┘
 ```
 
 ## Anatomy ของ toolchain

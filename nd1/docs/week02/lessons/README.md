@@ -1,0 +1,25 @@
+# บทเรียน Week 02 (ภาษาไทย)
+
+## Table of contents
+
+- [English edition](EN/README.md)
+- [Presentation](EN/web/README.md)
+- [Thai illustrations](images/README.md)
+- [English illustrations](EN/images/README.md)
+- [Week 02 index](../README.md)
+
+- [ชิป ESP32-S3 บน board ES3C28P](01-esp32s3r8-the-chip.md)
+- [ประวัติ ESP32 — จาก ESP8266 ถึง ESP32-S3](02-esp32-history.md)
+- [Memory หลายชนิดบน ESP32-S3 — RAM, SRAM, PSRAM, Flash, ROM, eFuse](03-memory-types.md)
+- [Memory ในมุม Firmware — heap, stack, partition, NVS](04-memory-firmware-view.md)
+- [ESP-IDF — Toolchain ตัวจริงของ ESP32](05-esp-idf-toolchain.md)
+- [USB/Serial บน board นี้ — ไม่มีชิป USB-UART และกับดักที่ตามมา](06-usb-serial-caveat.md)
+- [ระบบไฟและแบตเตอรี่ — TP4054, LDO, และการวัดแบตผ่าน ADC](07-power-battery.md)
+- [จอ ILI9341V — SPI display 240×320 บน board ES3C28P](08-ili9341-display.md)
+- [Touch screen FT6336G — capacitive touch ผ่าน I2C](09-ft6336-touch.md)
+- [ระบบเสียง — ES8311 codec + FM8002E amp + MEMS mic](10-audio-chain.md)
+- [RGB LED WS2812 — เส้นเดียวต้อง timing เป๊ะ และทำไมต้อง RMT](11-ws2812-rmt-led.md)
+- [MicroSD บน ES3C28P — SDIO 4-bit เต็มสปีด](12-microsd-sdio.md)
+- [Expansion header และแผนที่ขาทั้ง board — ขาไหนว่าง ขาไหนห้าม](13-expansion-pins.md)
+- [ติดตั้ง ESP-IDF ผ่าน VS Code — พร้อมทดสอบบน board จริง](14-esp-idf-setup.md)
+- [Embedded C + FreeRTOS review — ฐานที่ต้องมีก่อนเขียน firmware จริง](15-embedded-c-freertos-review.md)

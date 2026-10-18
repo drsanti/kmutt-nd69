@@ -18,6 +18,15 @@ These developments illustrate why toolchains, examples, libraries, and documenta
 
 ## Families represent different capability choices
 
+The family, reduced to the three steps this board inherits:
+
+```
+┌─────────┐      ┌────────────┐      ┌────────────┐
+│ ESP8266 │ ───► │ ESP32      │ ───► │ ESP32-S3   │
+│ Wi-Fi   │      │ Wi-Fi + BT │      │ USB, BLE 5 │
+└─────────┘      └────────────┘      └────────────┘
+```
+
 | Family         | Representative architecture               | Selection considerations                                                        |
 | -------------- | ----------------------------------------- | ------------------------------------------------------------------------------- |
 | Original ESP32 | Xtensa LX6; common variants are dual-core | Wi-Fi, Bluetooth Classic, and Bluetooth LE                                      |

@@ -22,8 +22,11 @@ action มีอยู่
 เหมือน function call ข้าม node:
 
 ```
-client node ──request──►  service node ──response──► client
-             (รอคำตอบสั้น ๆ)          (ตอบกลับ)
+┌─────────────┐                ┌──────────────┐
+│ client node │ ── request ──► │ service node │
+└──────┬──────┘                └───────┬──────┘
+       ▲ response                      │
+       └───────────────────────────────┘
 ```
 
 - client ถาม server ตอบ — synchronous ในเชิงตรรกะ (แม้ระบบจะ async
@@ -55,10 +58,12 @@ X" ใช้เวลาเป็นวินาทีหรือนาที �
 action คือ pattern ที่ทำสามอย่างนี้ให้เป็นระบบ:
 
 ```
-client ──goal──► action server
-       ◄──feedback (ไหลเรื่อย ๆ ระหว่างทำ)──
-       ──cancel──► (ถ้าต้องหยุด)
-       ◄──result (เมื่อจบ: success/fail/canceled)
+┌────────┐                                ┌───────────────┐
+│        │ ── goal ──────────────────────►│               │
+│        │◄────────────────── feedback ── │               │
+│ client │ ── cancel ────────────────────►│ action server │
+│        │◄──────────────────── result ── │               │
+└────────┘                                └───────────────┘
 ```
 
 - **goal** — ส่ง "เป้าหมาย" ไป (เช่น ไปที่จุดนี้, ทำ cycle นี้)

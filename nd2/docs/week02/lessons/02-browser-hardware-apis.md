@@ -45,6 +45,19 @@ Firefox และ Safari ไม่ implement (และแสดงท่าท�
 
 ### 2. ต้อง user gesture + picker ของ browser
 
+เพจขอได้ แต่ผู้ใช้เป็นคนเลือก:
+
+```
+┌──────┐                                 ┌─────────┐                                 ┌──────┐
+│ page │                                 │ browser │                                 │ user │
+└───┬──┘                                 └────┬────┘                                 └───┬──┘
+    │                                         │                                          │
+    │ requestPort / requestDevice ───────────►│                                          │
+    │                                         │ show the picker ────────────────────────►│
+    │                                         │◄─────────────────────── grant one device │
+    │◄───────────────────────── open a stream │                                          │
+```
+
 - เรียก `requestPort()` / `requestDevice()` ได้เฉพาะตอน user
   เพิ่งกด/แตะ — เว็บเปิด device เงียบ ๆ ไม่ได้
 - browser แสดง **device picker ของตัวเอง** — user เลือกเองว่าจะให้

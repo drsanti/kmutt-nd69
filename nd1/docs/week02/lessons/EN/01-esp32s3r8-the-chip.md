@@ -35,6 +35,25 @@ Two cores provide scheduling flexibility, but parallel execution does not remove
 
 ## Memory capacity is not a single resource
 
+The package and the external flash share one bus:
+
+```
+┌───────────────────────────────────────────┐
+│ ESP32-S3R8 (one package)                  │
+├────────────┼─────────────┼────────────────┤
+│ ROM 384 KB │ SRAM 512 KB │ RTC SRAM 16 KB │
+├───────────────────────────────────────────┤
+│ OPI PSRAM 8 MB                            │
+│ GPIO26, GPIO33-37 + 30clk                 │
+└─────────────────────┬─────────────────────┘
+                      │  shared octal bus
+                      ▼
+           ┌─────────────────────┐
+           │ QSPI flash 16 MB    │
+           │ external, GPIO27-32 │
+           └─────────────────────┘
+```
+
 A useful allocation plan separates internal memory from external memory. Large display or application buffers can consume PSRAM, preserving internal SRAM for stacks, driver requirements, and work that must remain accessible during cache-disabled intervals.
 
 The original notes report that a Wi-Fi/lwIP/zenoh-pico configuration had only approximately 3–8 KB of internal heap remaining before PSRAM was enabled. They also report improved link stability afterward. These are historical observations for that firmware configuration, not guaranteed measurements for every application. Reproduce the workload and record internal heap separately from total heap before drawing conclusions about the failure mechanism.

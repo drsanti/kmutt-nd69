@@ -17,6 +17,26 @@ This is why the stack needs a way to see inside itself that is separate from the
 
 ## Three tools
 
+Three tools, each looking at a different layer:
+
+```
+┌───────────┐   ┌───────────┐   ┌─────────────┐
+│ inspect   │   │ watch     │   │ record      │
+│ the graph │   │ one topic │   │ then replay │
+└───────────┘   └───────────┘   └─────────────┘
+```
+
+Record first. Replay second:
+
+```
+┌───────┐                              ┌──────────┐                              ┌─────┐
+│ graph │                              │ recorder │                              │ you │
+└───┬───┘                              └─────┬────┘                              └──┬──┘
+    │                                        │                                      │
+    │ live messages ────────────────────────►│                                      │
+    │                                        │ replay the same messages ───────────►│
+```
+
 ### 1. Inspect the graph — the structure, live
 
 - Which nodes exist, and which of them are actually running.

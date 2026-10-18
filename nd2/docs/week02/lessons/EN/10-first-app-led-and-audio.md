@@ -11,15 +11,24 @@ This is the first time the week looks like an application. The page does two thi
 The previous lesson named four layers. This demo uses all of them:
 
 ```
-UI:         [color control]   [sound meter]   [status + connect]
-                 │                 │                  │
-dispatcher       │  LED command    │                  │
-binding          │            audio level             │
-                 └──────── connection manager ────────┘
-                                   │
-                          transport: Web Serial
-                                   │
-                                 device
+┌───────────────┐    ┌─────────────┐    ┌─────────┐
+│ color control │    │ sound meter │    │ status  │
+│ LED command   │    │ audio level │    │ connect │
+└───────┬───────┘    └──────┬──────┘    └────┬────┘
+        │                   │                │
+        └─────────────────┬──────────────────┘
+                          ▼
+               ┌────────────────────┐
+               │ connection manager │
+               └──────────┬─────────┘
+                          ▼
+                   ┌────────────┐
+                   │ Web Serial │
+                   └──────┬─────┘
+                          ▼
+                     ┌────────┐
+                     │ device │
+                     └────────┘
 ```
 
 - **Command path.** The user picks a color. The dispatcher sends one command. The board changes the LED.

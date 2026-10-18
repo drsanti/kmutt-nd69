@@ -17,8 +17,11 @@ One rule covers the choice: **if it does not finish immediately, it is not a ser
 ## A service is a function call across a node boundary
 
 ```
-client node ── request ──►  service node ── response ──► client
-              (a short wait)               (one reply)
+┌─────────────┐                ┌──────────────┐
+│ client node │ ── request ──► │ service node │
+└──────┬──────┘                └───────┬──────┘
+       ▲ response                      │
+       └───────────────────────────────┘
 ```
 
 - The client asks. The server answers. Logically this is synchronous: the caller does not continue the conversation until the reply arrives, even when the implementation underneath is asynchronous.
@@ -47,10 +50,12 @@ Many robot commands do not finish in one exchange. "Move to this pose" takes sec
 An action is the pattern that makes those three part of the interface:
 
 ```
-client ── goal ──► action server
-       ◄── feedback, streaming while the work runs ──
-       ── cancel ──►   if it must stop
-       ◄── result, when it ends: success, failure, or cancelled
+┌────────┐                                ┌───────────────┐
+│        │ ── goal ──────────────────────►│               │
+│        │◄────────────────── feedback ── │               │
+│ client │ ── cancel ────────────────────►│ action server │
+│        │◄──────────────────── result ── │               │
+└────────┘                                └───────────────┘
 ```
 
 - The **goal** is the request: go to this pose, run this cycle.

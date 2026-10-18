@@ -48,11 +48,13 @@ parameter เหมือน setpoint/config ใน controller — หนึ่�
 กว่าเพราะระบบใหญ่ต้อง bring-up อย่างเป็นระบบ:
 
 ```
-unconfigured ──configure──► inactive ──activate──► active
-     ▲                        │                      │
-     └──────── cleanup ◄──────┘                      │
-     ▲                                               │
-     └────────── shutdown/error ◄────────────────────┘
+┌──────────────┐                  ┌──────────┐                 ┌────────┐
+│ unconfigured │ ── configure ──► │ inactive │ ── activate ──► │ active │
+└───────┬──────┘                  └─────┬────┘                 └────┬───┘
+        ▲ cleanup                       │                           │
+        └───────────────────────────────┘                           │
+        ▲ shutdown / error                                          │
+        └───────────────────────────────────────────────────────────┘
 ```
 
 - **unconfigured** — node ถูกสร้างแต่ยังไม่ตั้งค่า (รอ parameter/

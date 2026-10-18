@@ -48,6 +48,19 @@ The reason is impersonation. On plain HTTP, a network attacker can modify the pa
 
 ### 2. User gesture, then the browser's picker
 
+The page may ask. The user chooses:
+
+```
+┌──────┐                                 ┌─────────┐                                 ┌──────┐
+│ page │                                 │ browser │                                 │ user │
+└───┬──┘                                 └────┬────┘                                 └───┬──┘
+    │                                         │                                          │
+    │ requestPort / requestDevice ───────────►│                                          │
+    │                                         │ show the picker ────────────────────────►│
+    │                                         │◄─────────────────────── grant one device │
+    │◄───────────────────────── open a stream │                                          │
+```
+
 `navigator.serial.requestPort()` and `navigator.bluetooth.requestDevice()` require a recent user activation. A click or a tap counts. A timer, a page load, or a promise that resolves later does not.
 
 The browser then shows **its own picker**. The user chooses which device the page may see. The page cannot enumerate every serial port, and it cannot silently scan every BLE advertisement and build its own chooser from the full set. Filters on the Bluetooth call narrow what the picker shows. They do not give the page the scan results.

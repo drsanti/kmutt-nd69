@@ -25,10 +25,26 @@ device ตัวที่ใช้สอนมี BLE อยู่ใน hardwar
 ให้ **โครงสร้างเป็นชั้น ๆ** แทน:
 
 ```
-device
- └─ service        ← กลุ่มความสามารถหนึ่งชุด (เช่น battery service)
-     └─ characteristic   ← จุดข้อมูลจริง (เช่น "ระดับแบต %")
-         └─ operations: อ่าน / เขียน / ติดตามค่า (notify)
+        ┌────────┐
+        │ device │
+        └────┬───┘
+             │
+             ▼
+┌─────────────────────────┐
+│ service                 │
+│ a group of capabilities │
+└────────────┬────────────┘
+             │
+             ▼
+    ┌────────────────┐
+    │ characteristic │
+    │ one data point │
+    └────────┬───────┘
+             │
+             ▼
+ ┌───────────────────────┐
+ │ read / write / notify │
+ └───────────────────────┘
 ```
 
 - **service** = เมนูความสามารถ — device หนึ่งมีหลาย service
@@ -59,13 +75,23 @@ notify คือ subscription
 
 ## Lifecycle — เชื่อมไร้สายยังไง
 
+ลำดับจาก gesture จนลิงก์หลุด:
+
 ```
-user กดปุ่ม (gesture)
-  → browser แสดง device picker (scan บรรยากาศ แสดงเครื่องที่ตรง filter)
-  → user เลือกเครื่อง
-  → connect → เจอ service ต่าง ๆ → subscribe characteristic ที่ต้องการ
-  → notify เข้ามาเป็น stream ของ events
-  → disconnect อาจเกิดเอง (ระยะ/ไฟต่ำ) — app ต้องทนและต่อใหม่ได้
+┌──────┐                        ┌─────────┐                        ┌────────────┐
+│ page │                        │ browser │                        │ peripheral │
+└───┬──┘                        └────┬────┘                        └──────┬─────┘
+    │                                │                                    │
+    │ requestDevice ────────────────►│                                    │
+    │◄─────────────────── one device │                                    │
+    │ gatt.connect ─────────────────►│                                    │
+    │                                │ connect ──────────────────────────►│
+    │ startNotifications ───────────►│                                    │
+    │                                │ subscribe ────────────────────────►│
+    │                                │◄─────────────────────────── notify │
+    │◄──────────────────────── value │                                    │
+    │                                │◄─────────────────────── link drops │
+    │◄───────────────── disconnected │                                    │
 ```
 
 ต่างจาก serial ตรงที่:

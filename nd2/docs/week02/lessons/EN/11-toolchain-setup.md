@@ -33,6 +33,18 @@ Do not stay on an old Node just because a previous course used it. Current Vite 
 
 ## Step 2 — Create a Vite project and trust localhost
 
+A change in a file reaches the browser in this order:
+
+```
+┌────────┐                     ┌──────┐                     ┌─────────┐
+│ editor │                     │ Vite │                     │ browser │
+└────┬───┘                     └───┬──┘                     └────┬────┘
+     │                             │                             │
+     │ save a module ─────────────►│                             │
+     │                             │ serve localhost ───────────►│
+     │                             │◄───────────── load the page │
+```
+
 Create a project the way the current Vite documentation describes:
 
 ```bash

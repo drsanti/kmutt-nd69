@@ -10,6 +10,42 @@ Distinguish native USB from an external USB-to-UART bridge, explain USB Serial/J
 
 ## The board's USB connection
 
+A typical devkit inserts a bridge. This board does not, and opening the port resets the chip:
+
+```
+┌───────┐      ┌──────────────────────────────┐      ┌────────────────────┐
+│ USB-C │ ───► │ CH340 / CP2102               │ ───► │ UART0 of the ESP32 │
+└───────┘      │ USB-UART bridge              │      └────────────────────┘
+               │ separate chip, USB to serial │
+               └──────────────────────────────┘
+```
+
+```
+┌───────┐      ┌─────────────────────┐      ┌───────────────────────┐
+│ USB-C │ ───► │ ESP32-S3 native USB │ ───► │ GPIO19 (D-) / 20 (D+) │
+└───────┘      │ USB-Serial / JTAG   │      └───────────────────────┘
+               └─────────────────────┘
+```
+
+```
+┌─────┐        ┌─────┐
+│ DTR │        │ RTS │
+└──┬──┘        └──┬──┘
+   │              │
+   └──────┬───────┘
+          ▼
+      ┌───────┐
+      │ logic │
+      └───┬───┘
+          │
+         ┌┴───────────────────────┐
+         ▼                        ▼
+┌─────────────────┐      ┌────────────────┐
+│ EN              │      │ IO0            │
+│ CHIP_PU / reset │      │ BOOT strapping │
+└─────────────────┘      └────────────────┘
+```
+
 The original board notes describe a USB-C connector wired directly to ESP32-S3 GPIO19 (D−) and GPIO20 (D+), without a CH340 or CP210x bridge. USB-C describes the connector; it does not specify which internal peripheral implements the data interface.
 
 | Architecture               | Data path                                               |

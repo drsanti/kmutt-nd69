@@ -10,6 +10,26 @@ Classify memory by retention and physical location, explain cached external-memo
 
 ## A consistent classification
 
+An address leaves the CPU and lands in one of three memories:
+
+```
+                   ┌─────┐
+                   │ CPU │
+                   └──┬──┘
+                      │ address (virtual)
+                      ▼
+               ┌─────────────┐
+               │ cache / MMU │
+               └──────┬──────┘
+                      │
+    ┌─────────────────┴──────────────────┐
+    ▼                 ▼                  ▼
+┌─────────┐   ┌──────────────────┐   ┌─────────────┐
+│ SRAM    │   │ Flash            │   │ PSRAM       │
+│ direct  │   │ via cache, XIP   │   │ via cache   │
+└─────────┘   └──────────────────┘   └─────────────┘
+```
+
 | Technology    | Retains data without power?             | Primary purpose                                   |
 | ------------- | --------------------------------------- | ------------------------------------------------- |
 | Internal SRAM | No                                      | Working data and selected executable code         |

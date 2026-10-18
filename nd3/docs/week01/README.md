@@ -2,6 +2,13 @@
 
 > สัปดาห์เปิดตัวสำหรับกลุ่ม ND03 (automation / robotics / machinery industry)
 
+## Table of contents
+
+- [Track index](../../README.md)
+- [Documents](../README.md)
+- [Week 02](../week02/README.md)
+- [Course index](../../../README.md)
+
 ## Presentation
 
 Slide ประกอบการบรรยาย:

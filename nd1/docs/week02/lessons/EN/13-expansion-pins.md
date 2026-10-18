@@ -24,6 +24,20 @@ A function routed through the GPIO matrix is still subject to input/output capab
 
 ## Consolidated board map
 
+Pins on this board fall into reserved groups and a free header:
+
+```
+┌───────────────┐   ┌─────────────┐   ┌───────────────┐
+│ flash + PSRAM │   │ USB D- / D+ │   │ LCD SPI       │
+│ GPIO26-37     │   │ GPIO19-20   │   │ GPIO10-13, 46 │
+└───────────────┘   └─────────────┘   └───────────────┘
+
+┌───────────────────┐   ┌─────────┐   ┌──────────────────┐
+│ free header       │   │ RGB LED │   │ microSD          │
+│ GPIO 2, 3, 14, 21 │   │ GPIO42  │   │ GPIO38-41, 47-48 │
+└───────────────────┘   └─────────┘   └──────────────────┘
+```
+
 | GPIO group | Assignment in the course notes |
 |---|---|
 | 0 | BOOT button and boot strap |

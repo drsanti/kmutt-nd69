@@ -10,6 +10,27 @@ Distinguish native SD memory transfers from SPI mode, configure the board's sock
 
 ## Board routing and terminology
 
+The card sits on the SDMMC host in 4-bit mode:
+
+```
+┌────────────┐              ┌───────────────┐
+│ ESP32-S3   │ ── 4-bit ──► │ microSD       │
+│ SDMMC host │              │ CLK CMD D0-D3 │
+└────────────┘              └───────────────┘
+```
+
+A command on CMD, then the payload on the data bus:
+
+```
+┌──────┐                     ┌──────┐
+│ host │                     │ card │
+└───┬──┘                     └───┬──┘
+    │                            │
+    │ command on CMD ───────────►│
+    │◄────────── response on CMD │
+    │◄──────────── data on D0-D3 │
+```
+
 The course notes describe a native four-bit SD connection:
 
 | Signal | GPIO |

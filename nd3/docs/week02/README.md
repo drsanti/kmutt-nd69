@@ -3,6 +3,16 @@
 > จาก PLC/DCS สู่ ROS era — เข้าใจ node, topic, service, action,
 > TF และ Digital Twin — 11 บท เตรียมตัวก่อน hands-on สัปดาห์ถัดไป
 
+## Table of contents
+
+- [Thai lessons](lessons/README.md)
+- [English edition](lessons/EN/README.md)
+- [Presentation](lessons/EN/web/README.md)
+- [Thai illustrations](lessons/images/README.md)
+- [English illustrations](lessons/EN/images/README.md)
+- [Week 01](../week01/README.md)
+- [Documents](../README.md)
+
 ## 📚 Lessons
 
 ### แนวคิดหลักของ middleware

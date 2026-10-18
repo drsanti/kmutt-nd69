@@ -33,6 +33,15 @@ message Temperature {
 
 ## The schema is the contract
 
+Both sides hold the same contract:
+
+```
+┌────────────┐      ┌─────────┐      ┌─────────────┐
+│ publisher  │ ───► │ message │ ───► │ subscriber  │
+│ one schema │      └─────────┘      │ same schema │
+└────────────┘                       └─────────────┘
+```
+
 A graph of dozens of nodes will be written in more than one language, by more than one person, months apart. The schema is how they still agree.
 
 - **One definition, the same reading everywhere.** The field `celsius` is a `float32` in degrees. It is not "probably tenths, check the PDF."

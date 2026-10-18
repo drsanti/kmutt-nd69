@@ -21,13 +21,19 @@ loop** — มันคือชั้นสื่อสารไม่ใช่
 คำตอบของสถาปัตยกรรม robot คือ **แยกชั้น**:
 
 ```
-hard real-time (ต้องตรงจังหวะ)
-    └─ อยู่ใน node/controller ตัวเดียวบนเครื่องเดียว
-       (motor loop, safety, encoder read) — ภายใน process/MCU
-       
-soft coordination (ต้องรวดเร็วแต่ยอม jitter ได้)
-    └─ ผ่าน pub/sub ระหว่าง node
-       (telemetry, mode change, supervision, เส้นทาง)
+┌─────────────────────────────┐
+│ hard real time              │
+│ the period is the contract  │
+│ one node, one machine       │
+│ motor loop, safety, encoder │
+└─────────────────────────────┘
+
+┌──────────────────────────────┐
+│ soft coordination            │
+│ fast, jitter is acceptable   │
+│ publish / subscribe          │
+│ telemetry, mode, supervision │
+└──────────────────────────────┘
 ```
 
 - **ลูปที่ต้องแน่นอนอยู่ภายใน node** — motor control, PID, safety

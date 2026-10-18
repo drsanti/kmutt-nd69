@@ -7,15 +7,21 @@
 devkit ทั่วไป (ตระกูล DevKitC, NodeMCU) มีสองโลกแยกกัน:
 
 ```
-USB-C ──► CH340/CP2102 (USB-UART bridge) ──► UART0 ของ ESP32
-         ชิปแยก ทำหน้าที่แปลง USB↔serial
+┌───────┐      ┌──────────────────────────────┐      ┌────────────────────┐
+│ USB-C │ ───► │ CH340 / CP2102               │ ───► │ UART0 of the ESP32 │
+└───────┘      │ USB-UART bridge              │      └────────────────────┘
+               │ separate chip, USB to serial │
+               └──────────────────────────────┘
 ```
 
 board ES3C28P **ไม่มีชิป bridge** — USB-C ต่อตรงเข้า native USB ของ
 ESP32-S3 บน GPIO19/20:
 
 ```
-USB-C ──► ESP32-S3 native USB (USB-Serial/JTAG) ──► GPIO19(D−)/20(D+)
+┌───────┐      ┌─────────────────────┐      ┌───────────────────────┐
+│ USB-C │ ───► │ ESP32-S3 native USB │ ───► │ GPIO19 (D-) / 20 (D+) │
+└───────┘      │ USB-Serial / JTAG   │      └───────────────────────┘
+               └─────────────────────┘
 ```
 
 ผู้ผลิตเรียกมันว่า "USB analog serial" — ผลข้างเคียงคือพฤติกรรมทั้ง
@@ -46,9 +52,22 @@ auto-reset circuit (transistor pair) แปลงสองเส้นนี้�
 **EN (reset)** และ **IO0 (BOOT)**:
 
 ```
-DTR ──┐
-      ├─► logic ──► EN   (CHIP_PU / reset)
-RTS ──┘         ──► IO0  (BOOT strapping)
+┌─────┐        ┌─────┐
+│ DTR │        │ RTS │
+└──┬──┘        └──┬──┘
+   │              │
+   └──────┬───────┘
+          ▼
+      ┌───────┐
+      │ logic │
+      └───┬───┘
+          │
+         ┌┴───────────────────────┐
+         ▼                        ▼
+┌─────────────────┐      ┌────────────────┐
+│ EN              │      │ IO0            │
+│ CHIP_PU / reset │      │ BOOT strapping │
+└─────────────────┘      └────────────────┘
 ```
 
 - host software เปิด port → OS/driver assert DTR/RTS → transistor

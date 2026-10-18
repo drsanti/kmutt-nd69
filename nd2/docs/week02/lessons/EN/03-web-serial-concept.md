@@ -22,13 +22,31 @@ Two details matter in practice even at this altitude. First, opening the port ca
 Web Serial is the browser API that lets a page open a serial port on the user's machine — the job that used to require a native terminal or the microcontroller vendor's monitor.
 
 ```
-web page ── Web Serial API ── serial port ── device
-           (browser-owned)    (OS-owned)     (hardware)
+┌──────────┐      ┌─────────┐      ┌─────────┐      ┌────────┐
+│ web page │ ───► │ browser │ ───► │ OS port │ ───► │ device │
+└──────────┘      └─────────┘      └─────────┘      └────────┘
 ```
 
 The page never receives a file descriptor. The browser opens the port, enforces the permission, and hands the page a pair of streams. The page can ask. It cannot seize.
 
 ## The lifecycle
+
+From the grant to the release:
+
+```
+┌──────┐                    ┌─────────┐                    ┌────────┐
+│ page │                    │ browser │                    │ device │
+└───┬──┘                    └────┬────┘                    └────┬───┘
+    │                            │                              │
+    │ requestPort ──────────────►│                              │
+    │◄───────────── granted port │                              │
+    │ open(baudRate) ───────────►│                              │
+    │                            │ claim the port ─────────────►│
+    │                            │◄──────────────── byte stream │
+    │◄─────────────────── chunks │                              │
+    │ close ────────────────────►│                              │
+    │                            │ release ────────────────────►│
+```
 
 ### 1. Request — the user always chooses
 

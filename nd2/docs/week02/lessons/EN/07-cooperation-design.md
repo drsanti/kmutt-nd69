@@ -6,6 +6,18 @@ The channel is settled enough to use. The next question is how the two machines 
 
 ## Three directions, and only three
 
+Three directions, two machines:
+
+```
+┌────────┐               ┌─────────────┐
+│ device │               │ application │
+└────┬───┘               └──────┬──────┘
+     │                          │
+     │ telemetry ──────────────►│
+     │ event ──────────────────►│
+     │◄──────────────── command │
+```
+
 Every device interface, on every channel, reduces to three directions:
 
 | Direction                                    | Name          | Examples                                                                                                                         |
@@ -32,9 +44,25 @@ Serial and BLE arrive at the same rule from opposite directions. Serial makes yo
 
 The model to build: **the application is a receiver, not an interviewer.** The device decides when to report — a cadence for telemetry, an occurrence for events. The application's work is to subscribe to the right streams and react.
 
+poll, every interval:
+
 ```
-poll:      app ── ask ──► device ── reply ──► app     every interval, even when nothing changed
-subscribe: device ── push when there is news ──► app  only when there is news
+┌─────┐                              ┌────────┐
+│ app │                              │ device │
+└──┬──┘                              └────┬───┘
+   │                                      │
+   │ ask, on a timer ────────────────────►│
+   │◄─────────── reply, even if unchanged │
+```
+
+subscribe, only when there is news:
+
+```
+┌────────┐                             ┌─────┐
+│ device │                             │ app │
+└────┬───┘                             └──┬──┘
+     │                                    │
+     │ push when there is news ──────────►│
 ```
 
 Polling still has a narrow use: a one-shot read of a value you need immediately after connect, before the subscription is live. That is a refresh, not a design. If the steady state of your page is a `setInterval` that reads every characteristic, the cooperation is wrong.
@@ -77,6 +105,17 @@ One rule covers the table. **The device answers the world immediately. The appli
 A useful test: unplug the page. Whatever must still be safe and still be true has to live on the device. Whatever can wait for a human to look at it can live in the application.
 
 ## Who owns state — the shadow
+
+The device owns the live value. The application holds a copy:
+
+```
+┌────────┐                             ┌─────────────┐
+│ device │                             │ application │
+└────┬───┘                             └──────┬──────┘
+     │                                        │
+     │ live state ───────────────────────────►│
+     │◄────────────── refresh after reconnect │
+```
 
 The failure you will hit: **the application disconnects, and the device keeps going.** The LED stays on. A motor may still be turning. The microphone may still be open. The page's last render is a picture of a machine that has already moved on.
 

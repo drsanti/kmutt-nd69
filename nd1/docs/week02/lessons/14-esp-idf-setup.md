@@ -42,6 +42,19 @@ ESP-IDF extension ของ Espressif ติดตั้ง toolchain ทั้�
 
 ## Verify ระดับ 1 — toolchain ตอบกลับ
 
+ลำดับที่ต้องผ่านก่อนจะถือว่า toolchain พร้อม:
+
+```
+┌───────────┐                        ┌────────┐                        ┌───────┐
+│ developer │                        │ idf.py │                        │ board │
+└─────┬─────┘                        └────┬───┘                        └───┬───┘
+      │                                   │                                │
+      │ set-target esp32s3 ──────────────►│                                │
+      │ build ───────────────────────────►│                                │
+      │                                   │ flash ────────────────────────►│
+      │◄────────────────────────────────────────────────────── console log │
+```
+
 เปิด ESP-IDF Terminal (palette → "ESP-IDF: Open ESP-IDF Terminal")
 แล้ว:
 

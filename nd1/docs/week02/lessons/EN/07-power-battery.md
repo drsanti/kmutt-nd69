@@ -10,6 +10,42 @@ Explain the roles of the charger and regulator, estimate electrical and thermal 
 
 ## Charger and regulator responsibilities
 
+USB splits toward the charger and toward the 3.3 V rail:
+
+```
+                    ┌───────────┐
+                    │ USB-C 5 V │
+                    └─────┬─────┘
+                          │
+      ┌───────────────────┴─────────────┐
+      ▼                                 ▼
+┌───────────┐                       ┌──────┐
+│ TP4054    │                       │ rail │
+│ charge IC │                       └───┬──┘
+└─────┬─────┘                           │
+      ▼                                 │
+┌────────────┐                          │
+│ LiPo 3.7 V │                          │
+│ 3.0-4.2 V  │                          │
+└──────┬─────┘                          │
+       │                                │
+       └───────────────┬────────────────┘
+                       ▼
+            ┌─────────────────────┐
+            │ ME6217 LDO          │
+            │ stable step-down    │
+            └──────────┬──────────┘
+                       ▼
+                   ┌───────┐
+                   │ 3.3 V │
+                   └───┬───┘
+                       ▼
+            ┌─────────────────────┐
+            │ ESP32-S3            │
+            │ and the whole board │
+            └─────────────────────┘
+```
+
 The course notes identify a TP4054 single-cell charger and an ME6217 linear regulator. USB provides nominal 5 V input, while a conventional rechargeable single-cell lithium-ion/polymer battery has a nominal voltage near 3.7 V and a full-charge voltage of 4.2 V.
 
 The charger controls the battery charging process. The regulator supplies a nominal 3.3 V system rail. These are separate responsibilities. The exact source-selection, reverse-current protection, and load-sharing behavior must be read from the board schematic; a simplified power diagram does not establish the presence of a managed power path.

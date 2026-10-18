@@ -55,12 +55,24 @@ The architectural constraint is the other half. **The Wi-Fi path is not the page
 ## A decision you can apply without a matrix
 
 ```
-Do you need remote reach, or many devices in one view?
-   ├─ yes → Wi-Fi, through a service on the network
-   └─ no  → Is it a single nearby device?
-        ├─ it moves, or it is worn, and energy matters → BLE
-        └─ it can sit still and be plugged in,
-           and you want the link to stay up          → Serial
+                  ┌──────────────────────────────────┐
+                  │ remote, or many devices at once? │
+                  └─────────────────┬────────────────┘
+                                    │
+              ┌─────────────────────┴──────────────────────┐
+              ▼                                            ▼
+┌──────────────────────────┐                    ┌────────────────────┐
+│ yes                      │                    │ no                 │
+│ Wi-Fi, through a service │                    │ one nearby device? │
+└──────────────────────────┘                    └──────────┬─────────┘
+                                                           │
+                                             ┌─────────────┴─────────────┐
+                                             ▼                           ▼
+                                ┌─────────────────────────┐    ┌───────────────────┐
+                                │ it moves, or it is worn │    │ it can sit still  │
+                                │ energy matters          │    │ and be plugged in │
+                                │ BLE                     │    │ Serial            │
+                                └─────────────────────────┘    └───────────────────┘
 ```
 
 Three questions decide almost every case: **How far? Does it move? Who pays for the radio?**

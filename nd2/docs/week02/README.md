@@ -3,6 +3,16 @@
 > เข้าถึง hardware จากเว็บเพจ — Web Serial, Web Bluetooth, WiFi
 > และการออกแบบ app ที่คุยกับ device จริง — 11 บท
 
+## Table of contents
+
+- [Thai lessons](lessons/README.md)
+- [English edition](lessons/EN/README.md)
+- [Presentation](lessons/EN/web/README.md)
+- [Thai illustrations](lessons/images/README.md)
+- [English illustrations](lessons/EN/images/README.md)
+- [Week 01](../week01/README.md)
+- [Documents](../README.md)
+
 ## 📚 Lessons
 
 ### ช่องทางเชื่อมต่อ

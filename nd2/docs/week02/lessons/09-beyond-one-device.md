@@ -26,11 +26,26 @@
 ให้หลายผู้บริโภค**:
 
 ```
-point-to-point:          app ────── device
+point to point
+┌─────┐          ┌────────┐
+│ app │ ───────► │ device │
+└─────┘          └────────┘
 
-ผ่านตัวกลาง:             device ──► gateway ──► app A
-                        (ต่อกลาง)      │        app B
-                                       └──────► service อื่น ๆ
+through a gateway
+                        ┌────────┐
+                        │ device │
+                        └────┬───┘
+                             │
+                             ▼
+                        ┌─────────┐
+                        │ gateway │
+                        └────┬────┘
+                             │
+        ┌────────────────────┴─────────────────────┐
+        ▼                    ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌────────────────┐
+│ application A │    │ application B │    │ other services │
+└───────────────┘    └───────────────┘    └────────────────┘
 ```
 
 gateway (หรือ "service กลาง") คือโปรแกรมที่:
@@ -52,12 +67,22 @@ app ทุกตัวคุยกับ gateway — **ไม่เคยเห�
 ## แผนที่ topology ที่ใช้จริง
 
 ```
-งานเล็ก/เดี่ยว:      app ──serial──► device                    (week นี้)
+one person, one device — this week
+┌─────┐               ┌────────┐
+│ app │ ── serial ──► │ device │
+└─────┘               └────────┘
 
-งานใกล้หลายผู้ชม:    device ──► gateway (เครื่องเดียวกับ app) ──► หลาย viewer
+several local viewers
+┌────────┐      ┌──────────────┐      ┌─────────┐
+│ device │ ───► │ gateway      │ ───► │ viewers │
+└────────┘      │ same machine │      └─────────┘
+                └──────────────┘
 
-งานจริง/remote:      device(s) ──► gateway/service กลาง ──► app/web/mobile
-                    (WiFi หรือสาย)      (เครือข่าย/cloud)      จากทุกที่
+a real site
+┌──────────────────┐      ┌───────────────────┐      ┌────────────────┐
+│ device           │ ───► │ gateway / service │ ───► │ web and mobile │
+│ Wi-Fi or a cable │      │ a network         │      └────────────────┘
+└──────────────────┘      └───────────────────┘
 ```
 
 level ไหนก็ใช้ concept เดียวกัน — device เสนอ capability → ใครก็

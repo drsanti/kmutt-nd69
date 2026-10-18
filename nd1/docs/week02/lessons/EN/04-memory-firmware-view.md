@@ -46,6 +46,25 @@ The name `CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL` can be misleading. Its threshold 
 
 ## Flash partitions
 
+The 16 MB of flash is laid out as adjacent regions:
+
+```
+┌────────────┐  ┌─────────────┐  ┌─────┐  ┌─────┐  ┌─────────┐
+│ bootloader │  │ part. table │  │ app │  │ NVS │  │ storage │
+└────────────┘  └─────────────┘  └─────┘  └─────┘  └─────────┘
+```
+
+What runs, in order, at power-on:
+
+```
+┌─────┐           ┌────────────┐           ┌─────┐
+│ ROM │           │ bootloader │           │ app │
+└──┬──┘           └──────┬─────┘           └──┬──┘
+   │                     │                    │
+   │ load ──────────────►│                    │
+   │                     │ start ────────────►│
+```
+
 A partition table divides flash into application and data regions. The bootloader and partition-table binary are separate from the application partitions. In a conventional ESP32-S3 layout, the second-stage bootloader starts at `0x0000`, the partition table commonly starts at `0x8000`, and an application commonly starts at `0x10000`. These are configuration-dependent conventions, not addresses to hard-code into arbitrary projects.
 
 | Partition                  | Purpose                                         |

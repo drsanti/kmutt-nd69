@@ -28,6 +28,19 @@ On Windows and WSL, tool installation and USB access are separate concerns. Esta
 
 ## Verification stage 1: environment
 
+The order that has to succeed before the toolchain counts as ready:
+
+```
+┌───────────┐                        ┌────────┐                        ┌───────┐
+│ developer │                        │ idf.py │                        │ board │
+└─────┬─────┘                        └────┬───┘                        └───┬───┘
+      │                                   │                                │
+      │ set-target esp32s3 ──────────────►│                                │
+      │ build ───────────────────────────►│                                │
+      │                                   │ flash ────────────────────────►│
+      │◄────────────────────────────────────────────────────── console log │
+```
+
 ```sh
 idf.py --version
 xtensa-esp32s3-elf-gcc --version

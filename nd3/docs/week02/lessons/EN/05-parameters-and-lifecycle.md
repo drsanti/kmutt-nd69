@@ -38,11 +38,13 @@ The process-control reading is the clean one. A topic is the process variable, f
 A PLC program is basically stopped or running. A graph of many nodes cannot use a switch that coarse, because the order in which things become live matters.
 
 ```
-unconfigured ── configure ──► inactive ── activate ──► active
-     ▲                           │                        │
-     └──────── cleanup ──────────┘                        │
-     ▲                                                    │
-     └──────────── shutdown / error ──────────────────────┘
+┌──────────────┐                  ┌──────────┐                 ┌────────┐
+│ unconfigured │ ── configure ──► │ inactive │ ── activate ──► │ active │
+└───────┬──────┘                  └─────┬────┘                 └────┬───┘
+        ▲ cleanup                       │                           │
+        └───────────────────────────────┘                           │
+        ▲ shutdown / error                                          │
+        └───────────────────────────────────────────────────────────┘
 ```
 
 - **Unconfigured.** The process exists. It has not been given its parameters or its connections. It must not publish, subscribe, or move anything yet.

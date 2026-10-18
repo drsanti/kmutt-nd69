@@ -26,11 +26,26 @@ Those facts are virtues on the bench. Exclusive ownership is what makes the cabl
 The remedy is to insert a process that **owns the device connection and serves many consumers**:
 
 ```
-point to point:     app ────── device
+point to point
+┌─────┐          ┌────────┐
+│ app │ ───────► │ device │
+└─────┘          └────────┘
 
-through a gateway:  device ──► gateway ──► application A
-                    (one owner)    │       application B
-                                   └──────► other services
+through a gateway
+                        ┌────────┐
+                        │ device │
+                        └────┬───┘
+                             │
+                             ▼
+                        ┌─────────┐
+                        │ gateway │
+                        └────┬────┘
+                             │
+        ┌────────────────────┴─────────────────────┐
+        ▼                    ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌────────────────┐
+│ application A │    │ application B │    │ other services │
+└───────────────┘    └───────────────┘    └────────────────┘
 ```
 
 A gateway, or more generally a **service in the middle**, is a program that:
@@ -46,12 +61,22 @@ Every application talks to the gateway. **None of them sees the device's raw cha
 ## Topologies you will actually deploy
 
 ```
-one person, one device:   app ── serial ──► device                 this week
+one person, one device — this week
+┌─────┐               ┌────────┐
+│ app │ ── serial ──► │ device │
+└─────┘               └────────┘
 
-several local viewers:    device ──► gateway on the same machine ──► several viewers
+several local viewers
+┌────────┐      ┌──────────────┐      ┌─────────┐
+│ device │ ───► │ gateway      │ ───► │ viewers │
+└────────┘      │ same machine │      └─────────┘
+                └──────────────┘
 
-a real site:              device(s) ──► gateway or cloud service ──► web and mobile
-                          (Wi-Fi or a cable)   (a network)            from anywhere
+a real site
+┌──────────────────┐      ┌───────────────────┐      ┌────────────────┐
+│ device           │ ───► │ gateway / service │ ───► │ web and mobile │
+│ Wi-Fi or a cable │      │ a network         │      └────────────────┘
+└──────────────────┘      └───────────────────┘
 ```
 
 The scale changes. The concept does not. The device publishes a capability surface. Consumers reach it through whichever middle tier the distance and the audience require. A gateway on the technician's laptop and a service in a plant are the same role at two sizes: own the link, translate, fan out.

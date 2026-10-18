@@ -6,6 +6,17 @@
 
 ## The definition this course will hold
 
+A twin stays alive because state flows in and a command can flow back:
+
+```
+┌─────────┐                              ┌──────┐
+│ machine │                              │ twin │
+└────┬────┘                              └───┬──┘
+     │                                       │
+     │ live state ──────────────────────────►│
+     │◄──────────── command, after a preview │
+```
+
 **A digital twin is a digital replica of one specific physical thing, kept continuously in sync with that thing, with a path back from the replica to a decision.**
 
 All three conditions have to be true:

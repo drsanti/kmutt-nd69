@@ -50,6 +50,27 @@ timing-critical ต้องเล่นโดย hardware ไม่ใช่ CP
 
 ## RMT — peripheral ที่เกิดมาเพื่อเรื่องแบบนี้
 
+พัลส์ออกจากฮาร์ดแวร์ ไม่ใช่จากลูปใน CPU:
+
+```
+┌────────┐                 ┌─────────────┐
+│ RMT    │ ── waveform ──► │ WS2812      │
+│ GPIO42 │                 │ GRB, 24 bit │
+└────────┘                 └─────────────┘
+```
+
+หนึ่งเฟรมคือบิตตามด้วย reset:
+
+```
+┌─────┐                        ┌────────┐
+│ RMT │                        │ WS2812 │
+└──┬──┘                        └────┬───┘
+   │                                │
+   │ bit 0, short high ────────────►│
+   │ bit 1, long high ─────────────►│
+   │ reset, low > 50 us ───────────►│
+```
+
 - **RMT (Remote Control peripheral)** ของ ESP32 ออกแบบมาสำหรับ
   สัญญาณ IR remote แต่แกนมันคือ **waveform generator ที่เล่น
   จาก memory** — ใส่ pattern (high นานเท่าไร low นานเท่าไร) แล้ว
