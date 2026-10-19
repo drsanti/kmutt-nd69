@@ -1,0 +1,11 @@
+# Use ESP-IDF's generated includes, defines, and language standard.
+CompileFlags:
+  CompilationDatabase: build
+  # GCC-only code-generation flags are irrelevant to clangd's syntax analysis.
+  Remove:
+    - -mlongcalls
+    - -fno-shrink-wrap
+    - -fstrict-volatile-bitfields
+    - -fno-tree-switch-conversion
+    - -fzero-init-padding-bits=*
+    - -fno-malloc-dce
