@@ -1,6 +1,6 @@
 # Message & schema — สัญญาข้อมูลของระบบ
 
-![alt text](images/03-messages-and-schema.png)
+![Message & schema — สัญญาข้อมูลของระบบ](images/03-messages-and-schema.png)
 
 เมื่อ topic คือช่องทาง **message คือสิ่งที่ไหลผ่าน** และ schema คือ
 นิยามรูปทรงของมัน — บทนี้อธิบายว่าทำไม "tag แบน ๆ" ของระบบเดิม

@@ -1,6 +1,6 @@
 # USB/Serial บน board นี้ — ไม่มีชิป USB-UART และกับดักที่ตามมา
 
-![alt text](images/06-usb-serial-caveat.png)
+![USB/Serial บน board นี้ — ไม่มีชิป USB-UART และกับดักที่ตามมา](images/06-usb-serial-caveat.png)
 
 ## จุดต่างสถาปัตยกรรม: USB ตรงเข้าชิป
 

@@ -1,6 +1,6 @@
 # จอ ILI9341V — SPI display 240×320 บน board ES3C28P
 
-![alt text](images/08-ili9341-display.png)
+![จอ ILI9341V — SPI display 240×320 บน board ES3C28P](images/08-ili9341-display.png)
 
 ## ILI9341 คืออะไร
 

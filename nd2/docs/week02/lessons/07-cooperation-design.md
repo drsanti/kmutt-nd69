@@ -1,6 +1,6 @@
 # Capability → cooperation design — ออกแบบการทำงานร่วมของสองเครื่อง
 
-![alt text](images/07-cooperation-design.png)
+![Capability → cooperation design — ออกแบบการทำงานร่วมของสองเครื่อง](images/07-cooperation-design.png)
 
 รู้ช่องทางแล้ว — คำถามต่อไปคือ **แบ่งงานกันยังไง** ระหว่าง device
 กับ app บทนี้คือหลักการออกแบบการคุยของสองฝั่ง

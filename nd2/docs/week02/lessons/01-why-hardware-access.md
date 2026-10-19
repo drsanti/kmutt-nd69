@@ -1,6 +1,6 @@
 # ทำไมเรา software developer ต้องเข้าถึง hardware — ยุคที่ coding ไม่พอ
 
-![alt text](images/01-why-hardware-access.png)
+![ทำไมเรา software developer ต้องเข้าถึง hardware — ยุคที่ coding ไม่พอ](images/01-why-hardware-access.png)
 
 ## โลกเปลี่ยนแล้ว
 

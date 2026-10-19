@@ -1,6 +1,6 @@
 # RGB LED WS2812 — เส้นเดียวต้อง timing เป๊ะ และทำไมต้อง RMT
 
-![alt text](images/11-ws2812-rmt-led.png)
+![RGB LED WS2812 — เส้นเดียวต้อง timing เป๊ะ และทำไมต้อง RMT](images/11-ws2812-rmt-led.png)
 
 ## WS2812 คืออะไร
 

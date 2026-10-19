@@ -1,6 +1,6 @@
 # TF — frames & coordinate transforms: robot ต้องรู้ว่าอะไรอยู่ตรงไหน
 
-![alt text](images/06-tf-frames.png)
+![TF — frames & coordinate transforms: robot ต้องรู้ว่าอะไรอยู่ตรงไหน](images/06-tf-frames.png)
 
 บทนี้แตกต่างจากที่ผ่านมา — ไม่ใช่เรื่องการสื่อสาร แต่เป็นแนวคิด
 ที่ทำให้ robot "เข้าใจพื้นที่" — สิ่งที่ไม่มีในโลก PLC เพราะ

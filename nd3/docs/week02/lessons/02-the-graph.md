@@ -1,6 +1,6 @@
 # The graph — node + topic: จาก scan cycle สู่ event-driven
 
-![alt text](images/02-the-graph.png)
+![The graph — node + topic: จาก scan cycle สู่ event-driven](images/02-the-graph.png)
 
 บทนี้คือหัวใจของการเปลี่ยน mental model — เข้าใจสองสิ่งนี้แล้ว
 ที่เหลือของ week ตามมาเอง

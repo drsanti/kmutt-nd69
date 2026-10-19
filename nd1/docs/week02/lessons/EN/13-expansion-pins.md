@@ -82,6 +82,6 @@ Design connections for a UART sensor, an I2C sensor pair, and an SPI device as t
 
 ## Existing course illustration
 
-![Original course illustration for Lesson 13](../images/13-expansion-pins.png)
+![Original course illustration for Lesson 13](./images/13-expansion-pins.png)
 
 > This is the illustration supplied with the original lesson. Its embedded labels have not been translated or technically revised; the English text above governs this edition.

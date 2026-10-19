@@ -79,6 +79,6 @@ The acceptance criterion is a stable visible sequence under the stated combined 
 
 ## Existing course illustration
 
-![Original course illustration for Lesson 11](../images/11-ws2812-rmt-led.png)
+![Original course illustration for Lesson 11](./images/11-ws2812-rmt-led.png)
 
 > This is the illustration supplied with the original lesson. Its embedded labels have not been translated or technically revised; the English text above governs this edition.

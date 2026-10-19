@@ -1,6 +1,6 @@
 # เมื่อ device เดียวไม่พอ — สู่บริการกลาง
 
-![alt text](images/09-beyond-one-device.png)
+![เมื่อ device เดียวไม่พอ — สู่บริการกลาง](images/09-beyond-one-device.png)
 
 ทุกบทที่ผ่านมาคือ **point-to-point** — app หนึ่งคุยกับ device หนึ่ง
 อยู่ใกล้ ๆ — มันเรียบง่ายและพอสำหรับงานจำนวนมาก แต่โลกจริงมัก

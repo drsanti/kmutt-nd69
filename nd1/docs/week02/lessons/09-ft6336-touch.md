@@ -1,6 +1,6 @@
 # Touch screen FT6336G — capacitive touch ผ่าน I2C
 
-![alt text](images/09-ft6336-touch.png)
+![Touch screen FT6336G — capacitive touch ผ่าน I2C](images/09-ft6336-touch.png)
 
 ## FT6336G คืออะไร
 

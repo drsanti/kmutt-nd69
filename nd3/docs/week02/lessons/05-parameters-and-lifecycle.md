@@ -1,6 +1,6 @@
 # Parameter & lifecycle — node มีชีวิตไม่ใช่แค่ "รันตลอด"
 
-![alt text](images/05-parameters-and-lifecycle.png)
+![Parameter & lifecycle — node มีชีวิตไม่ใช่แค่ "รันตลอด"](images/05-parameters-and-lifecycle.png)
 
 ในโลก PLC: โปรแกรมมีสถานะ — STOP/RUN — และ tag คือค่าที่ปรับได้
 โลก node-based มีสองแนวคิดที่เทียบกันได้: **parameter** (ค่าปรับ

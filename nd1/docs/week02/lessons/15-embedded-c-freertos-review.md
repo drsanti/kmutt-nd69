@@ -1,6 +1,6 @@
 # Embedded C + FreeRTOS review — ฐานที่ต้องมีก่อนเขียน firmware จริง
 
-![alt text](images/15-embedded-c-freertos-review.png)
+![Embedded C + FreeRTOS review — ฐานที่ต้องมีก่อนเขียน firmware จริง](images/15-embedded-c-freertos-review.png)
 
 บทนี้รวมความรู้ C สำหรับ embedded ที่ต่างจาก C บน PC อย่างมีนัยสำคัญ
 บวกแนวคิด FreeRTOS ที่ใช้จริงใน firmware ระดับ production — เป้าคือ

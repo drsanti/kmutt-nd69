@@ -1,6 +1,6 @@
 # Expansion header และแผนที่ขาทั้ง board — ขาไหนว่าง ขาไหนห้าม
 
-![alt text](images/13-expansion-pins.png)
+![Expansion header และแผนที่ขาทั้ง board — ขาไหนว่าง ขาไหนห้าม](images/13-expansion-pins.png)
 
 ## ขาอิสระที่เหลือจริง: 4 ขา
 

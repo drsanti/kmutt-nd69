@@ -1,5 +1,11 @@
 # ND03 — Week 02: ROS-Style Middleware & Digital Twin
 
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND03-6d28d9?style=flat-square)
+![week](https://img.shields.io/badge/week-02-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-TH%20%2B%20EN-orange?style=flat-square)
+![kind](https://img.shields.io/badge/kind-index-2e8b57?style=flat-square)
+
 > จาก PLC/DCS สู่ ROS era — เข้าใจ node, topic, service, action,
 > TF และ Digital Twin — 11 บท เตรียมตัวก่อน hands-on สัปดาห์ถัดไป
 
@@ -13,7 +19,7 @@
 - [Week 01](../week01/README.md)
 - [Documents](../README.md)
 
-## 📚 Lessons
+## Lessons
 
 ### แนวคิดหลักของ middleware
 

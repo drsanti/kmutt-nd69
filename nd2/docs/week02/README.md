@@ -1,5 +1,11 @@
 # ND02 — Week 02: Hardware Access from the Browser
 
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
+![week](https://img.shields.io/badge/week-02-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-TH%20%2B%20EN-orange?style=flat-square)
+![kind](https://img.shields.io/badge/kind-index-2e8b57?style=flat-square)
+
 > เข้าถึง hardware จากเว็บเพจ — Web Serial, Web Bluetooth, WiFi
 > และการออกแบบ app ที่คุยกับ device จริง — 11 บท
 
@@ -13,7 +19,7 @@
 - [Week 01](../week01/README.md)
 - [Documents](../README.md)
 
-## 📚 Lessons
+## Lessons
 
 ### ช่องทางเชื่อมต่อ
 

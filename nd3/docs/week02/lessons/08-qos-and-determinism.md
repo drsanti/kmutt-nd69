@@ -1,6 +1,6 @@
 # QoS & determinism — เมื่อ pub/sub ต้องเจอ deadline จริง
 
-![alt text](images/08-qos-and-determinism.png)
+![QoS & determinism — เมื่อ pub/sub ต้องเจอ deadline จริง](images/08-qos-and-determinism.png)
 
 สิ่งที่คน automation ถามทันทีเมื่อเห็น pub/sub: **"แล้วเรื่องเวลา
 ล่ะ? loop ผมต้องตรงทุก ms"** — บทนี้ตอบคำถามนั้นตรง ๆ

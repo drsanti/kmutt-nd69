@@ -1,6 +1,6 @@
 # Observe & debug — ดูระบบกระจายที่ไม่มี "โปรแกรมเดียว" ให้ดู
 
-![alt text](images/07-observe-and-debug.png)
+![Observe & debug — ดูระบบกระจายที่ไม่มี "โปรแกรมเดียว" ให้ดู](images/07-observe-and-debug.png)
 
 ในโลก PLC debug คือเปิดโปรแกรมเดียวดู ladder กับ watch table —
 โลก node กระจายไม่มี "ที่เดียว" ให้ดู — เครื่องมือมองเห็นระบบจึง

@@ -1,6 +1,6 @@
 # Concept เดียวกัน สามภาษา — C, Rust, Python
 
-[text](11-three-languages.md)
+![Concept เดียวกัน สามภาษา — C, Rust, Python](images/11-three-languages.png)
 
 สิ่งที่ middleware ดีให้คือ **แนวคิดเดียวกันเขียนได้หลายภาษา** —
 graph/node/topic ไม่ผูกกับภาษาใดภาษาหนึ่ง บทนี้แสดง pattern เดียว

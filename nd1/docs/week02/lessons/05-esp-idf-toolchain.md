@@ -1,6 +1,6 @@
 # ESP-IDF — Toolchain ตัวจริงของ ESP32
 
-![alt text](images/05-esp-idf-toolchain.png)
+![ESP-IDF — Toolchain ตัวจริงของ ESP32](images/05-esp-idf-toolchain.png)
 
 ## ตำแหน่งของ ESP-IDF ใน ecosystem
 

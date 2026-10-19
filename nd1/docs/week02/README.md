@@ -1,5 +1,11 @@
 # ND01 — Week 02: ES3C28P Hardware & Embedded Fundamentals
 
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND01-0e7490?style=flat-square)
+![week](https://img.shields.io/badge/week-02-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-TH%20%2B%20EN-orange?style=flat-square)
+![kind](https://img.shields.io/badge/kind-index-2e8b57?style=flat-square)
+
 > บอร์ด ES3C28P (ESP32-S3R8) ตั้งแต่ชิปถึง firmware — 15 บท
 > เรียงจาก silicon → peripherals → toolchain → embedded C
 
@@ -11,9 +17,10 @@
 - [Thai illustrations](lessons/images/README.md)
 - [English illustrations](lessons/EN/images/README.md)
 - [Week 01](../week01/README.md)
+- [Week 03 — Install ESP-IDF on Windows](../week03/README.md)
 - [Documents](../README.md)
 
-## 📚 Lessons
+## Lessons
 
 ### สถาปัตยกรรมชิป
 

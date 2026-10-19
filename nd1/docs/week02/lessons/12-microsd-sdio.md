@@ -1,6 +1,6 @@
 # MicroSD บน ES3C28P — SDIO 4-bit เต็มสปีด
 
-![alt text](images/12-microsd-sdio.png)
+![MicroSD บน ES3C28P — SDIO 4-bit เต็มสปีด](images/12-microsd-sdio.png)
 
 ## SD card บน board นี้ต่อยังไง
 

@@ -1,6 +1,6 @@
 # ประวัติ ESP32 — จาก ESP8266 ถึง ESP32-S3
 
-![alt text](images/02-esp32-history-slide-prompt.png)
+![ประวัติ ESP32 — จาก ESP8266 ถึง ESP32-S3](images/02-esp32-history-slide-prompt.png)
 
 ## จุดเริ่มต้น: Espressif
 
