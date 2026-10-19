@@ -11,5 +11,5 @@ Course documents for the embedded track.
 
 - [Week 01 — Introduction](week01/README.md)
 - [Week 02 — ES3C28P hardware](week02/README.md)
-- [Week 03 — Install ESP-IDF on Windows](week03/README.md)
+- [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](week03/README.md)
 - [Track index](../README.md)

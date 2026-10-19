@@ -1,5 +1,7 @@
 # ESP-IDF development terminal launchers
 
+The examples below assume your current directory is `nd1/docs/week03/lessons/esp32-s3`, the included firmware project root. If you cloned the repository elsewhere, use the same relative paths.
+
 Run a launcher each time you need a new ESP-IDF terminal. It activates ESP-IDF, prints the version, and opens your chosen working directory. Keep the terminal open for `idf.py` commands and type `exit` when finished.
 
 These scripts reuse an existing ESP-IDF installation. They do not download the framework, install operating-system prerequisites, edit shell profiles, change saved `PATH` settings, or flash a board. Tool installation runs only when explicitly requested.
@@ -16,10 +18,10 @@ If you installed with EIM and it uses custom tools or activation settings, prefe
 
 ## 2. Windows: launch from Git Bash
 
-From the repository root (`D:\CODE\2027\kmutt-nd69`), run:
+Assume you are already in the course firmware project root (`D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3`). Run:
 
 ```bash
-bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh
+bash ../scripts/start-esp-idf.sh
 ```
 
 This starts Windows PowerShell, handles inherited MSYS settings, activates `D:\dev\esp\v6.1\esp-idf`, and keeps the current directory as the working directory. Wait for **ESP-IDF ready** and a `PS ...>` prompt.
@@ -27,7 +29,7 @@ This starts Windows PowerShell, handles inherited MSYS settings, activates `D:\d
 For the first tool installation, run instead:
 
 ```bash
-bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh -InstallTools
+bash ../scripts/start-esp-idf.sh -InstallTools
 ```
 
 Wait for installation and activation to finish. The installation target defaults to `esp32s3`. This installs tools; it does not change a project's chip target.
@@ -35,7 +37,7 @@ Wait for installation and activation to finish. The installation target defaults
 For a different framework or an existing project:
 
 ```bash
-bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh -IdfPath 'D:\dev\esp\v6.1\esp-idf' -ProjectPath 'D:\dev\projects\hello_world'
+bash ../scripts/start-esp-idf.sh -IdfPath 'D:\dev\esp\v6.1\esp-idf' -ProjectPath 'D:\dev\projects\hello_world'
 ```
 
 Use **PowerShell parameter names on Windows**, even when starting through the `.sh` launcher. You can combine `-InstallTools` with `-Target esp32s3` and the path options.
@@ -44,32 +46,32 @@ Use **PowerShell parameter names on Windows**, even when starting through the `.
 
 Double-click `start-esp-idf.cmd` to open PowerShell with the default framework path. The working directory will depend on how Windows launched the file; change to your project before building.
 
-Or, from PowerShell at the repository root:
+Or, from PowerShell in the firmware project root:
 
 ```powershell
-.\nd1\docs\week03\lessons\scripts\start-esp-idf.cmd -ProjectPath D:\dev\projects\hello_world
+..\scripts\start-esp-idf.cmd
 ```
 
 To activate directly in an existing PowerShell session:
 
 ```powershell
-. .\nd1\docs\week03\lessons\scripts\start-esp-idf.ps1 -ProjectPath D:\dev\projects\hello_world
+. ..\scripts\start-esp-idf.ps1
 ```
 
 If Windows blocks a trusted local script, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` in PowerShell, then retry the `.ps1` command in that same session. Institutional policy may require IT assistance. The launchers do not bypass execution policy.
 
 ## 4. macOS or Linux: launch from Terminal
 
-From the repository root, assuming the framework is at `~/esp/esp-idf`:
+From the course firmware project root, assuming the framework is at `~/esp/esp-idf`:
 
 ```bash
-bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh
+bash ../scripts/start-esp-idf.sh
 ```
 
 For a custom location and an existing project:
 
 ```bash
-bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh \
+bash ../scripts/start-esp-idf.sh \
   --idf-path "$HOME/esp/esp-idf" \
   --project-path "$HOME/esp/hello_world"
 ```
@@ -77,7 +79,7 @@ bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh \
 For first-time tool installation:
 
 ```bash
-bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh \
+bash ../scripts/start-esp-idf.sh \
   --idf-path "$HOME/esp/esp-idf" --install-tools --target esp32s3
 ```
 
@@ -101,6 +103,10 @@ idf.py build
 
 For a new project, select the actual chip with `idf.py set-target esp32s3` before the first build. Follow the [lesson](../install-esp-idf.md) to create `hello_world`, identify the serial port, and flash it. Each operating system uses its own serial-port names and USB permissions.
 
+## VS Code extension builds
+
+These launchers activate terminal sessions. They do not configure the ESP-IDF extension's Build button. Follow the [VS Code extension guide](../vscode-esp-idf.md) to select or export the installation environment once. Afterward, the extension reuses its saved settings.
+
 ## Troubleshooting
 
 | Problem | Next step |
@@ -111,6 +117,10 @@ For a new project, select the actual chip with `idf.py set-target esp32s3` befor
 | Project directory does not exist | Create the project first or omit the project-path option to keep the current directory. |
 | `idf.py` unavailable back in Git Bash | Run the launcher again and use the PowerShell child session. Activation does not modify the parent Git Bash session. |
 | Wrong ESP-IDF version | Pass the intended framework path explicitly. |
+
+## Sharing and regeneration
+
+The launcher files contain no saved personal Python or compiler directory: they discover the installation from the supplied path, `IDF_PATH`, or their documented default. They do not rewrite `.vscode/settings.json`. The VS Code extension environment is a separate per-machine configuration; regenerate it using the [extension guide](../vscode-esp-idf.md) after cloning on another computer.
 
 ## Verification limits
 

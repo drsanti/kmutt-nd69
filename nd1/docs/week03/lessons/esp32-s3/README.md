@@ -2,6 +2,12 @@
 
 An ESP-IDF v6.1 project based on Espressif's `examples/get-started/hello_world`. The application prints `Hello world!`, chip and flash information, and minimum free heap, then counts down and restarts. This cycle repeats; it does not blink an LED.
 
+## Before starting from a fresh clone
+
+Use ESP-IDF v6.1 with ESP32-S3 tools installed. The project can be cloned to another directory; no source code depends on the example `D:\CODE` location. Build once before expecting the editor to resolve generated headers.
+
+For VS Code extension builds, follow the [extension setup guide](../vscode-esp-idf.md) to regenerate machine-specific settings or select your EIM installation. For command-line builds, continue below. You only need to configure one workflow to begin.
+
 ## 1. Open the development terminal
 
 Install the prerequisites and ESP-IDF using the [setup guide](../install-esp-idf.md). These instructions assume your terminal is already in this project's root directory, for example:
@@ -77,13 +83,60 @@ Values depend on the board and configuration. Press **Ctrl+]** to exit the monit
 
 The application source retains Espressif's CC0-1.0 license header.
 
+## Build with the VS Code ESP-IDF extension
+
+Follow the [step-by-step extension guide](../vscode-esp-idf.md). Open this project folder in VS Code, configure the installation once, run **Developer: Reload Window**, then check **ESP-IDF: Doctor Command** and use **ESP-IDF: Build your project**.
+
+The saved Windows environment is specific to this computer. Other users must select their EIM installation or export their own script-based installation. Activating PowerShell alone does not configure extension builds.
+
+## Clean the project
+
+From the project root in the activated terminal:
+
+```text
+idf.py clean
+```
+
+This cleans compiled outputs while keeping CMake configuration. For a complete build-directory cleanup:
+
+```text
+idf.py fullclean
+idf.py build
+```
+
+`fullclean` removes generated build contents and preserves source files and `sdkconfig`. To delete the entire `build` folder explicitly, use the command for your current shell instead of `fullclean`:
+
+```powershell
+# Windows PowerShell
+Remove-Item -Recurse -Force .\build
+```
+
+```bash
+# macOS/Linux Bash, or Windows Git Bash
+rm -rf -- ./build
+```
+
+Confirm you are in the project root and wait for any running build to finish before deleting its files. The next build regenerates the directory. Until then, clangd may report missing generated headers or a missing compilation database. Rebuild, then restart the language server. Use the extension's **ESP-IDF: Full Clean Project** command for the equivalent IDE operation when a configured build directory exists.
+
 ## Editor diagnostics (VS Code with clangd)
 
 Open either the repository root or this project root in VS Code. Build the project once so `build/compile_commands.json` and `build/config/sdkconfig.h` exist. Then run **clangd: Restart language server** from the Command Palette if old diagnostics remain.
 
 The project `.clangd` selects the generated compilation database and removes six GCC-only code-generation options from clangd analysis. The real GCC build retains these options. Workspace settings allow clangd to query the ESP32-S3 GCC driver for the target and standard-library include paths, preventing missing-header diagnostics. The matching compiler must already be installed and the compilation database must be generated on the same operating system as the editor.
 
-Both repository and project workspace settings contain the driver-query configuration so either folder can be opened independently. They use compiler-name patterns rather than a specific user's tool path. See [Espressif's editor configuration guidance](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/configureproject.html).
+Both repository and project workspace settings contain the driver-query configuration for source analysis. Open the firmware project root when using the ESP-IDF extension to build. They use compiler-name patterns rather than a specific user's tool path. See [Espressif's editor configuration guidance](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/configureproject.html).
+
+### Why `FreeRTOS.h` has an IWYU comment
+
+**IWYU** means **Include What You Use**. clangd normally flags headers that do not directly provide symbols used in the source file. Here, FreeRTOS `task.h` explicitly requires `FreeRTOS.h` to be included first, so the source records that dependency:
+
+```c
+// task.h requires FreeRTOS.h to be included first.
+#include "freertos/FreeRTOS.h" // IWYU pragma: keep
+#include "freertos/task.h"
+```
+
+The comment tells include-analysis tools to retain this required header. It does not change compiled behavior. See [clangd's include-cleaner guidance](https://clangd.llvm.org/guides/include-cleaner).
 
 ## Verification
 

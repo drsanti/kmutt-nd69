@@ -46,7 +46,7 @@ Each folder has a `README.md` with its own table of contents. This page links th
 - [Documents](nd1/docs/README.md)
 - [Week 01 — Introduction](nd1/docs/week01/README.md)
 - [Week 02 — ES3C28P Hardware](nd1/docs/week02/README.md)
-- [Week 03 — Install ESP-IDF on Windows](nd1/docs/week03/README.md)
+- [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](nd1/docs/week03/README.md)
 - [Thai lessons](nd1/docs/week02/lessons/README.md)
 - [Thai illustrations](nd1/docs/week02/lessons/images/README.md)
 - [English edition](nd1/docs/week02/lessons/EN/README.md)
@@ -89,6 +89,8 @@ Each folder has a `README.md` with its own table of contents. This page links th
 - [Lesson 14 — Installing ESP-IDF and Verifying the Board](nd1/docs/week02/lessons/EN/14-esp-idf-setup.md)
 - [Lesson 15 — Embedded C and FreeRTOS Engineering Fundamentals](nd1/docs/week02/lessons/EN/15-embedded-c-freertos-review.md)
 - [Install and Verify ESP-IDF on Windows](nd1/docs/week03/lessons/install-esp-idf.md)
+- [VS Code ESP-IDF extension setup](nd1/docs/week03/lessons/vscode-esp-idf.md)
+- [ESP32-S3 Hello World project](nd1/docs/week03/lessons/esp32-s3/README.md)
 
 ---
 
