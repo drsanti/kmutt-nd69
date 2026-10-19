@@ -4,6 +4,16 @@ Follow these steps in order. This guide starts with Git Bash and uses Windows Po
 
 You need internet access, disk space for the framework and tools, and an ESP32-S3 board with a USB data cable for the final hardware steps. Software installation and building can be completed without a board.
 
+## Automated terminal launcher
+
+After preparing the framework and prerequisites, use the [cross-platform launchers](scripts/README.md) instead of repeating the environment commands manually. From Git Bash at the repository root:
+
+```bash
+bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh
+```
+
+For first-time ESP32-S3 tool installation, add `-InstallTools`. Wait for **ESP-IDF ready** and continue in the PowerShell window. On macOS and Linux, the same launcher opens Bash; see the script README for paths and installation options. The numbered steps below explain the setup and provide a manual fallback.
+
 ## 1. Install Git for Windows, including Git Bash
 
 1. Download Git for Windows from the official [Windows download page](https://git-scm.com/install/windows).
@@ -246,7 +256,7 @@ A successful build verifies the software toolchain. Successful flashing and read
 
 For each new development session:
 
-1. Open the v6.1 IDF terminal. For the script-based route, repeat Steps 2 and 3, then activate with Step 6. Tool installation in Step 5 is normally needed only once.
+1. Run the [terminal launcher](scripts/README.md) from the repository root (`bash nd1/docs/week03/lessons/scripts/start-esp-idf.sh` in Git Bash). Alternatively, open the EIM IDF terminal or follow Steps 2, 3, and 6 manually. Tool installation is normally needed only once.
 2. Change to your project directory.
 3. Build and, when ready, flash and monitor:
 

@@ -1,0 +1,2 @@
+# Course target; board-specific flash, PSRAM, and console settings use IDF defaults.
+CONFIG_IDF_TARGET="esp32s3"

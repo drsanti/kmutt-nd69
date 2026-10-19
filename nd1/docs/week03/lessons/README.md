@@ -11,3 +11,5 @@
 - [Week 03 index](../README.md)
 - [Week 02 lessons](../../week02/lessons/README.md)
 - [Install and Verify ESP-IDF on Windows](install-esp-idf.md)
+- [ESP-IDF terminal launchers for Windows, macOS, and Linux](scripts/README.md)
+- [Hello World on ESP32-S3](esp32-s3/README.md)

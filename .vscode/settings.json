@@ -1,0 +1,6 @@
+{
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**/xtensa-esp32s3-elf-gcc,**/xtensa-esp32s3-elf-gcc.exe"
+  ]
+}
