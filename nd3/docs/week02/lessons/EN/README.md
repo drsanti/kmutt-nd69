@@ -1,5 +1,11 @@
 # Week 02 — English edition
 
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND03-6d28d9?style=flat-square)
+![week](https://img.shields.io/badge/week-02-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-EN-2563eb?style=flat-square)
+![kind](https://img.shields.io/badge/kind-lessons-2e8b57?style=flat-square)
+
 ## Table of contents
 
 - [Presentation](web/README.md)

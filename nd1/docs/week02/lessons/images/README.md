@@ -1,11 +1,16 @@
 # Thai lesson illustrations
 
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND01-0e7490?style=flat-square)
+![week](https://img.shields.io/badge/week-02-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-TH-orange?style=flat-square)
+![kind](https://img.shields.io/badge/kind-images-2e8b57?style=flat-square)
+
 16:9 infographics. The file name matches the lesson number.
 
 ## Table of contents
 
 - [Lessons](../README.md)
-
 - [01-esp32s3r8-the-chip.png](01-esp32s3r8-the-chip.png)
 - [02-esp32-history-slide-prompt.png](02-esp32-history-slide-prompt.png)
 - [03-memory-types.png](03-memory-types.png)

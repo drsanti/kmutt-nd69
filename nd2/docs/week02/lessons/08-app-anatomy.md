@@ -1,6 +1,6 @@
 # Anatomy ของ monitor/control app — app ที่คุยกับ device
 
-![alt text](images/08-app-anatomy.png)
+![Anatomy ของ monitor/control app — app ที่คุยกับ device](images/08-app-anatomy.png)
 
 ถึงตอนนี้เรารู้ช่องทาง (serial/BLE/WiFi) และรูปแบบการคุย
 (telemetry/command/event) — บทนี้ถามว่า **app ที่ใช้งานจริงหน้าตา

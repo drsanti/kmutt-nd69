@@ -1,6 +1,6 @@
 # Browser hardware APIs — เว็บเพจที่แตะ hardware ได้
 
-![alt text](images/02-browser-hardware-apis.png)
+![Browser hardware APIs — เว็บเพจที่แตะ hardware ได้](images/02-browser-hardware-apis.png)
 
 ## จุดเริ่มต้น: browser คือ sandbox
 

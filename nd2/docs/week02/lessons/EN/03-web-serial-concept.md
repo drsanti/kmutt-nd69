@@ -1,6 +1,6 @@
 # Web Serial — The Cable, as a Concept
 
-![alt text](images/03-web-serial-concept.png)
+![Web Serial — The Cable, as a Concept](images/03-web-serial-concept.png)
 
 A serial port is the oldest practical way for two machines to exchange bytes, and it is still the simplest. This lesson stays on the concept: what the pipe is, what the browser adds around it, and why a protocol has to exist above the bytes. The wire format used by the teaching board lives in a library. You need the model, not the frame layout.
 

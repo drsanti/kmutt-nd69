@@ -1,6 +1,6 @@
 # Digital Twin คืออะไร — ภาพจำลองที่มีชีวิตของเครื่องจริง
 
-![alt text](images/09-digital-twin.png)
+![Digital Twin คืออะไร — ภาพจำลองที่มีชีวิตของเครื่องจริง](images/09-digital-twin.png)
 
 คำว่า digital twin ถูกใช้จนกว้าง — บทนี้ตรึงนิยามให้ชัดสำหรับคน
 automation: อะไรคือ twin จริง อะไรเป็นแค่ของที่เรียกผิด ๆ

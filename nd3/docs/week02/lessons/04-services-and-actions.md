@@ -1,6 +1,6 @@
 # Service & Action — คำสั่งสั้น vs งานยาวที่ยกเลิกได้
 
-![alt text](images/04-services-and-actions.png)
+![Service & Action — คำสั่งสั้น vs งานยาวที่ยกเลิกได้](images/04-services-and-actions.png)
 
 topic เป็น stream ข้อมูล — แต่ "สั่งให้ทำ" ไม่ใช่ stream บทนี้คือ
 อีกสองเครื่องมือของการคุย: **service** (ขอ-ตอบ) และ **action**

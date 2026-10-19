@@ -1,6 +1,6 @@
 # Memory ในมุม Firmware — heap, stack, partition, NVS
 
-![alt text](images/04-memory-firmware-view.png)
+![Memory ในมุม Firmware — heap, stack, partition, NVS](images/04-memory-firmware-view.png)
 
 บทก่อนพูดถึง memory แต่ละชนิดในเชิง hardware — บทนี้ดูจากฝั่ง
 software ว่า memory พวกนั้นถูกจัดการและใช้งานยังไงจริง

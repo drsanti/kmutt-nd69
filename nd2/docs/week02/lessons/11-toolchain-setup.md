@@ -1,6 +1,6 @@
 # เตรียมเครื่องมือ — Node.js, Vite+, TypeScript และพื้นฐานเว็บ
 
-![alt text](images/11-toolchain-setup.png)
+![เตรียมเครื่องมือ — Node.js, Vite+, TypeScript และพื้นฐานเว็บ](images/11-toolchain-setup.png)
 
 บทสุดท้ายของ week: ติดตั้ง toolchain ให้ครบ และรู้ว่าต้องเติม
 พื้นฐานอะไรบ้างก่อนเขียน app ที่คุยกับ device จริง

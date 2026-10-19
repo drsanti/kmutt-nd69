@@ -1,6 +1,6 @@
 # App แรก — ควบคุม LED และอ่านระดับเสียง
 
-![alt text](images/10-first-app-led-and-audio.png)
+![App แรก — ควบคุม LED และอ่านระดับเสียง](images/10-first-app-led-and-audio.png)
 
 ถึงเวลาเห็น code — เป้าหมายของบทนี้คือ app หน้าเดียวที่ทำสองอย่าง
 ร่วมกัน: **ส่งคำสั่งเปลี่ยนสี LED** (command) และ **แสดงระดับเสียง

@@ -1,6 +1,6 @@
 # ติดตั้ง ESP-IDF ผ่าน VS Code — พร้อมทดสอบบน board จริง
 
-![alt text](images/14-esp-idf-setup.png)
+![ติดตั้ง ESP-IDF ผ่าน VS Code — พร้อมทดสอบบน board จริง](images/14-esp-idf-setup.png)
 
 ## จะได้อะไรจากการติดตั้งครั้งนี้
 

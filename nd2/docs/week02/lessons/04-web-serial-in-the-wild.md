@@ -1,6 +1,6 @@
 # Web Serial in the wild — อุปกรณ์จริงที่คุย serial
 
-![alt text](images/04-web-serial-in-the-wild.png)
+![Web Serial in the wild — อุปกรณ์จริงที่คุย serial](images/04-web-serial-in-the-wild.png)
 
 ก่อนไปไร้สาย ลองดูว่า "ท่อ byte สองทิศ" ที่เรียนมาใช้กับของจริง
 ระดับไหน — คำตอบคือกว้างกว่าที่คิดมาก

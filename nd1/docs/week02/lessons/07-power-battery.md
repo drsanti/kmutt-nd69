@@ -1,6 +1,6 @@
 # ระบบไฟและแบตเตอรี่ — TP4054, LDO, และการวัดแบตผ่าน ADC
 
-![alt text](images/07-power-battery.png)
+![ระบบไฟและแบตเตอรี่ — TP4054, LDO, และการวัดแบตผ่าน ADC](images/07-power-battery.png)
 
 ## ภาพรวม power path
 

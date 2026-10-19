@@ -1,6 +1,6 @@
 # Twin ↔ middleware — ทำให้ทั้งคู่ทำงานร่วมกัน + ปูทางสู่ hands-on
 
-![alt text](images/10-twin-meets-middleware.png)
+![Twin ↔ middleware — ทำให้ทั้งคู่ทำงานร่วมกัน + ปูทางสู่ hands-on](images/10-twin-meets-middleware.png)
 
 บทสุดท้ายของ week — เอาทุกอย่างมารวม: twin มีชีวิตเพราะ
 middleware และขั้นต่อไปคือเอา board จริงเข้าระบบจริง

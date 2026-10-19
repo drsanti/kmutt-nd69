@@ -1,6 +1,6 @@
 # Memory หลายชนิดบน ESP32-S3 — RAM, SRAM, PSRAM, Flash, ROM, eFuse
 
-![alt text](images/03-memory-types.png)
+![Memory หลายชนิดบน ESP32-S3 — RAM, SRAM, PSRAM, Flash, ROM, eFuse](images/03-memory-types.png)
 
 ## ปัญหาแรก: ชื่อคล้ายกัน แต่ไม่ใช่ของเดียวกัน
 

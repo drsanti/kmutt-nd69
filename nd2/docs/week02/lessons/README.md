@@ -1,5 +1,11 @@
 # บทเรียน Week 02 (ภาษาไทย)
 
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
+![week](https://img.shields.io/badge/week-02-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-TH-orange?style=flat-square)
+![kind](https://img.shields.io/badge/kind-lessons-2e8b57?style=flat-square)
+
 ## Table of contents
 
 - [English edition](EN/README.md)

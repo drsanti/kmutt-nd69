@@ -1,6 +1,6 @@
 # เลือกช่องทาง — Serial vs BLE vs WiFi ในสถานการณ์จริง
 
-![alt text](images/06-choosing-the-channel.png)
+![เลือกช่องทาง — Serial vs BLE vs WiFi ในสถานการณ์จริง](images/06-choosing-the-channel.png)
 
 ตอนนี้เห็นสองทางแล้ว (สายกับไร้สายระยะสั้น) — บทนี้เพิ่มทางที่สาม
 และสำคัญที่สุดในภาพใหญ่: **WiFi / เครือข่าย** พร้อมตัวอย่างเปรียบ

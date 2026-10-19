@@ -1,6 +1,6 @@
 # ระบบเสียง — ES8311 codec + FM8002E amp + MEMS mic
 
-![alt text](images/10-audio-chain.png)
+![ระบบเสียง — ES8311 codec + FM8002E amp + MEMS mic](images/10-audio-chain.png)
 
 ## สามชิปในเส้นทางเสียงเดียว
 

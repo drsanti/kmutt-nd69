@@ -1,6 +1,6 @@
 # ชิป ESP32-S3 บน board ES3C28P
 
-![alt text](images/01-esp32s3r8-the-chip.png)
+![ชิป ESP32-S3 บน board ES3C28P](images/01-esp32s3r8-the-chip.png)
 
 ## Part number ที่ใช้จริง
 

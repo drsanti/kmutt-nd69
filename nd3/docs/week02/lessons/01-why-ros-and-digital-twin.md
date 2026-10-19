@@ -1,6 +1,6 @@
 # ทำไม automation ต้องไปยุค ROS และ Digital Twin
 
-![alt text](images/01-why-ros-and-digital-twin.png)
+![ทำไม automation ต้องไปยุค ROS และ Digital Twin](images/01-why-ros-and-digital-twin.png)
 
 ## โลกกำลังเปลี่ยน — อีกครั้ง
 

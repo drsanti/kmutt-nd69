@@ -1,5 +1,7 @@
 # Web Serial — ช่องทางแบบสายในเชิงหลักการ
 
+![Web Serial — ช่องทางแบบสายในเชิงหลักการ](images/03-web-serial-concept.png)
+
 ## Serial port คืออะไรในเชิงแนวคิด
 
 ลืม hardware ก่อน — **serial port คือท่อ byte สองทิศ** ระหว่างสอง

@@ -1,6 +1,6 @@
 # Web Bluetooth — ช่องทางแบบไร้สายในเชิงหลักการ
 
-![alt text](images/05-web-bluetooth-concept.png)
+![Web Bluetooth — ช่องทางแบบไร้สายในเชิงหลักการ](images/05-web-bluetooth-concept.png)
 
 ## BLE ≠ Bluetooth ที่เคยรู้จัก
 
