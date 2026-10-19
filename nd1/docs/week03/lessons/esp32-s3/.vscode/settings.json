@@ -2,5 +2,15 @@
   "clangd.arguments": [
     "--background-index",
     "--query-driver=**/xtensa-esp32s3-elf-gcc,**/xtensa-esp32s3-elf-gcc.exe"
-  ]
+  ],
+  "idf.customExtraVars": {
+    "IDF_PATH": "D:/dev/esp/v6.1/esp-idf",
+    "IDF_TOOLS_PATH": "C:/Users/drsanti/.espressif",
+    "IDF_PYTHON_ENV_PATH": "C:/Users/drsanti/.espressif/python_env/idf6.1_py3.11_env",
+    "ESP_IDF_VERSION": "6.1",
+    "IDF_CCACHE_ENABLE": "1",
+    "OPENOCD_SCRIPTS": "C:/Users/drsanti/.espressif/tools/openocd-esp32/v0.12.0-esp32-20260703/openocd-esp32/share/openocd/scripts",
+    "ESP_ROM_ELF_DIR": "C:/Users/drsanti/.espressif/tools/esp-rom-elfs/20241011",
+    "Path": "C:/Users/drsanti/.espressif/tools/xtensa-esp-elf-gdb/17.1_20260402/xtensa-esp-elf-gdb/bin;C:/Users/drsanti/.espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/bin;C:/Users/drsanti/.espressif/tools/riscv32-esp-elf/esp-15.2.0_20251204/riscv32-esp-elf/bin;C:/Users/drsanti/.espressif/tools/esp32ulp-elf/2.38_20240113/esp32ulp-elf/bin;C:/Users/drsanti/.espressif/tools/cmake/4.0.3/bin;C:/Users/drsanti/.espressif/tools/openocd-esp32/v0.12.0-esp32-20260703/openocd-esp32/bin;C:/Users/drsanti/.espressif/tools/ninja/1.12.1;C:/Users/drsanti/.espressif/tools/ccache/4.12.1/ccache-4.12.1-windows-x86_64;C:/Users/drsanti/.espressif/python_env/idf6.1_py3.11_env/Scripts;D:/dev/esp/v6.1/esp-idf/tools"
+  }
 }
