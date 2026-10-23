@@ -62,24 +62,29 @@ On Windows the same steps produce a wheel embedding
 `robotos_ffi.dll` (no codesign step; run in PowerShell/CMD with
 `py -m build`).
 
-## Linux package (rebuilt via Docker on macOS 2026-10-23)
+## Linux package (rebuilt on debian:bullseye via Docker 2026-10-23, verified)
 
-> ⚠️ **glibc compatibility — read first.** The current bundle was
-> built on `rust:slim` (Debian bookworm, **glibc 2.36**) — it fails
-> on Ubuntu 22.04 (glibc 2.35) and older:
-> `version 'GLIBC_2.36' not found`. If students hit that, rebuild on
-> an older image per the recipe below. Rule: binaries run on NEWER
-> glibc, never older — always build on the OLDEST target distro
+> ✅ **glibc compatibility — resolved.** The current bundle's max
+> symbol requirement is **GLIBC_2.30** (checked via
+> `strings bin/robotos | grep -oE 'GLIBC_[0-9.]+' | sort -uV | tail`)
+> — runs on Ubuntu 20.04+ and essentially every distro since 2021.
+> An earlier build on `rust:slim` (bookworm, glibc 2.36) would have
+> failed on Ubuntu 22.04 — always build on the OLDEST target distro
 > (the CI builds on `ubuntu-22.04` runners for this reason).
 
-Preferred base for student builds — `debian:bullseye` (glibc 2.31,
-covers every distro since 2021):
+Base: `debian:bullseye` (glibc 2.31, covers every distro since 2021).
+**Bullseye's apt moved to archive.debian.org** — the stock
+sources.list is dead; rewrite it before apt-get:
 
 ```bash
 # in the robotos repo on the mac (linux/amd64 emulation — slow, ~2h)
 docker run -d --name rb-linux --platform linux/amd64 -v "$PWD:/src" -w /src debian:bullseye bash -c "
-  apt-get update -qq > /dev/null 2>&1 &&
-  apt-get install -qq -y build-essential protobuf-compiler pkg-config clang cmake curl > /dev/null 2>&1 &&
+  cat > /etc/apt/sources.list <<'EOF'
+  deb http://archive.debian.org/debian bullseye main
+  deb http://archive.debian.org/debian-security bullseye-security main
+  EOF
+  apt-get -o Acquire::Check-Valid-Until=false update -qq > /dev/null 2>&1 &&
+  apt-get install -qq -y build-essential protobuf-compiler pkg-config clang curl ca-certificates > /dev/null 2>&1 &&
   curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.97.1 > /dev/null 2>&1 &&
   . \$HOME/.cargo/env &&
   ROBOTOS_EMBED_UI=1 cargo build --release --target x86_64-unknown-linux-gnu -p robotos-cli -p robotos-ffi 2>&1 | tail -15"
@@ -94,13 +99,19 @@ docker run -d --name rb-linux --platform linux/amd64 -v "$PWD:/src" -w /src debi
 # it hard-runs `cargo build --target $TARGET` unconditionally.
 ```
 
-Previous (faster but glibc-2.36) variant: same command with
-`rust:slim` image + `rustup default 1.97.1` instead of the curl
-install — only OK if every student is on glibc ≥ 2.36.
+Faster but less compatible variant: `rust:slim` image (Debian 12,
+already has cargo+build tools — just `rustup default 1.97.1` and
+build) — produces **glibc ≥ 2.36** binaries, only OK if every
+student is on a 2023+ distro.
 
 Gotchas hit on 2026-10-23: builds eat disk (`target/debug` alone
 was 28 GB — check `df -h` first); the pkg script re-runs
-`cargo build` so run it inside the container, not on the host.
+`cargo build` so run it inside the container, not on the host;
+`debian:bullseye` slim images lack `procps` (no `ps` for status
+checks — use `docker stats` + target-dir mtimes); **host-side
+`llvm-strip` invalidates cargo fingerprints** — if you strip
+before the container build finishes it recompiles, so let the
+build exit first.
 
 ## Windows package — TODO on a Windows machine
 
