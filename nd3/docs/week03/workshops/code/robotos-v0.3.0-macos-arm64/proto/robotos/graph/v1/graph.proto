@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+// Presence announcement — docs/adr/0007-presence-and-graph.md.
+// Self-reported, unauthenticated metadata (v0.1 trusted network).
+package robotos.graph.v1;
+
+message Endpoint {
+  // Logical topic, e.g. "/robot/01/sensor/imu".
+  string topic = 1;
+  Kind kind = 2;
+  // Canonical protobuf schema name the endpoint speaks.
+  string schema_id = 3;
+  // Self-reported QoS summary, e.g. "depth=8 drop_oldest" —
+  // informational only; empty for pre-0.4 writers and services.
+  string qos = 4;
+
+  enum Kind {
+    KIND_UNSPECIFIED = 0;
+    PUBLISHER = 1;
+    SUBSCRIBER = 2;
+    SERVICE = 3;
+    CLIENT = 4;
+  }
+}
+
+message NodePresence {
+  // Runtime UUID — authoritative node identity.
+  string node_uuid = 1;
+  // Human-readable, not unique.
+  string node_name = 2;
+  // e.g. "robotos/0.1.0+rust/1.97.1"
+  string runtime_version = 3;
+  // Unix epoch nanoseconds when this announcement was made.
+  uint64 timestamp_ns = 4;
+  // How long watchers should keep this entry without a heartbeat.
+  uint32 lease_ms = 5;
+  // Per-node monotonic announce counter.
+  uint64 sequence = 6;
+  // True on graceful shutdown — watchers drop the entry immediately.
+  bool leaving = 7;
+  repeated Endpoint endpoints = 8;
+  // Lifecycle state (ADR 0012): numeric value of
+  // robotos.lifecycle.v1.LifecycleState. 0/absent = unknown (pre-0.2
+  // writers are effectively ACTIVE-equivalent for interop purposes).
+  uint32 lifecycle_state = 9;
+}

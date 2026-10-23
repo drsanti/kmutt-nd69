@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package robotos.sensor.v1;
+
+// JointState — parallel arrays for position/velocity/effort keyed
+// by joint name (ROS convention; absent array = not measured).
+message JointState {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  repeated string name = 3;
+  repeated double position = 4;
+  repeated double velocity = 5;
+  repeated double effort = 6;
+}

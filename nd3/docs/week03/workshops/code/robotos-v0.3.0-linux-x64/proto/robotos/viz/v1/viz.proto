@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package robotos.viz.v1;
+
+import "robotos/geometry/v1/geometry.proto";
+
+// Markers — the visualization_msgs catch-all for drawing in 3D
+// viewers. `type`/`action` numeric values match ROS exactly so the
+// bridge is transparent.
+
+enum MarkerType {
+  MARKER_TYPE_ARROW = 0;
+  MARKER_TYPE_CUBE = 1;
+  MARKER_TYPE_SPHERE = 2;
+  MARKER_TYPE_CYLINDER = 3;
+  MARKER_TYPE_LINE_STRIP = 4;
+  MARKER_TYPE_LINE_LIST = 5;
+  MARKER_TYPE_CUBE_LIST = 6;
+  MARKER_TYPE_SPHERE_LIST = 7;
+  MARKER_TYPE_POINTS = 8;
+  MARKER_TYPE_TEXT_VIEW_FACING = 9;
+  MARKER_TYPE_MESH_RESOURCE = 10;
+  MARKER_TYPE_TRIANGLE_LIST = 11;
+}
+
+enum MarkerAction {
+  MARKER_ACTION_ADD = 0;      // also MODIFY
+  MARKER_ACTION_DELETE = 2;
+  MARKER_ACTION_DELETEALL = 3;
+}
+
+message ColorRGBA {
+  float r = 1;
+  float g = 2;
+  float b = 3;
+  float a = 4;
+}
+
+message Marker {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  string ns = 3;                    // display namespace
+  int32 id = 4;                     // unique within ns
+  MarkerType type = 5;
+  MarkerAction action = 6;
+  robotos.geometry.v1.Pose pose = 7;
+  robotos.geometry.v1.Vector3 scale = 8;
+  ColorRGBA color = 9;
+  int64 lifetime_ns = 10;           // 0 = forever
+  bool frame_locked = 11;
+  repeated robotos.geometry.v1.Vector3 points = 12;  // per-type
+  repeated ColorRGBA colors = 13;                    // per-point, optional
+  string text = 14;                                   // TEXT_VIEW_FACING
+  string mesh_resource = 15;                          // MESH_RESOURCE
+  bool mesh_use_embedded_materials = 16;
+}
+
+message MarkerArray {
+  repeated Marker markers = 1;
+}

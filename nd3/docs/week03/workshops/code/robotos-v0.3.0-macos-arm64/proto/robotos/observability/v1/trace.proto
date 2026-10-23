@@ -1,0 +1,24 @@
+syntax = "proto3";
+package robotos.observability.v1;
+
+// Trace span/event — emitted on /{uuid}/_trace when tracing is on.
+// Timestamps are in the node's own clock domain — cross-node deltas
+// are NOT true latency unless clocks are synced (spec §10).
+message TraceEvent {
+  enum Kind {
+    TRACE_KIND_UNSPECIFIED = 0;
+    TRACE_KIND_PUBLISH = 1;   // publish() call returned
+    TRACE_KIND_DELIVER = 2;   // subscriber received a message
+    TRACE_KIND_RPC_CALL = 3;  // client call round-trip completed
+    TRACE_KIND_RPC_SERVE = 4; // service handler finished
+    TRACE_KIND_CALLBACK = 5;  // user callback duration
+  }
+  Kind kind = 1;
+  string node_uuid = 2;
+  string name = 3;            // topic or service path
+  uint64 seq = 4;             // envelope seq when applicable
+  uint64 start_ns = 5;        // monotonic-ish ns in node clock
+  uint64 dur_ns = 6;          // span duration; 0 for instant events
+  string clock_domain = 7;    // "mono" | "ros" | "unix" etc.
+  string peer_uuid = 8;       // publisher uuid on deliver, service node on rpc
+}

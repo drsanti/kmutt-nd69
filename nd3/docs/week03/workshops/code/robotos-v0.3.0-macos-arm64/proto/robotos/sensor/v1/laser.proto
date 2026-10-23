@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package robotos.sensor.v1;
+
+// Single-planar laser scan. Conventions match ROS LaserScan:
+// angles measured counter-clockwise from the sensor x-axis,
+// range_min/max in meters, ranges[] from angle_min by
+// angle_increment; inf = out of range, NaN = invalid.
+message LaserScan {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  float angle_min = 3;
+  float angle_max = 4;
+  float angle_increment = 5;
+  float time_increment = 6;   // seconds between readings
+  float scan_time = 7;        // seconds between scans
+  float range_min = 8;
+  float range_max = 9;
+  repeated float ranges = 10;
+  repeated float intensities = 11;  // optional; empty = none
+}

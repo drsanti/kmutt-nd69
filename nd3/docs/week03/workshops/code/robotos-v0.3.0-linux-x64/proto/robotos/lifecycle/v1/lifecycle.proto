@@ -1,0 +1,41 @@
+// robotos node lifecycle — v0.2 (ADR 0012).
+//
+// Remote control rides node-scoped services
+// /{node_uuid}/lifecycle/{get,set}; remote `set` is opt-in on the
+// target node. Stable states are 1..5; transient transition states
+// 10..14 are observable but never rest states.
+syntax = "proto3";
+
+package robotos.lifecycle.v1;
+
+enum LifecycleState {
+  LIFECYCLE_STATE_UNSPECIFIED = 0;
+  LIFECYCLE_STATE_CREATED = 1;
+  LIFECYCLE_STATE_INACTIVE = 2;
+  LIFECYCLE_STATE_ACTIVE = 3;
+  LIFECYCLE_STATE_FINALIZED = 4;
+  LIFECYCLE_STATE_ERROR = 5;
+  // Transient (observable during a transition only).
+  LIFECYCLE_STATE_CONFIGURING = 10;
+  LIFECYCLE_STATE_ACTIVATING = 11;
+  LIFECYCLE_STATE_DEACTIVATING = 12;
+  LIFECYCLE_STATE_CLEANING_UP = 13;
+  LIFECYCLE_STATE_SHUTTING_DOWN = 14;
+}
+
+// Served at /{node_uuid}/lifecycle/get.
+message LifecycleGetRequest {}
+message LifecycleGetResponse {
+  LifecycleState state = 1;
+}
+
+// Served at /{node_uuid}/lifecycle/set — opt-in per node.
+// `state` is a *target*: ACTIVE→activate(), INACTIVE→deactivate(),
+// CREATED→configure() is not accepted remotely (only from CREATED);
+// FINALIZED→shutdown().
+message LifecycleSetRequest {
+  LifecycleState state = 1;
+}
+message LifecycleSetResponse {
+  LifecycleState state = 1; // state after the transition
+}

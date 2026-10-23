@@ -1,0 +1,3 @@
+robotos.envelope.v1.Envelope.schema_id      max_length:96
+robotos.envelope.v1.Envelope.publisher_uuid max_length:48
+robotos.envelope.v1.Envelope.payload        max_size:1024

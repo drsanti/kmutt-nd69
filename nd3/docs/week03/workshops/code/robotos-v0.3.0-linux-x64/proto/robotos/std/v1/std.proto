@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package robotos.std.v1;
+
+// Standard services mirroring std_srvs — field-identical so the
+// ROS 2 bridge is a pure passthrough.
+
+// std_srvs/Trigger — "do the thing"; empty request.
+message TriggerRequest {}
+
+message TriggerResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// std_srvs/SetBool
+message SetBoolRequest {
+  bool data = 1;
+}
+
+message SetBoolResponse {
+  bool success = 1;
+  string message = 2;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+// Test/self-check messages — used by unit tests, interop harnesses
+// and examples. Not a stable public interface yet.
+package robotos.test.v1;
+
+message EchoRequest {
+  string text = 1;
+  uint64 sequence = 2;
+}
+
+message EchoResponse {
+  string text = 1;
+  uint64 sequence = 2;
+  string responder_uuid = 3;
+}

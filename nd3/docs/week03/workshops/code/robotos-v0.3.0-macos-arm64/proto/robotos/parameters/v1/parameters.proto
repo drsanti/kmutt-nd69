@@ -1,0 +1,101 @@
+// robotos typed runtime parameters — v0.2 (ADR 0011).
+//
+// The declaring node is authoritative; remote get/set/list ride
+// unary services at /{node_uuid}/param/{get,set,list}; committed
+// updates are announced on the /{node_uuid}/_param/event topic.
+syntax = "proto3";
+
+package robotos.parameters.v1;
+
+enum ParamType {
+  PARAM_TYPE_UNSPECIFIED = 0;
+  PARAM_TYPE_BOOL = 1;
+  PARAM_TYPE_INT64 = 2;
+  PARAM_TYPE_FLOAT64 = 3;
+  PARAM_TYPE_STRING = 4;
+  PARAM_TYPE_BYTES = 5;
+  PARAM_TYPE_BOOL_ARRAY = 6;
+  PARAM_TYPE_INT64_ARRAY = 7;
+  PARAM_TYPE_FLOAT64_ARRAY = 8;
+  PARAM_TYPE_STRING_ARRAY = 9;
+  PARAM_TYPE_BYTES_ARRAY = 10;
+}
+
+message Int64Array {
+  repeated int64 items = 1;
+}
+message Float64Array {
+  repeated double items = 1;
+}
+message BoolArray {
+  repeated bool items = 1;
+}
+message StringArray {
+  repeated string items = 1;
+}
+message BytesArray {
+  repeated bytes items = 1;
+}
+
+// A parameter's current value; the variant is fixed at declaration.
+message ParamValue {
+  oneof kind {
+    bool bool_value = 1;
+    int64 int64_value = 2;
+    double float64_value = 3;
+    string string_value = 4;
+    bytes bytes_value = 5;
+    BoolArray bool_array = 6;
+    Int64Array int64_array = 7;
+    Float64Array float64_array = 8;
+    StringArray string_array = 9;
+    BytesArray bytes_array = 10;
+  }
+}
+
+// Declaration-time metadata; immutable after declare.
+message ParamDescriptor {
+  string name = 1;
+  ParamType type = 2;
+  string description = 3;
+  bool read_only = 4;
+  // Numeric range [min, max]; applies to numeric params when has_range.
+  double range_min = 5;
+  double range_max = 6;
+  bool has_range = 7;
+  // Allowed values for PARAM_TYPE_STRING when non-empty.
+  repeated string string_choices = 8;
+}
+
+message ParamEntry {
+  ParamDescriptor descriptor = 1;
+  ParamValue value = 2;
+  uint64 revision = 3;
+}
+
+// Published on /{node_uuid}/_param/event after each committed set —
+// exactly once per commit at the source.
+message ParamEvent {
+  string name = 1;
+  ParamValue value = 2;
+  uint64 revision = 3;
+}
+
+// Remote API served at /{node_uuid}/param/{get,set,list}.
+message ParamGetRequest {
+  string name = 1;
+}
+message ParamGetResponse {
+  ParamEntry entry = 1;
+}
+message ParamSetRequest {
+  string name = 1;
+  ParamValue value = 2;
+}
+message ParamSetResponse {
+  uint64 revision = 1;
+}
+message ParamListRequest {}
+message ParamListResponse {
+  repeated ParamEntry entries = 1;
+}

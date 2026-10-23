@@ -1,0 +1,63 @@
+// robotos session recording — `.rbag` file payloads (v0.2, BAG-01).
+//
+// Container framing is length-prefixed protobuf in the recording
+// crate; these messages define what lives inside the frames.
+// Forward-compatible: unknown fields are ignored by readers.
+syntax = "proto3";
+
+package robotos.recording.v1;
+
+// Written once at the top of the file.
+message BagHeader {
+  // Container format version (currently 1).
+  uint32 format_version = 1;
+  // Unix nanos when recording started (writer's wall clock).
+  uint64 created_unix_ns = 2;
+  // e.g. "robotos/0.1.0"
+  string writer_version = 3;
+  // Recording node's UUID.
+  string recorder_uuid = 4;
+  // Declared intent string (optional, from CLI --label).
+  string label = 5;
+  // Schema catalog: distinct (topic, schema) pairs seen.
+  repeated BagTopic topics = 6;
+}
+
+// A (topic, schema) catalog entry.
+message BagTopic {
+  string topic = 1;
+  string schema_id = 2;
+  // Per-topic message count (filled in the footer, 0 in header).
+  uint64 message_count = 3;
+}
+
+// One recorded message. `payload` is the decoded payload bytes from
+// the wire envelope (i.e. the protobuf-encoded message), NOT the
+// outer envelope — replay re-wraps it in a fresh envelope.
+message BagRecord {
+  string topic = 1;
+  string schema_id = 2;
+  // Envelope source timestamp (publisher's clock domain, see
+  // EnvelopeHeader.clock_domain).
+  uint64 stamp_ns = 3;
+  // Original publisher UUID as announced in the envelope.
+  string publisher_uuid = 4;
+  // Original per-publisher sequence number.
+  uint64 sequence = 5;
+  // Envelope clock_domain + flags, passed through verbatim.
+  uint32 clock_domain = 6;
+  uint32 flags = 7;
+  // Recorder's local receive timestamp (Unix ns, recorder clock).
+  uint64 recv_unix_ns = 8;
+  // Message payload bytes (envelope payload field).
+  bytes payload = 9;
+}
+
+// Trailing frame: lets `bag info` work without scanning.
+message BagFooter {
+  uint64 message_count = 1;
+  uint64 end_unix_ns = 2;
+  repeated BagTopic topics = 3;
+  // CRC32 of every record frame concatenated — integrity check.
+  uint32 records_crc32 = 4;
+}
