@@ -175,3 +175,25 @@ publisher        transport          inspector         your terminal
      |               |- msgs ------------------------------>|
      |- exits ------>|- presence gone -->|- node disappears |
 ```
+
+## ✅ Checkpoint
+
+- [ ] `robotos version` prints `0.3.0` without `./` (PATH configured)
+- [ ] `robotos doctor` passes its checks
+- [ ] `robotos ui` opens the inspector at `127.0.0.1:4789`
+- [ ] `node list` shows `rs_publisher` while the example runs
+- [ ] `topic echo /robot/01/sensor/imu` prints live messages
+
+## 🔧 Troubleshooting
+
+| Symptom | Try |
+|---|---|
+| `robotos: command not found` | PATH not set — use `./bin/robotos` in place, or redo Step 2 |
+| Inspector opens but stays empty | correct — start `./examples/rust-publisher`, then refresh |
+| `node list` empty while publisher runs | discovery takes a moment — re-run; on flaky LANs, pin endpoints (`ROBOTOS_LISTEN`/`ROBOTOS_CONNECT`) |
+
+## ➡️ Next
+
+Workshop 02 — publish and subscribe to your first topic in Python.
+
+<sub>[← Workshop list](README.md)</sub>

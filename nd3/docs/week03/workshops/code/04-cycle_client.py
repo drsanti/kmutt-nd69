@@ -23,6 +23,10 @@ with robotos.Node("cycle_client") as node:
             if e.status != 10:                # UNAVAILABLE → retry
                 raise
             time.sleep(0.3)
+    if goal_id is None:
+        print("server never came up — is 04-cycle_server.py running?")
+        cli.close()
+        raise SystemExit(1)
     print(f"goal accepted: {goal_id}")
 
     deadline = time.time() + 15

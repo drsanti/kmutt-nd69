@@ -1,5 +1,25 @@
 # ESP-IDF development terminal launchers
 
+```
+              ┌──────────────────┐
+              │ start-esp-idf.sh │
+              └────────┬─────────┘
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+          ▼                         ▼
+┌───────────────────┐     ┌───────────────────┐
+│ Windows           │     │ macOS / Linux     │
+│ PowerShell child  │     │ Bash child        │
+└─────────┬─────────┘     └─────────┬─────────┘
+          │                         │
+          └────────────┬────────────┘
+                       ▼
+             ┌──────────────────┐
+             │  ESP-IDF ready   │
+             └──────────────────┘
+```
+
 The examples below assume your current directory is `nd1/docs/week03/lessons/esp32-s3`, the included firmware project root. If you cloned the repository elsewhere, use the same relative paths.
 
 Run a launcher each time you need a new ESP-IDF terminal. It activates ESP-IDF, prints the version, and opens your chosen working directory. Keep the terminal open for `idf.py` commands and type `exit` when finished.

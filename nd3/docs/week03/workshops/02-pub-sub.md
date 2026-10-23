@@ -118,7 +118,8 @@ Three ideas in 15 lines: `Node` = your process on the graph,
 ## Step 3 — Watch it without code
 
 ```bash
-python3 sim_sensor.py          # terminal 1 — leave running
+cd code
+python3 02-sim_sensor.py       # terminal 1 — leave running
 
 robotos node list              # terminal 2 → sim_sensor
 robotos topic list             # → /machine/01/sensor/imu
@@ -145,7 +146,7 @@ with robotos.Node("monitor") as node:
 ```
 
 ```bash
-python3 monitor.py             # terminal 3 — values stream in
+python3 02-monitor.py          # terminal 3 — values stream in
 ```
 
 `on_message(cb)` = event-driven push — the PLC→event-driven shift
@@ -173,3 +174,25 @@ sim_sensor       transport         monitor          inspector
     |                |- presence ---->|                 |- edge drops
     |                |   withdrawn    |  (no more msgs) |
 ```
+
+## ✅ Checkpoint
+
+- [ ] `pip install` of the bundled wheel + `protobuf` succeeds
+- [ ] `robotos.Node.version()` prints `0.3.0`
+- [ ] `node list` shows `sim_sensor` while the publisher runs
+- [ ] `topic echo` decodes live `Imu` messages
+- [ ] `02-monitor.py` prints `acc.z=9.81` and changing `gyro.x` values
+
+## 🔧 Troubleshooting
+
+| Symptom | Try |
+|---|---|
+| `ModuleNotFoundError: robotos` | install the bundled wheel — `pip install code/robotos-0.3.0-py3-none-any.whl protobuf` |
+| monitor prints nothing | is the publisher still running? Subscriber matching takes a few seconds on a fresh session — wait |
+| `topic echo` silent but `node list` works | multicast scouting flakiness — pin `ROBOTOS_LISTEN`/`ROBOTOS_CONNECT` to `tcp/127.0.0.1` |
+
+## ➡️ Next
+
+Workshop 03 — request/response with services.
+
+<sub>[← Workshop list](README.md)</sub>

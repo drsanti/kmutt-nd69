@@ -37,4 +37,6 @@ The source project, default target settings, launchers, and clangd configuration
 
 Generated `build/`, `sdkconfig`, `sdkconfig.old`, and editor caches are local artifacts, not lesson source. Preserve `sdkconfig.defaults` when cleaning or sharing a project. After cloning, build once to generate the configuration headers and compilation database used by the editor.
 
-The [FreeRTOS folder](free-rtos/README.md) is reserved for a later exercise; it does not yet contain a standalone lab.
+The [FreeRTOS folder](free-rtos/README.md) links to the companion
+[freertos-pc-workshops](https://github.com/drsanti/freertos-pc-workshops)
+exercises — follow that repository for the hands-on FreeRTOS lab.
