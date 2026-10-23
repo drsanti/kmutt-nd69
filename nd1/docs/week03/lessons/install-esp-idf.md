@@ -6,6 +6,19 @@ You need internet access, disk space for the framework and tools, and an ESP32-S
 
 ## Automated terminal launcher
 
+```
+┌───────────┐               ┌──────────────────┐                 ┌──────────────┐
+│ Git Bash  │ ───launch───► │ PowerShell       │ ───activate───► │ ESP-IDF      │
+│ (.sh)     │               │ (child session)  │                 │ ready        │
+└───────────┘               └──────────────────┘                 └──────┬───────┘
+                                                                        │
+                                                                        ▼
+                                                              ┌─────────────────┐
+                                                              │  idf.py build   │
+                                                              │  idf.py flash   │
+                                                              └─────────────────┘
+```
+
 After preparing the framework and prerequisites, use the [cross-platform launchers](scripts/README.md) instead of repeating the environment commands manually. From Git Bash in the included `esp32-s3` firmware project root:
 
 ```bash

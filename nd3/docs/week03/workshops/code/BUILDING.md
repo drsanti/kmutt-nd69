@@ -5,10 +5,10 @@ workshop docs reference these exact directory names — keep them:
 
 ```
 code/
-├── robotos-v<ver>-macos-arm64/   ← bin/robotos, lib/librobotos_ffi.dylib, …
-├── robotos-v<ver>-linux-x64/     ← bin/robotos, lib/librobotos_ffi.so, …
-├── robotos-v<ver>-windows-x64/   ← bin/robotos.exe, lib/robotos_ffi.dll  (MISSING — build on a Windows machine)
-└── robotos-<ver>-py3-none-any.whl
++-- robotos-v<ver>-macos-arm64/   <- bin/robotos, lib/librobotos_ffi.dylib, ...
++-- robotos-v<ver>-linux-x64/     <- bin/robotos, lib/librobotos_ffi.so, ...
++-- robotos-v<ver>-windows-x64/   <- bin/robotos.exe, lib/robotos_ffi.dll  (MISSING — build on a Windows machine)
++-- robotos-<ver>-py3-none-any.whl
 ```
 
 `ver` = the workspace version in `robotos/Cargo.toml`

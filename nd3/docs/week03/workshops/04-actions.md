@@ -103,6 +103,10 @@ with robotos.Node("cycle_client") as node:
             if e.status != 10:                # UNAVAILABLE → retry
                 raise
             time.sleep(0.3)
+    if goal_id is None:
+        print("server never came up — is 04-cycle_server.py running?")
+        cli.close()
+        raise SystemExit(1)
     print(f"goal accepted: {goal_id}")
 
     deadline = time.time() + 15
@@ -122,8 +126,9 @@ with robotos.Node("cycle_client") as node:
 ## Step 3 — Run and watch
 
 ```bash
-python3 cycle_server.py        # terminal 1
-python3 cycle_client.py        # terminal 2
+cd code
+python3 04-cycle_server.py     # terminal 1
+python3 04-cycle_client.py     # terminal 2
 # client: goal accepted → feedback step 1/5 … 5/5 → result SUCCEEDED
 ```
 
@@ -160,3 +165,26 @@ client            action          cycle_server       handler loop
    |<- result --------------------------------------------|
    |   CANCELED    |                   |                  |
 ```
+
+## ✅ Checkpoint
+
+- [ ] Client prints `goal accepted` with a real `goal_id`
+- [ ] Feedback arrives `step 1/5` through `step 5/5`, one per second
+- [ ] Result is `SUCCEEDED — 'cycle complete'`
+- [ ] With the cancel edit, result is `CANCELED` and the server
+      returned `"aborted"` — proof the loop checked the flag
+- [ ] You can name the three channels: goal, feedback, result
+
+## 🔧 Troubleshooting
+
+| Symptom | Try |
+|---|---|
+| `server never came up` message | start `04-cycle_server.py` first — the client's 30 retries exhaust in ~15 s |
+| Goal accepted but no feedback | server died after accepting — check its terminal |
+| `send_goal` throws immediately | server not discovered yet — that's the `UNAVAILABLE` retry path |
+
+## ➡️ Next
+
+Workshop 05 — parameters: reconfigure a running node from the CLI.
+
+<sub>[← Workshop list](README.md)</sub>

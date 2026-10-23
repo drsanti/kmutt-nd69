@@ -45,7 +45,8 @@ a *tap* on the wire, not a change to it.
 ## Step 1 — Generate traffic
 
 ```bash
-python3 sim_sensor.py         # terminal 1 — Imu at 10 Hz (workshop 02)
+cd code
+python3 02-sim_sensor.py      # terminal 1 — Imu at 10 Hz (workshop 02)
 robotos ui                    # optional — watch while recording
 ```
 
@@ -79,10 +80,23 @@ robotos play machine_run.rbag --rate 2.0    # 2× speed
 robotos play machine_run.rbag --dry-run     # plan only, nothing sent
 ```
 
-Now run `monitor.py` (workshop 02) — it receives the **replayed**
-messages exactly as if the sensor were live. The subscriber cannot
-tell the difference — that's the point: the graph doesn't care who
-publishes, only what's on the topic.
+Start `02-monitor.py` (workshop 02) **first, and give it a few seconds
+before you press play** — it receives the **replayed** messages
+exactly as if the sensor were live. The subscriber cannot tell the
+difference — that's the point: the graph doesn't care who publishes,
+only what's on the topic.
+
+The player waits for your subscriber's declaration to propagate —
+on a fresh session link-up that can take a few seconds. If you see
+
+```
+warning: no subscribers matched /machine/01/sensor/imu — replayed records were dropped
+```
+
+the subscriber's session never discovered the player before the
+records went out. Re-run `play` — or pin both sides to an explicit
+endpoint (`ROBOTOS_LISTEN` on the monitor, `ROBOTOS_CONNECT` on the
+player) if multicast scouting is unreliable on your network.
 
 ## What replay actually does, in time order
 
@@ -118,3 +132,27 @@ While nodes come and go:
 robotos presence               # watch nodes join/leave live
 robotos presence --get         # one-shot list of who's alive
 ```
+
+## ✅ Checkpoint
+
+- [ ] `record` captured a sensible count (~10 Hz × duration)
+- [ ] `bag info` shows topic, schema, and message count
+- [ ] `play --dry-run` prints the schedule without publishing
+- [ ] `02-monitor.py` receives the **replayed** stream
+- [ ] With no subscriber running, `play` prints the
+      `no subscribers matched` warning instead of lying
+
+## 🔧 Troubleshooting
+
+| Symptom | Try |
+|---|---|
+| `played 38` but monitor saw nothing | subscriber wasn't matched in time — start monitor first, or pin `ROBOTOS_LISTEN`/`ROBOTOS_CONNECT` |
+| `no subscribers matched` warning | that's the honest report — a subscriber exists but its session never discovered the player; re-run or pin endpoints |
+| `record` captures 0 msgs | publisher running? topic name exact? (`topic list` to check) |
+| `bag info` fails | file incomplete — record wrote it? check size |
+
+## ➡️ Next
+
+Workshop 07 — capstone: build the mini digital twin.
+
+<sub>[← Workshop list](README.md)</sub>

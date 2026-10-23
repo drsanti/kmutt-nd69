@@ -73,7 +73,8 @@ Three calls do the work: `declare_parameter` (name + default),
 ## Step 2 — Drive it from the CLI
 
 ```bash
-python3 tuning_node.py          # terminal 1 — prints setpoint=42
+cd code
+python3 05-tuning_node.py       # terminal 1 — prints setpoint=42
 
 robotos param list tuning_node              # declared params
 robotos param get tuning_node setpoint      # → 42
@@ -97,19 +98,22 @@ The historian/config-management parallel: parameters aren't
 ephemeral — save a known-good configuration, reload it later or
 on another machine.
 
-## Step 4 — Lifecycle from the CLI
+## Step 4 — Lifecycle: read-only for now
 
 ```bash
-robotos lifecycle get tuning_node     # current state
-robotos lifecycle set tuning_node inactive   # request a transition
-robotos lifecycle get tuning_node
-robotos lifecycle set tuning_node active
+robotos lifecycle get tuning_node     # current state → active
+robotos lifecycle set tuning_node inactive
+# → error: node is unmanaged (auto-active)
 ```
 
-Lifecycle is the "managed node" idea from week02: a node isn't
-just running or dead — it moves through states, and remote
-transitions are explicitly opt-in (`allow_remote_lifecycle` on the
-node side).
+Lifecycle is the "managed node" idea from week02: a managed node
+moves through `Created → Inactive → Active`, and remote transitions
+are opt-in (`allow_remote_lifecycle`). But `lifecycle set` fails
+honestly here — **Python SDK nodes are *unmanaged*** in this
+release: they behave as if always `Active` and reject transitions.
+The managed lifecycle state machine exists for Rust-SDK and embedded
+nodes — `lifecycle get` still reports the auto-active state, which
+is why the read works while the write refuses.
 
 ## One `param set`, in time order
 
@@ -127,3 +131,28 @@ you (CLI)        transport        tuning_node        main loop
    |                |                |  next print:     |
    |                |                |  setpoint=77     |
 ```
+
+## ✅ Checkpoint
+
+- [ ] `param list tuning_node` shows `setpoint` and `mode`
+- [ ] `param set tuning_node setpoint 77` succeeds remotely
+- [ ] Terminal 1's printout changes to `setpoint=77` — no restart
+- [ ] `param watch` prints the change event live
+- [ ] `param save` → `param load` round-trips a config file
+- [ ] `lifecycle get tuning_node` reports `active`, and `set` is
+      refused — you can explain `unmanaged (auto-active)`
+
+## 🔧 Troubleshooting
+
+| Symptom | Try |
+|---|---|
+| `param list` errors | it needs the node **name** — `param list tuning_node`, not the topic |
+| `param set` denied | node didn't opt in — `set_allow_remote_params(True)` required |
+| `lifecycle set` → `unmanaged` | expected — Python nodes are auto-active; managed lifecycle is for Rust/embedded nodes |
+| `node not found` | node name typo, or the node exited — `robotos node list` |
+
+## ➡️ Next
+
+Workshop 06 — record live traffic and replay it later.
+
+<sub>[← Workshop list](README.md)</sub>

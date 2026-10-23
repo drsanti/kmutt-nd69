@@ -1,5 +1,18 @@
 # Hello World on ESP32-S3
 
+```
+┌──────────────────┐           ┌──────────────────┐           ┌───────────┐
+│ hello_world_main │ ──build─► │ hello_world.bin  │ ──flash─► │ ESP32-S3  │
+│ .c               │           │                  │           │ board     │
+└──────────────────┘           └──────────────────┘           └─────┬─────┘
+                                                                    │
+                                                                    ▼
+                                                          ┌───────────────────┐
+                                                          │ serial monitor:   │
+                                                          │ "Hello world!"    │
+                                                          └───────────────────┘
+```
+
 An ESP-IDF v6.1 project based on Espressif's `examples/get-started/hello_world`. The application prints `Hello world!`, chip and flash information, and minimum free heap, then counts down and restarts. This cycle repeats; it does not blink an LED.
 
 ## Before starting from a fresh clone
