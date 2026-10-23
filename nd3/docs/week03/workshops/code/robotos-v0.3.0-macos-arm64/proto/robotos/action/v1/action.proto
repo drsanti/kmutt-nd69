@@ -1,0 +1,72 @@
+// Action protocol — long-running goals (v0.2, ACT-01).
+//
+// Wire layout per action `A` (name must be a valid topic):
+//   service  {A}/send_goal    SendGoalRequest  -> SendGoalResponse
+//   service  {A}/cancel_goal  CancelGoalRequest-> CancelGoalResponse
+//   service  {A}/get_result   GetResultRequest -> GetResultResponse
+//   topic    {A}/_feedback    ActionFeedback   (per-goal progress)
+//   topic    {A}/_status      ActionStatus     (transition events)
+syntax = "proto3";
+
+package robotos.action.v1;
+
+enum GoalStatus {
+  GOAL_STATUS_UNSPECIFIED = 0;
+  GOAL_STATUS_PENDING     = 1;
+  GOAL_STATUS_ACCEPTED    = 2;
+  GOAL_STATUS_EXECUTING   = 3;
+  GOAL_STATUS_CANCELING   = 4;
+  GOAL_STATUS_SUCCEEDED   = 5;
+  GOAL_STATUS_CANCELED    = 6;
+  GOAL_STATUS_ABORTED     = 7;
+  // Rejected at submission (invalid goal, duplicate, server busy).
+  GOAL_STATUS_REJECTED    = 8;
+}
+
+message SendGoalRequest {
+  // Client-generated UUID. Duplicate IDs are deduplicated — a second
+  // send of an active goal returns its current state.
+  string goal_id = 1;
+  // Typed goal payload (schema in the service envelope).
+  bytes goal = 2;
+}
+
+message SendGoalResponse {
+  string goal_id = 1;
+  GoalStatus state = 2;
+  // Reason string when REJECTED.
+  string reason = 3;
+}
+
+message CancelGoalRequest {
+  string goal_id = 1;
+}
+
+message CancelGoalResponse {
+  string goal_id = 1;
+  // State *after* the request: CANCELING if the goal was executing,
+  // the terminal state if it already finished, REJECTED if unknown.
+  GoalStatus state = 2;
+}
+
+message GetResultRequest {
+  string goal_id = 1;
+}
+
+message GetResultResponse {
+  GoalStatus state = 1;
+  // Typed result payload — valid only when state == SUCCEEDED.
+  bytes result = 2;
+}
+
+// Published on {A}/_feedback while a goal EXECUTES.
+message ActionFeedback {
+  string goal_id = 1;
+  bytes feedback = 2;
+}
+
+// Published on {A}/_status at every state transition.
+message ActionStatus {
+  string goal_id = 1;
+  GoalStatus state = 2;
+}

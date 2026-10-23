@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package robotos.geometry.v1;
+
+// Shared primitives — mirror robotos.sensor.v1.Vector3 but kept in a
+// geometry namespace so nav/tf schemas don't depend on sensor.
+message Vector3 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message Quaternion {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double w = 4;
+}
+
+message Pose {
+  Vector3 position = 1;
+  Quaternion orientation = 2;
+}
+
+// Twist: linear m/s, angular rad/s.
+message Twist {
+  Vector3 linear = 1;
+  Vector3 angular = 2;
+}

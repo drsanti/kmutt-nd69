@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+// robotos wire envelope — see docs/adr/0003-wire-envelope.md
+package robotos.envelope.v1;
+
+message Envelope {
+  uint32 protocol_major = 1;
+  uint32 protocol_minor = 2;
+  // Canonical protobuf full name of the payload message,
+  // e.g. "robotos.sensor.v1.Imu". Exact-equality match in v0.1.
+  string schema_id = 3;
+  // Runtime UUID of the publishing node.
+  string publisher_uuid = 4;
+  // Per-publisher monotonic sequence number (gap diagnostics only;
+  // no cross-publisher ordering is implied).
+  uint64 sequence = 5;
+  // Timestamp at publish time, interpreted per `clock_domain`.
+  uint64 timestamp_ns = 6;
+  // prost/protobuf-encoded user message.
+  bytes payload = 7;
+  // Which clock timestamp_ns uses (reserved for embedded nodes where
+  // monotonic uptime replaces wall time; v0.4 consumes this).
+  ClockDomain clock_domain = 8;
+  // Reserved for compression/fragmentation/etc. Currently always 0.
+  uint32 flags = 9;
+}
+
+enum ClockDomain {
+  CLOCK_DOMAIN_UNSPECIFIED = 0;
+  // timestamp_ns is Unix epoch nanoseconds (desktop default).
+  CLOCK_DOMAIN_UNIX_EPOCH_NS = 1;
+  // timestamp_ns is monotonic uptime on the publishing node;
+  // not comparable across nodes.
+  CLOCK_DOMAIN_MONOTONIC_NS = 2;
+}

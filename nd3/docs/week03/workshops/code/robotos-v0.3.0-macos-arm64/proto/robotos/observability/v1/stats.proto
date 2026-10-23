@@ -1,0 +1,23 @@
+// Node introspection counters (v0.2, OBS-01). Served ungated on
+// `/{node_uuid}/_stats` like the other node-internal services.
+syntax = "proto3";
+
+package robotos.observability.v1;
+
+message NodeStatsRequest {
+  // Reserved.
+  uint32 reserved = 1;
+}
+
+// Flat counter map — new counters are added as keys so older
+// readers degrade gracefully.
+message NodeStatsResponse {
+  // Counter name → value. Known keys:
+  //   published, delivered, dropped_overflow, dropped_deadline,
+  //   schema_mismatch, service_requests, service_errors,
+  //   rpc_calls, rpc_timeouts, lifecycle_failures,
+  //   action_goals_accepted, action_goals_completed
+  map<string, uint64> counters = 1;
+  // Node uptime in milliseconds.
+  uint64 uptime_ms = 2;
+}

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package robotos.sensor.v1;
+
+// PointField — one field of a point record. datatype values match
+// ROS sensor_msgs/PointField (FLOAT32=7, UINT8=1, ...).
+message PointField {
+  string name = 1;
+  uint32 offset = 2;
+  uint32 datatype = 3;
+  uint32 count = 4;
+}
+
+// PointCloud2 — packed point data, ROS-compatible layout so the
+// payload is a byte copy.
+message PointCloud2 {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  uint32 height = 3;
+  uint32 width = 4;
+  repeated PointField fields = 5;
+  bool is_bigendian = 6;
+  uint32 point_step = 7;   // bytes per point
+  uint32 row_step = 8;     // bytes per row
+  bytes data = 9;
+  bool is_dense = 10;
+}

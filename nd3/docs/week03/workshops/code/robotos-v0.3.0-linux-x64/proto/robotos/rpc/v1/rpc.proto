@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+// Unary RPC metadata — docs/adr/0009-rpc-wire-protocol.md.
+// Carried inside the Zenoh query/reply payload; the robotos envelope
+// is NOT used for RPC (query correlation is explicit).
+package robotos.rpc.v1;
+
+message RequestMeta {
+  // UUIDv4 per call — correlates request and reply.
+  string request_id = 1;
+  // Fully-qualified service name, e.g. "/robot/01/service/reset".
+  string service_name = 2;
+  // Canonical proto names for request and reply payload schemas.
+  string request_schema_id = 3;
+  string reply_schema_id = 4;
+  // Absolute deadline, Unix epoch nanoseconds. Enforced by the
+  // responder (reject if elapsed) and the client (discard late).
+  uint64 deadline_unix_ns = 5;
+  // Calling node's runtime UUID.
+  string caller_id = 6;
+  // Encoded request message.
+  bytes payload = 7;
+}
+
+message ReplyMeta {
+  // Echo of RequestMeta.request_id.
+  string request_id = 1;
+  // Responding node's runtime UUID — used by the client to detect
+  // ambiguous responders (ADR 0008).
+  string responder_id = 2;
+  Status status = 3;
+  // Encoded reply message; only meaningful when status == OK.
+  bytes payload = 4;
+  // Human-readable detail on failure; never carries secrets.
+  string error_detail = 5;
+}
+
+// Cancellation advisory (RPC-06): client publishes this on
+// {service}/_cancel to ask responders to abort the in-flight call
+// identified by request_id. Best-effort — a handler that already
+// finished keeps its result; blocking/foreign handlers may run to
+// completion and have their reply discarded.
+message CancelRequest {
+  // RequestMeta.request_id of the call to cancel.
+  string request_id = 1;
+}
+
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_OK = 1;
+  STATUS_INVALID_ARGUMENT = 2;
+  STATUS_NOT_FOUND = 3;
+  STATUS_ALREADY_EXISTS = 4;
+  STATUS_DEADLINE_EXCEEDED = 5;
+  STATUS_CANCELLED = 6;
+  STATUS_UNAVAILABLE = 7;
+  STATUS_RESOURCE_EXHAUSTED = 8;
+  STATUS_INTERNAL = 9;
+  STATUS_SCHEMA_MISMATCH = 10;
+  // Two or more distinct responders answered one unary call.
+  STATUS_AMBIGUOUS_RESPONDER = 11;
+}

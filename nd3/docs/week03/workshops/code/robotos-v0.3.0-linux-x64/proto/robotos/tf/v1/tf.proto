@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package robotos.tf.v1;
+
+import "robotos/geometry/v1/geometry.proto";
+
+// Transform — child frame expressed in parent frame.
+message Transform {
+  robotos.geometry.v1.Vector3 translation = 1;
+  robotos.geometry.v1.Quaternion rotation = 2;
+}
+
+message TransformStamped {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;        // parent
+  string child_frame_id = 3;  // child
+  Transform transform = 4;
+}
+
+// A batch of transforms — the tf2 broadcast message.
+message TFMessage {
+  repeated TransformStamped transforms = 1;
+}

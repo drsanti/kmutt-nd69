@@ -1,0 +1,389 @@
+// Serial-bridge payload schemas (docs/embedded/serial-bridge-spec.md
+// §5.1). Wire payloads are canonical proto3 encoding — the MCU side
+// uses nanopb, the host bridge prost. msg_type alone defines the
+// schema; fields are additive-only after freeze.
+syntax = "proto3";
+package robotos.serial.v1;
+
+// 0x20 IMU — MCU→host sensor sample. Payload is the canonical
+// `robotos.sensor.v1.Imu` (sensor/v1/imu.proto), identical bytes on
+// COBS and zenoh — the bridge republishes them verbatim.
+// (ImuSample below is kept for reference / older captures only.)
+message ImuSample {
+  uint64 mono_ns = 1;          // MCU monotonic tick — never wall clock
+  float accel_x = 2;           // m/s^2
+  float accel_y = 3;
+  float accel_z = 4;
+  float gyro_x = 5;            // rad/s
+  float gyro_y = 6;
+  float gyro_z = 7;
+}
+
+// 0x21 LED shadow state — MCU→host (WS2812 is write-only; this is the
+// last commanded value, not readback).
+message LedState {
+  uint32 r = 1;                // 0..255
+  uint32 g = 2;
+  uint32 b = 3;
+}
+
+// 0x22 wave module shadow — MCU→host, on every WaveCmd.
+message WaveState {
+  uint32 channel = 1;
+  uint32 shape = 2;            // 0=sin 1=square 2=tri 3=saw
+  bool running = 3;
+  float freq_hz = 4;
+  float amplitude = 5;
+  float offset = 6;
+  float phase_deg = 7;         // normalised 0..360
+  float last = 8;              // latest output sample
+}
+
+// 0x23 mic level — MCU→host @ ~10 Hz while capture enabled.
+message AudioLevel {
+  uint32 rms = 1;              // full-scale counts 0..32767
+  uint32 peak = 2;
+  uint32 frames = 3;           // samples in the window
+  bool clipped = 4;
+}
+
+// 0x24 upstream PCM — MCU→host, opt-in via MicCmd.stream. Post-chain
+// mono int16 at the codec rate (16 kHz).
+message MicPcm {
+  uint32 seq = 1;
+  repeated sint32 samples = 2; // int16 range values, packed
+}
+
+// 0x25 battery — MCU→host @ ~10 s (ADC on GPIO9, LiPo via divider).
+message BatteryStatus {
+  uint32 mv = 1;               // pack voltage, millivolts
+  uint32 pct = 2;              // estimated charge 0..100
+}
+
+// 0x28 board identity — MCU→host on boot, on change, ~10 s.
+// The serial-only identity surface: uuid + mac work without wifi.
+message BoardInfo {
+  string uuid = 1;             // ternion-esp32s3-d1b680
+  string mac = 2;              // 14:c1:9f:d1:b6:80 ("" when unknown)
+  string ip = 3;               // dotted-quad or "" when offline
+  uint64 uptime_ns = 4;
+  uint64 unix_ns = 5;          // wall clock after a TimeSync; 0 = unsynced
+  bool synced = 6;             // a TimeSync has been applied this boot
+  string fw_version = 7;       // e.g. "robotos-fw/0.3.0" — the
+                               // librobotos_fw build identity
+  uint32 proto_version = 8;    // RSP_PROTO_VERSION — wire-protocol
+                               // feature level (0x90/0x91 cmds need >=1)
+  string hw_model = 9;         // board SKU, e.g. "es3c28p" / "ws28p" —
+                               // uuid carries it too; this is the
+                               // no-parse contract for hosts
+  uint32 caps = 10;            // board_caps() bitmask — LED=1 MIC=2
+                               // IMU=4 RTC=8 BATT=16 (firmware board.h)
+}
+
+// 0x2a touch — MCU→host pointer events, edge-triggered: one frame
+// per point transition (DOWN/UP always immediate, MOVE deadbanded +
+// rate-capped in middleware/touch.c). `points` holds the CHANGED
+// contacts in this frame — UP entries carry the last position and
+// appear after the contact vanishes; consumers keep an id→state map.
+// gesture is the controller's gesture id (normalized enum)
+// piggybacked on the frame that reported it.
+message TouchEvent {
+  uint64 timestamp_ms = 1;       // board mono ms
+  TouchGesture gesture = 2;
+  repeated TouchPoint points = 3;
+}
+
+message TouchPoint {
+  uint32 id = 1;                 // allocator sequence, stable per
+                                 // contact; expires on UP — a consumer
+                                 // id->state map must drop it then
+  TouchEv event = 2;
+  uint32 x = 3;                  // logical display coords (post-rotate)
+  uint32 y = 4;
+}
+
+enum TouchEv {
+  TOUCH_EV_UP = 0;               // synthesized when a contact vanishes
+  TOUCH_EV_DOWN = 1;
+  TOUCH_EV_MOVE = 2;
+}
+
+// KeyEvent — physical button presses (msg 0x2c). `key` is the board's
+// button ordinal (ws28p: 0=PWR GPIO6, 1=BOOT GPIO0). DOWN/UP are
+// debounced edges; SHORT/LONG/DOUBLE emit on release classification.
+// On ws28p a LONG also precedes the board's software power-off —
+// hosts see the event ~200 ms before the link dies.
+enum KeyEv {
+  KEY_EV_UP = 0;
+  KEY_EV_DOWN = 1;
+  KEY_EV_SHORT = 2;              // released below long-press threshold
+  KEY_EV_LONG = 3;               // released at/above long-press threshold
+  KEY_EV_DOUBLE = 4;             // second press within the double window
+}
+message KeyEvent {
+  uint64 timestamp_ms = 1;       // board mono ms
+  uint32 key = 2;                // button ordinal — board-defined
+  KeyEv event = 3;
+  uint32 hold_ms = 4;            // press duration on UP/SHORT/LONG/DOUBLE
+}
+
+enum TouchGesture {
+  TOUCH_GEST_NONE = 0;
+  TOUCH_GEST_UP = 1;
+  TOUCH_GEST_DOWN = 2;
+  TOUCH_GEST_LEFT = 3;
+  TOUCH_GEST_RIGHT = 4;
+  TOUCH_GEST_CLICK = 5;
+  TOUCH_GEST_DOUBLE_CLICK = 6;
+  TOUCH_GEST_ZOOM_IN = 7;
+  TOUCH_GEST_ZOOM_OUT = 8;
+}
+
+// 0x90 draw batch — host→MCU remote-display protocol. `mode` hands
+// the framebuffer between the local UI and the host; ops execute in
+// order on the UI task, then one flush. BLIT pixels are row-major
+// RGB565, chunked to <=512 B per op (bigger rects = multiple ops).
+message DrawCmd {
+  uint32 mode = 1;             // legacy nav: 0 = keep, 1 = jump to
+                               // the host page (remote slot 0),
+                               // 2 = back to the previous local page.
+                               // Edge-signalled. UiCmd SHOW/BACK is
+                               // the preferred surface.
+  repeated DrawOp ops = 2;
+  uint32 page_id = 3;          // target remote page; 0 = the default
+                               // (remote slot 0, the "HOST" tab)
+}
+
+message DrawOp {
+  Op op = 1;
+  int32 x = 2;                 // int32 so off-clip ops are legal
+  int32 y = 3;
+  int32 w = 4;                 // width | radius (CIRCLE) | unused
+  int32 h = 5;
+  uint32 color = 6;            // RGB565 packed
+  string text = 7;             // TEXT op
+  bytes pixels = 8;            // BLIT op: w*h*2 bytes, row-major RGB565
+  enum Op {
+    DRAW_CLEAR = 0;
+    DRAW_FILL_RECT = 1;
+    DRAW_TEXT = 2;
+    DRAW_HLINE = 3;
+    DRAW_VLINE = 4;
+    DRAW_CIRCLE = 5;           // fill_circle(x, y, w)
+    DRAW_BLIT = 6;
+  }
+}
+
+// 0x91 UI control — host→MCU: register/destroy/nav remote canvas
+// pages. Remote pages are canvas-only: they paint via DrawCmd, no
+// local widgets, no touch handlers (touch flows upstream as
+// TouchEvent). Runtime-only — destroyed on reboot.
+message UiCmd {
+  Op op = 1;
+  uint32 group_id = 2;         // 0 = the host group (remote pages);
+                               // hosts cannot address local groups
+  uint32 page_id = 3;          // DESTROY/SHOW/REFRESH target; on
+                               // CREATE, 0 = firmware assigns
+  string name = 4;             // tab label (CREATE), <=8 chars
+  string hint = 5;             // footer text (CREATE, optional)
+  uint32 cookie = 6;           // host nonce echoed in UiEvent
+  uint32 ttl_ms = 7;           // lease: destroy if untouched within
+                               // ttl; 0 = persist (default)
+  enum Op {
+    UI_OP_UNSPEC   = 0;
+    UI_OP_CREATE   = 1;
+    UI_OP_DESTROY  = 2;
+    UI_OP_LIST     = 3;        // one UiEvent per remote page
+    UI_OP_SHOW     = 4;        // select a page (edge-signalled)
+    UI_OP_BACK     = 5;        // return to the previous local page
+    UI_OP_REFRESH  = 6;        // lease keepalive
+  }
+}
+
+// 0x2b UI event — MCU→host. Replies to UiCmd AND emitted on any
+// committed mutation, including local-user navigation (SHOWN/HIDDEN)
+// so a host knows when to repaint and when it lost the screen.
+message UiEvent {
+  Kind kind = 1;
+  uint32 group_id = 2;
+  uint32 page_id = 3;          // the page the event is about
+  string name = 4;
+  uint32 cookie = 5;           // echo of the UiCmd that caused this
+  int32 rc = 6;                // 0 ok, <0 -errno (EEXIST/ENOMEM/ENOENT)
+  uint32 cur_page = 7;         // front remote page_id, 0 = local front
+  enum Kind {
+    UI_EV_UNSPEC    = 0;
+    UI_EV_CREATED   = 1;
+    UI_EV_DESTROYED = 2;
+    UI_EV_SHOWN     = 3;
+    UI_EV_HIDDEN    = 4;
+    UI_EV_EXPIRED   = 5;
+    UI_EV_ERROR     = 6;
+  }
+}
+
+// 0x8a param op — host→MCU. op: 0=get, 1=set (runtime), 2=list,
+// 3=set+persist(NVS).
+message ParamCmd {
+  uint32 op = 1;
+  string name = 2;             // e.g. "uplink", "mic.gain", "wifi.ssid"
+  string value = 3;            // set: textual value ("42", "3.14", "on")
+}
+
+// 0x29 param event — MCU→host. Reply to ParamCmd AND emitted on any
+// committed set so watchers see live changes.
+message ParamEvent {
+  string name = 1;
+  string value = 2;            // current value as text
+  string type = 3;             // "bool" "i64" "f64" "str"
+  int32 rc = 4;                // 0 ok, -ENOENT unknown, -EINVAL bad value
+  uint64 revision = 5;
+}
+
+// 0x8c reboot — host→MCU. Grace window lets the CmdAck flush to the
+// wire before the reset; the handler defers the actual restart to the
+// executor loop so dispatch can finish first.
+message RebootCmd {
+  uint32 delay_ms = 1;         // 0xFFFFFFFF = cancel a pending reboot
+  Mode mode = 2;               // APP resets; BOOTLOADER rejected (-2) until OTA lands
+  enum Mode {
+    APP = 0;
+    BOOTLOADER = 1;            // download-mode entry — OTA prerequisite
+  }
+}
+
+// 0x8b clock sync — host→MCU. Host stamps its unix clock; the MCU
+// stores `offset = unix_ns - mono_ns` so upstream telemetry can carry
+// wall time. Runtime-only — not persisted.
+message TimeSync {
+  uint64 unix_ns = 1;
+}
+
+// 0x26 wifi status — MCU→host, published on state change and ~5 s
+// while wifi is configured.
+message WifiStatus {
+  enum State {
+    OFF = 0;         // disabled / no creds
+    CONNECTING = 1;  // creds set, associating/retrying
+    UP = 2;          // IP assigned
+    SESSION = 3;     // IP + zenoh session live
+  }
+  State state = 1;
+  string ssid = 2;
+  int32 rssi = 3;        // dBm, 0 = unknown
+  string ip = 4;         // dotted-quad or ""
+  bool zenoh_up = 5;
+  int32 last_reason = 6; // last disconnect reason, 0 = none
+}
+
+// 0x87 wifi/peer config — host→MCU; persisted to NVS, survives
+// reboot. Empty/absent fields are left unchanged.
+message WifiConfig {
+  string ssid = 1;            // AP SSID (<=32 chars)
+  string pass = 2;            // WPA2 password (<=63 chars)
+  string connect = 3;         // zenoh locator e.g. tcp/10.0.0.5:7447
+}
+
+// 0x88 telemetry route — host→MCU; runtime only (not persisted).
+// Selects which transport(s) carry MCU→host streams. Bitmask:
+// bit0 = serial/COBS, bit1 = zenoh-pico session, bit2 = BLE.
+message RouteCfg {
+  uint32 uplink = 1;          // boots serial+zenoh (3); 7 = all
+}
+
+// 0x89 wifi control — host→MCU; proto3 optional = "unchanged".
+// `enable` persists to NVS (`board_wifi_set_enabled`); `reconnect`
+// kicks a re-associate with stored creds.
+message WifiCtl {
+  optional bool enable = 1;     // false = disconnect + radio off
+  optional bool reconnect = 2;  // true = re-associate now
+}
+
+// 0x27 MCU→host: command acknowledgement. Emitted once per dispatched
+// cmd (any transport) — `msg_type` is the cmd that ran, `req_seq` echoes
+// the envelope sequence the requester put on the wire (0 when the
+// request carried none, e.g. serial-injected cmds), `rc` is the
+// handler's result (0 = ok).
+message CmdAck {
+  uint32 msg_type = 1;
+  uint64 req_seq = 2;
+  int32 rc = 3;
+  string detail = 4;
+}
+
+// 0x80 base command — host→MCU. `on` toggles the LED; rgb[] drives
+// the WS2812 when present (3 = {r,g,b}; 1 byte payload = legacy
+// on/off, kept for wire compat).
+message LedCmd {
+  uint32 on = 1;               // 0/1
+  repeated uint32 rgb = 2;     // 0..255 each
+}
+
+// 0x83 wave module config — host→MCU.
+message WaveCmd {
+  uint32 channel = 1;          // index; 255 = all
+  uint32 shape = 2;
+  uint32 cycles = 3;           // 0 = free-run
+  float freq_hz = 4;
+  float amplitude = 5;
+  float offset = 6;
+  float phase_deg = 7;
+  bool enable = 8;
+  optional uint32 duty_pct = 9; // SQUARE only: on-time 1..99 (default 50)
+}
+
+// 0x84 SFX trigger — host→MCU.
+message SfxCmd {
+  uint32 preset = 1;           // 255 = stop
+  uint32 volume = 2;           // 1-100, 0 = unchanged
+  uint32 loops = 3;            // 0 = preset default
+  uint32 dur_s = 4;            // 0 = unlimited
+}
+
+// 0x85 live DSP knob — host→MCU.
+message SfxParam {
+  uint32 stage = 1;
+  uint32 field = 2;
+  float value = 3;
+}
+
+// 0x8e semantic LED effect — host→MCU. Segment-time model: a cycle
+// is [delay][on][off][end] — period = delay+on+off+end, delay doubles
+// as per-channel phase shift. Firmware-side fx module owns the
+// mapping so the touch UI and the wire behave identically.
+message LedFx {
+  uint32 effect = 1;           // 0=off 1=solid 2=blink 3=fade 4=rainbow
+  uint32 r = 2;                // blink color / intensity per channel
+  uint32 g = 3;
+  uint32 b = 4;
+  uint32 n = 5;                // cycles; 0 = free-run
+  uint32 delay_ms = 6;         // segment 1: phase shift
+  uint32 on_ms = 7;            // segment 2: blink hold | fade ramp-in
+  uint32 off_ms = 8;           // segment 3: blink dark | fade ramp-out
+  uint32 end_ms = 9;           // segment 4: dead time between cycles
+  uint32 intensity = 10;       // peak 0..255 per effect (255 = full)
+}
+
+// 0x8d custom SFX program — host→MCU. Uploads a step table into the
+// user preset slot; SfxCmd{preset=3} then plays it through the same
+// seq engine as the built-in presets (spec §5.x).
+message SfxStep {
+  uint32 freq_hz = 1;          // 0 = rest
+  uint32 shape = 2;            // WaveCmd.shape values
+  uint32 dur_ms = 3;
+}
+
+message SfxProg {
+  repeated SfxStep steps = 1;  // ≤64 (serial.options max_count)
+  optional string name = 2;    // free label — shows in logs/UI
+}
+
+// 0x86 mic control — host→MCU. proto3 optional replaces the former
+// 0xFF-sentinel "unchanged" convention: absent fields are untouched.
+message MicCmd {
+  optional bool enable = 1;
+  optional uint32 gain_pct = 2;      // 0..100 -> PGA map
+  optional bool stream = 3;
+  optional uint32 stage_mask = 4;    // bit i gates chain[i]
+  optional bool mute = 5;
+}
