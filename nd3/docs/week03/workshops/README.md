@@ -24,7 +24,7 @@ network or hardware is needed.
 | Item | Why | Where to get it |
 |---|---|---|
 | robotos package | CLI + shared library | bundled in [`code/`](code/) — `robotos-v*/` |
-| robotos Python SDK | workshop language SDK | bundled wheel — `code/robotos-0.3.0-*.whl` |
+| robotos Python SDK | workshop language SDK | bundled wheel — `code/robotos-0.3.0-*.whl` *(per-OS build — the wheel embeds the native lib; Windows wheel pending — see [`code/BUILDING.md`](code/BUILDING.md))* |
 | Python ≥ 3.10 | primary workshop language | python.org or system package |
 | A single machine | local transport needs no network | — |
 
