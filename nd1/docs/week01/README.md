@@ -27,4 +27,4 @@ Slide ประกอบการบรรยาย:
 | Week | Topic |
 |---|---|
 | [Week 02](../week02/README.md) | ES3C28P board hardware and embedded fundamentals — 15 lessons |
-| [Week 03](../week03/README.md) | Install and verify ESP-IDF on Windows |
+| [Week 03](../week03/README.md) | Install and verify ESP-IDF (Windows, macOS, Linux) |

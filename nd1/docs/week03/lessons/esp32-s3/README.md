@@ -17,39 +17,35 @@ An ESP-IDF v6.1 project based on Espressif's `examples/get-started/hello_world`.
 
 ## Before starting from a fresh clone
 
-Use ESP-IDF v6.1 with ESP32-S3 tools installed. The project can be cloned to another directory; no source code depends on the example `D:\CODE` location. Build once before expecting the editor to resolve generated headers.
+Use ESP-IDF v6.1 with ESP32-S3 tools installed ([setup guide](../install-esp-idf.md)). The project path may differ after you clone; no source depends on a fixed drive letter.
 
-For VS Code extension builds, follow the [extension setup guide](../vscode-esp-idf.md) to regenerate machine-specific settings or select your EIM installation. For command-line builds, continue below. You only need to configure one workflow to begin.
+> [!NOTE]
+> **Terminal-only students:** follow sections 1–3 below. Skip [vscode-esp-idf.md](../vscode-esp-idf.md) until you want the VS Code Build button.
+> **VS Code Build button:** configure once with [vscode-esp-idf.md](../vscode-esp-idf.md), then return here for flash/monitor.
 
 ## 1. Open the development terminal
 
-Install the prerequisites and ESP-IDF using the [setup guide](../install-esp-idf.md). These instructions assume your terminal is already in this project's root directory, for example:
+Open a terminal **in this project root** (folder that contains `CMakeLists.txt` and `main/`). Examples after cloning:
 
-```text
-D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3
-```
+| Platform | Example project path |
+|---|---|
+| Windows | `D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3` |
+| macOS / Linux | `~/kmutt-nd69/nd1/docs/week03/lessons/esp32-s3` |
 
-On Windows, from **Git Bash**, run:
-
-```bash
-bash ../scripts/start-esp-idf.sh
-```
-
-Wait for **ESP-IDF ready**. The launcher keeps this project as the working directory. Enter the remaining commands at the **PowerShell** prompt.
-
-If you are already using Windows PowerShell, run:
-
-```powershell
-. ..\scripts\start-esp-idf.ps1
-```
-
-On macOS or Linux, from the same project root:
+**Recommended (all platforms)** — from that folder:
 
 ```bash
 bash ../scripts/start-esp-idf.sh
 ```
 
-The Unix launcher opens an activated Bash session in this project directory. It uses `IDF_PATH` if set, otherwise `~/esp/esp-idf`. For another framework location, pass `--idf-path /path/to/esp-idf`. See the [launcher instructions](../scripts/README.md) for Windows custom paths and first-time tool installation.
+Wait for **ESP-IDF ready**.
+
+| Platform | Where to type `idf.py` after the launcher |
+|---|---|
+| Windows | The **PowerShell** child prompt (not the parent Git Bash) |
+| macOS / Linux | The **Bash** child session the launcher opened |
+
+Custom framework path: `--idf-path` / `-IdfPath` — see [scripts/README.md](../scripts/README.md). Advanced: Windows PowerShell can also run `. ..\scripts\start-esp-idf.ps1` from this folder.
 
 ## 2. Build
 
@@ -66,13 +62,17 @@ The project targets ESP32-S3. Flash size, PSRAM, and console settings use ESP-ID
 
 ## 3. Connect, flash, and monitor
 
-Connect the board with a USB data cable. On Windows, find its COM port in Device Manager and close other serial monitors. Replace `COM5` with the actual port:
+Connect the board with a USB data cable. Close other serial monitors. Find the port, then flash (replace the port with yours).
 
-```text
-idf.py -p COM5 flash monitor
-```
+| Platform | Find the port | Flash and monitor |
+|---|---|---|
+| Windows | Device Manager → Ports (COM & LPT) | `idf.py -p COM5 flash monitor` |
+| macOS | `ls /dev/cu.*` | `idf.py -p /dev/cu.usbserial-XXXX flash monitor` |
+| Linux | `ls /dev/ttyUSB* /dev/ttyACM*` | `idf.py -p /dev/ttyUSB0 flash monitor` |
 
-Flashing replaces the board's current application. Use the programming connector and boot procedure documented for your board. On macOS/Linux, replace `COM5` with the actual device path; Linux may also require serial-port permissions.
+On Linux you may need membership in `dialout` or `uucp`. On **WSL2**, USB serial often needs passthrough (for example `usbipd` on Windows) or flash from native Windows instead.
+
+Flashing replaces the board's current application. Use the programming connector and boot procedure from your board manual.
 
 Look for output similar to:
 

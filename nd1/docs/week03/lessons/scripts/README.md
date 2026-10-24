@@ -38,7 +38,7 @@ If you installed with EIM and it uses custom tools or activation settings, prefe
 
 ## 2. Windows: launch from Git Bash
 
-Assume you are already in the course firmware project root (`D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3`). Run:
+Assume you are already in the course firmware project root (`…/nd1/docs/week03/lessons/esp32-s3`). This folder **is** the firmware project. Run:
 
 ```bash
 bash ../scripts/start-esp-idf.sh
@@ -62,9 +62,11 @@ bash ../scripts/start-esp-idf.sh -IdfPath 'D:\dev\esp\v6.1\esp-idf' -ProjectPath
 
 Use **PowerShell parameter names on Windows**, even when starting through the `.sh` launcher. You can combine `-InstallTools` with `-Target esp32s3` and the path options.
 
-## 3. Windows: launch without Git Bash
+## 3. Windows: launch without Git Bash (advanced)
 
-Double-click `start-esp-idf.cmd` to open PowerShell with the default framework path. The working directory will depend on how Windows launched the file; change to your project before building.
+Not the first-lab path. Prefer [§2 from Git Bash](#2-windows-launch-from-git-bash) so the working directory stays the project folder.
+
+Double-click `start-esp-idf.cmd` to open PowerShell with the default framework path. The working directory may be wrong; `cd` to your project before building.
 
 Or, from PowerShell in the firmware project root:
 
@@ -107,7 +109,7 @@ The launcher opens **Bash**, including when your normal macOS shell is Zsh. It l
 
 Execute the launcher with `bash`; do not `source` it. It opens a child shell, so activation ends when you type `exit`. Do not run `esp-idf-shell.bash` directly; it is the internal initialization file.
 
-## 5. Verify and build
+## 5. Verify, then open the project guide
 
 Once **ESP-IDF ready** appears, run:
 
@@ -115,13 +117,7 @@ Once **ESP-IDF ready** appears, run:
 idf.py --version
 ```
 
-Expect the installed version (v6.1 for this course). In a firmware project directory containing a top-level `CMakeLists.txt`, run:
-
-```text
-idf.py build
-```
-
-For a new project, select the actual chip with `idf.py set-target esp32s3` before the first build. Follow the [lesson](../install-esp-idf.md) to create `hello_world`, identify the serial port, and flash it. Each operating system uses its own serial-port names and USB permissions.
+Expect the installed version (v6.1 for this course). For build, ports, and flash on the **course project**, follow [esp32-s3/README.md](../esp32-s3/README.md) — not a separate `hello_world` copy unless you created one for practice in the install guide.
 
 ## VS Code extension builds
 

@@ -1,35 +1,53 @@
-# Install and Verify ESP-IDF on Windows
+# Install and Verify ESP-IDF
 
-Follow these steps in order. This guide starts with Git Bash and uses Windows PowerShell for ESP-IDF installation, builds, and flashing on an ESP32-S3 board. Complete each verification before continuing.
+Follow these steps for **Windows**, **macOS**, or **Linux**. Install ESP-IDF v6.1 with ESP32-S3 tools, then build (and optionally flash) on an ESP32-S3 board. Complete each verification before continuing.
 
 You need internet access, disk space for the framework and tools, and an ESP32-S3 board with a USB data cable for the final hardware steps. Software installation and building can be completed without a board.
 
-## Automated terminal launcher
+## Which section to follow
 
-```
-┌───────────┐               ┌──────────────────┐                 ┌──────────────┐
-│ Git Bash  │ ───launch───► │ PowerShell       │ ───activate───► │ ESP-IDF      │
-│ (.sh)     │               │ (child session)  │                 │ ready        │
-└───────────┘               └──────────────────┘                 └──────┬───────┘
-                                                                        │
-                                                                        ▼
-                                                              ┌─────────────────┐
-                                                              │  idf.py build   │
-                                                              │  idf.py flash   │
-                                                              └─────────────────┘
-```
+| Platform | Install and activate (this file) | Then go to |
+|---|---|---|
+| Windows | [Windows setup](#windows-setup) | [esp32-s3/README.md](esp32-s3/README.md) |
+| macOS | [macOS and Linux setup](#macos-and-linux-setup) | [esp32-s3/README.md](esp32-s3/README.md) |
+| Linux (including WSL) | [macOS and Linux setup](#macos-and-linux-setup) | [esp32-s3/README.md](esp32-s3/README.md) |
 
-After preparing the framework and prerequisites, use the [cross-platform launchers](scripts/README.md) instead of repeating the environment commands manually. From Git Bash in the included `esp32-s3` firmware project root:
+**Stop this guide** when `idf.py --version` reports ESP-IDF v6.1 in an activated terminal. Build, flash, and daily launcher steps live in the project README — do not search for a second full lab inside this file.
 
-```bash
-bash ../scripts/start-esp-idf.sh
-```
+WSL is a **Linux** environment. Install a Linux ESP-IDF toolchain inside WSL; do not reuse a Windows compiler from WSL Bash. Flashing a USB board from WSL2 often needs extra USB passthrough (`usbipd` on Windows, or flash from native Windows/macOS/Linux instead).
 
-For first-time ESP32-S3 tool installation, add `-InstallTools`. Wait for **ESP-IDF ready** and continue in the PowerShell window. On macOS and Linux, the same launcher opens Bash; see the script README for paths and installation options. The numbered steps below explain the setup and provide a manual fallback.
+For optional VS Code Build-button setup, see [vscode-esp-idf.md](vscode-esp-idf.md) after install. Launcher flags and custom paths: [scripts/README.md](scripts/README.md).
 
-For VS Code Build-button setup, continue with the [ESP-IDF extension guide](vscode-esp-idf.md) after installation. For the checked-in firmware project, use the [ESP32-S3 project instructions](esp32-s3/README.md).
+## Example paths (all platforms)
 
-## 1. Install Git for Windows, including Git Bash
+Activate the **framework** directory — the folder that contains `export.ps1` / `export.sh` and `tools/idf.py`. Do not stop at the parent directory.
+
+> [!NOTE]
+> Examples used in these lessons and launchers (when `IDF_PATH` is unset). Use the paths on **your** computer.
+>
+> | Platform | Parent directory | Actual framework (`IDF_PATH`) | Tools (typical default) |
+> |---|---|---|---|
+> | Windows | `D:\dev\esp` | `D:\dev\esp\v6.1\esp-idf` | `%USERPROFILE%\.espressif` |
+> | macOS | `~/esp` | `~/esp/esp-idf` | `~/.espressif` |
+> | Linux | `~/esp` | `~/esp/esp-idf` | `~/.espressif` |
+>
+> On Windows, PowerShell `D:\dev\esp\v6.1\esp-idf` is Git Bash `/d/dev/esp/v6.1/esp-idf` (same folder, different spelling). Avoid spaces in framework and project paths.
+
+---
+
+## Windows setup
+
+> [!IMPORTANT]
+> Pick **one** Windows track and stay on it.
+>
+> | Track | Steps | Skip |
+> |---|---|---|
+> | **A — Course scripts (recommended)** | W1 → W6 below (`git clone`, `install.ps1`, `export.ps1`) | W5 EIM alternative |
+> | **B — EIM only** | Official Windows guide + EIM **Open IDF Terminal**, then [esp32-s3/README.md](esp32-s3/README.md) | W4–W6 script commands |
+>
+> W2 PowerShell is for **install and first activation only**. Daily lab work uses the launcher from the `esp32-s3` folder (see the project README).
+
+### W1. Install Git for Windows, including Git Bash
 
 1. Download Git for Windows from the official [Windows download page](https://git-scm.com/install/windows).
 2. Run the installer. Include Git Bash and select **Git from the command line and also from 3rd-party software** when choosing the `PATH` option.
@@ -43,7 +61,7 @@ For VS Code Build-button setup, continue with the [ESP-IDF extension guide](vsco
 
 Both commands must print version information. If already installed, perform these checks and continue.
 
-## 2. Open PowerShell from Git Bash
+### W2. Open PowerShell from Git Bash
 
 In **Git Bash**, run:
 
@@ -51,13 +69,11 @@ In **Git Bash**, run:
 env -u MSYSTEM powershell.exe -NoLogo -NoExit
 ```
 
-Wait for a prompt beginning with `PS`. **All subsequent commands use PowerShell**, unless explicitly labeled otherwise. Keep this session open throughout setup.
+Wait for a prompt beginning with `PS`. **All subsequent Windows setup commands use PowerShell**, unless explicitly labeled otherwise. Keep this session open throughout setup.
 
 Git Bash uses MSYS/MinGW, which the installed ESP-IDF tool manager rejects. The command above opens Windows PowerShell and removes the inherited `MSYSTEM` marker from that child process. Do not run `install.sh` or source `export.sh` in Git Bash for this Windows setup.
 
-Git Bash uses paths such as `/d/dev/esp`; PowerShell uses `D:\dev\esp`. WSL is a separate Linux environment and requires a separate Linux toolchain.
-
-## 3. Verify Python and Git in PowerShell
+### W3. Verify Python and Git in PowerShell
 
 Run:
 
@@ -69,9 +85,9 @@ git --version
 
 The first command clears any remaining MSYS marker in the Windows PowerShell session; it prints nothing. Expect Python 3.10 or newer and a Git version from the next two commands. Python 3.11.9 was used for the command verification on this computer. Supported versions are listed in [Espressif's prerequisites](https://docs.espressif.com/projects/idf-im-ui/en/latest/prerequisites.html).
 
-### If Python or Git is not recognized
+#### If Python or Git is not recognized
 
-First refresh the current session from the saved Windows environment. This also handles a child PowerShell process inheriting incomplete settings from another shell:
+First refresh the current session from the saved Windows environment:
 
 ```powershell
 $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
@@ -98,22 +114,21 @@ python --version
 
 If neither command works, install a supported Python release from [python.org](https://www.python.org/downloads/windows/). In the traditional installer, enable **Add python.exe to PATH**. An existing installation can be modified to enable this option; see [Python's Windows instructions](https://docs.python.org/3.11/using/windows.html#finding-the-python-executable). Alternatively, EIM can install missing prerequisites as described below.
 
-After installing Python or Git, close PowerShell and its parent Git Bash, reopen Git Bash, repeat Step 2, and verify both version commands. If Python opens Microsoft Store, check Windows **App execution aliases** and ensure `PATH` selects the installed interpreter.
+After installing Python or Git, close PowerShell and its parent Git Bash, reopen Git Bash, repeat Step W2, and verify both version commands. If Python opens Microsoft Store, check Windows **App execution aliases** and ensure `PATH` selects the installed interpreter.
 
 **Continue only when both `python --version` and `git --version` succeed.**
 
-## 4. Prepare the ESP-IDF v6.1 source
+### W4. Prepare the ESP-IDF v6.1 source
 
-Use these paths or substitute your own consistently. Avoid spaces in framework and project paths.
+| Purpose | Example path | Notes |
+| --- | --- | --- |
+| Parent directory | `D:\dev\esp` | Holds version folders such as `v6.1`. Not `IDF_PATH`. |
+| Framework (`IDF_PATH`) | `D:\dev\esp\v6.1\esp-idf` | Actual ESP-IDF source. Contains `export.ps1` and `tools/idf.py`. |
+| Practice projects | `D:\dev\projects` | Outside the framework tree. |
 
-| Purpose | Path |
-| --- | --- |
-| Framework | `D:\dev\esp\v6.1\esp-idf` |
-| Practice projects | `D:\dev\projects` |
+All clone, activate, and build commands use the **framework** path, not the parent directory.
 
-### If the framework is already downloaded
-
-Check it in PowerShell:
+#### If the framework is already downloaded
 
 ```powershell
 Set-Location D:\dev\esp\v6.1\esp-idf
@@ -131,9 +146,7 @@ git submodule update --init --recursive
 
 Expect `v6.1` for the course checkout. If you extracted an archive without Git metadata, skip the Git commands; use a complete official package containing submodules. An automatically generated GitHub ZIP may omit them.
 
-### If the framework directory does not exist
-
-Run these commands only for a new destination:
+#### If the framework directory does not exist
 
 ```powershell
 New-Item -ItemType Directory -Force D:\dev\esp\v6.1 | Out-Null
@@ -144,9 +157,9 @@ git describe --tags --always
 
 Expect `v6.1`. Do not clone over an existing source directory.
 
-### Framework and compiler are stored separately
+#### Framework and compiler are stored separately
 
-The framework directory `D:\dev\esp\v6.1\esp-idf` contains source, examples, and build scripts. The default tools directory on Windows is `%USERPROFILE%\.espressif`, unless `IDF_TOOLS_PATH` selects another location. The compiler is installed below that tools directory; it is not inside the framework checkout.
+The framework directory contains source, examples, and build scripts. The default tools directory on Windows is `%USERPROFILE%\.espressif`, unless `IDF_TOOLS_PATH` selects another location. The compiler is installed below that tools directory; it is not inside the framework checkout.
 
 After activation, inspect your actual locations:
 
@@ -157,9 +170,7 @@ $env:IDF_TOOLS_PATH
 (Get-Command cmake).Source
 ```
 
-For the verified tool version, the compiler is under `%USERPROFILE%\.espressif\tools\xtensa-esp-elf\esp-15.2.0_20251204\xtensa-esp-elf\bin`. The user directory, tools root, and tool version may differ on your computer.
-
-## 5. Install the ESP32-S3 tools
+### W5. Install the ESP32-S3 tools
 
 Downloading source files does not install the compiler or ESP-IDF Python environment. In the same PowerShell session, run:
 
@@ -168,7 +179,7 @@ Set-Location D:\dev\esp\v6.1\esp-idf
 .\install.ps1 esp32s3
 ```
 
-Wait for the script to finish successfully and print `All done!`. The initial tool downloads can exceed 1 GB, and extracted tools need additional space. Keep the terminal open while downloads, extraction, and Python package installation run. It downloads Windows tools and creates the ESP-IDF Python environment, normally under your Windows user profile's `.espressif` directory. The framework and tools can be stored separately. Do not move tool folders after installation.
+Wait for the script to finish successfully and print `All done!`. The initial tool downloads can exceed 1 GB. Keep the terminal open while downloads run. Do not move tool folders after installation.
 
 If PowerShell blocks a trusted installation script, run this session-scoped command and retry:
 
@@ -178,17 +189,17 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 
 If institutional policy prevents this change, contact your IT administrator. If installation reports a download or Python dependency error, resolve it before activation.
 
-### Alternative: use Espressif Installation Manager (EIM)
+#### Alternative: Espressif Installation Manager (EIM) on Windows
 
-EIM is Espressif's recommended installer for v6.1. Use this alternative if you prefer a managed installation rather than the source-and-script route above:
+EIM is Espressif's recommended installer for v6.1:
 
 1. Follow the official [Windows installation guide](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/windows-setup.html).
 2. Install prerequisites when prompted. Select v6.1 through the custom installation options; Easy Installation may select a different release.
 3. Select ESP32-S3 support when offered and wait for completion.
 4. Open **Manage Installations → Open Dashboard**, select the installed environment, and choose **Open IDF Terminal**.
-5. Continue with the verification commands in Step 6. Use the framework path configured by EIM, which may differ from this guide.
+5. Continue with the verification commands in Step W6. Use the framework path configured by EIM, which may differ from this guide.
 
-## 6. Activate and verify ESP-IDF
+### W6. Activate and verify ESP-IDF
 
 For the script-based installation, run in the same PowerShell session:
 
@@ -198,7 +209,7 @@ Set-Location D:\dev\esp\v6.1\esp-idf
 . .\export.ps1
 ```
 
-`PYTHONUTF8` enables Python UTF-8 mode for this session and avoids the console encoding warning observed during verification. The first dot followed by a space loads the activation script into the current session. For EIM, use its activated IDF terminal instead.
+`PYTHONUTF8` enables Python UTF-8 mode for this session. The first dot followed by a space loads the activation script into the current session. For EIM, use its activated IDF terminal instead.
 
 Then verify:
 
@@ -213,135 +224,181 @@ ninja --version
 
 Expect the intended ESP-IDF v6.1 release, the correct framework directory, and version output for all tools. Python should now belong to the ESP-IDF environment. Do not continue if any command fails.
 
-If activation reports `python` is not recognized followed by an invalid expression after `.`, return to Step 3. The second error follows from the missing Python command. If activation reports a missing Python environment or compiler, complete Step 5 first.
+Activation affects this terminal only. Keep PowerShell open for verification; type `exit` when finished.
 
-Activation affects this terminal only. Running a short-lived `powershell.exe -Command ...` does not activate the parent Git Bash session. Keep PowerShell open; type `exit` when you want to return to Git Bash.
+**Windows Track A complete.** Next: [esp32-s3/README.md](esp32-s3/README.md) (open a terminal in that folder, run the launcher, then build).
 
-## 7. Choose the firmware project
+---
 
-For this repository, use the included [ESP32-S3 Hello World project](esp32-s3/README.md). Open its directory, `nd1/docs/week03/lessons/esp32-s3`, as your working directory and continue to Step 8. No source copying is needed.
+## macOS and Linux setup
 
-### Optional: create a separate practice copy
+Use Bash (or the course launcher, which opens Bash). Do not mix a Windows ESP-IDF install with WSL Bash.
 
-The following commands are an alternative for a scratch project outside the repository. They are not required for the included course project.
+> [!IMPORTANT]
+> Pick **one** Unix track and stay on it.
+>
+> | Track | Steps | Skip |
+> |---|---|---|
+> | **A — Course scripts (recommended)** | U1 → U4 (`git clone`, `install.sh`, `export.sh`) | U3 EIM alternative |
+> | **B — EIM** | Official macOS/Linux guide + managed IDF terminal, then [esp32-s3/README.md](esp32-s3/README.md) | U2–U4 script commands |
 
-Copy the official example into a separate project directory. This keeps practice changes outside the framework installation. First check the destination:
+### U1. Install prerequisites
 
-```powershell
-Test-Path D:\dev\projects\hello_world
+**Ordered spine (Track A):** install OS packages from Espressif → verify Git/Python → clone framework (U2) → `./install.sh esp32s3` (U3) → `. ./export.sh` (U4) → open [esp32-s3/README.md](esp32-s3/README.md).
+
+Prerequisites by OS (packages and system tools):
+
+- [macOS setup (ESP-IDF v6.1)](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/macos-setup.html)
+- [Linux setup (ESP-IDF v6.1)](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/linux-setup.html)
+- Script-based clone details (matches this course’s launcher default): [Linux and macOS legacy setup](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/linux-macos-setup-legacy.html)
+
+Then verify:
+
+```bash
+git --version
+python3 --version
 ```
 
-Continue with the copy only if this prints `False`. If it prints `True`, use a new project name consistently in the commands below, or use your existing project if it is already your practice copy.
+Expect a recent Git and Python 3.10 or newer (see Espressif’s prerequisites for supported versions).
+
+### U2. Prepare the ESP-IDF v6.1 source
+
+| Purpose | Example path | Notes |
+| --- | --- | --- |
+| Parent directory | `~/esp` | Holds the clone. Not `IDF_PATH` by itself when the clone is nested. |
+| Framework (`IDF_PATH`) | `~/esp/esp-idf` | Actual ESP-IDF source. Contains `export.sh` and `tools/idf.py`. |
+| Practice projects | `~/esp/projects` (example) | Outside the framework tree, or use the course `esp32-s3` folder. |
+
+#### If the framework is already downloaded
+
+```bash
+cd ~/esp/esp-idf
+test -f ./tools/idf.py && echo ok
+test -f ./install.sh && echo ok
+test -f ./examples/get-started/hello_world/CMakeLists.txt && echo ok
+git describe --tags --always
+git submodule update --init --recursive
+```
+
+Expect `v6.1` for the course checkout.
+
+#### If the framework directory does not exist
+
+```bash
+mkdir -p ~/esp
+cd ~/esp
+git clone --branch v6.1 --recursive https://github.com/espressif/esp-idf.git
+cd ~/esp/esp-idf
+git describe --tags --always
+```
+
+Expect `v6.1`. Do not clone over an existing source directory.
+
+#### Framework and compiler are stored separately
+
+Tools normally land under `~/.espressif` unless `IDF_TOOLS_PATH` selects another location. After activation:
+
+```bash
+echo "$IDF_PATH"
+echo "$IDF_TOOLS_PATH"
+command -v xtensa-esp32s3-elf-gcc
+command -v cmake
+```
+
+### U3. Install the ESP32-S3 tools
+
+```bash
+cd ~/esp/esp-idf
+./install.sh esp32s3
+```
+
+Wait until the installer finishes successfully. Downloads can exceed 1 GB. Do not move tool folders after installation.
+
+#### Alternative: Espressif Installation Manager (EIM) on macOS/Linux
+
+For v6.1, Espressif also documents EIM as the recommended installer on macOS (and supports managed installs on Linux). Follow the official OS page linked in Step U1, select **v6.1** and ESP32-S3 support, then open the IDF terminal or activate the installed environment. Use that framework path for later steps; it may differ from `~/esp/esp-idf`.
+
+### U4. Activate and verify ESP-IDF
+
+```bash
+cd ~/esp/esp-idf
+. ./export.sh
+```
+
+The leading `.` and space matter. Then verify:
+
+```bash
+idf.py --version
+echo "$IDF_PATH"
+command -v idf.py
+python --version
+cmake --version
+ninja --version
+```
+
+Expect ESP-IDF v6.1, the correct framework directory, and version output for all tools. Activation affects this shell only.
+
+**macOS / Linux Track A complete.** Next: [esp32-s3/README.md](esp32-s3/README.md) (open a terminal in that folder, run the launcher, then build).
+
+---
+
+## Next lab (all platforms)
+
+When `idf.py --version` works, leave this install guide and follow:
+
+**[Hello World on ESP32-S3](esp32-s3/README.md)** — activate with `bash ../scripts/start-esp-idf.sh`, then `set-target`, `build`, flash, and monitor.
+
+Optional scratch copy of Espressif’s example (not required for the course project):
+
+**Windows (PowerShell, activated):**
 
 ```powershell
 New-Item -ItemType Directory -Force D:\dev\projects | Out-Null
 Copy-Item -Recurse "$env:IDF_PATH\examples\get-started\hello_world" D:\dev\projects\hello_world
-Set-Location D:\dev\projects\hello_world
 ```
 
-Verify the copied project:
+**macOS / Linux (Bash, activated):**
 
-```powershell
-Test-Path .\CMakeLists.txt
-Test-Path .\main
+```bash
+mkdir -p ~/esp/projects
+cp -r "$IDF_PATH/examples/get-started/hello_world" ~/esp/projects/hello_world
 ```
 
-Both checks must print `True`.
+---
 
-## 8. Select the target and build
-
-For the ESP32-S3 board used in this guide:
-
-```powershell
-idf.py set-target esp32s3
-idf.py build
-```
-
-Use the actual chip target if your board is different. For example, an original ESP32 uses `esp32`. The target identifies the chip family, not the board's product name.
-
-`set-target` reconfigures the project and can reset existing configuration. Run it when creating the practice project or intentionally changing targets.
-
-The first invocation of `idf.py` and the first build can take time while Python modules load, ESP-IDF configures the project, and components compile. Wait for the PowerShell prompt to return; do not start a second build in the same directory. A successful build ends with a completion message and flashing instructions. Resolve build errors before connecting the result to a hardware test.
-
-## 9. Connect the board and identify its port
-
-1. Connect the board using a USB data cable.
-2. Open **Windows Device Manager → Ports (COM & LPT)**.
-3. Note the port that appears when the board is connected, for example `COM5`.
-4. If the board has multiple USB connectors, use the connector recommended by its manual for programming and serial output.
-
-If no port appears, try another data cable or USB port and check the board documentation. A USB-to-UART bridge may require the matching driver from its manufacturer. Native USB connections can appear differently and may receive another COM number after reset.
-
-Close other serial monitors before flashing or opening the ESP-IDF monitor.
-
-## 10. Flash and monitor
-
-Replace `COM5` with your board's port:
-
-```powershell
-idf.py -p COM5 flash monitor
-```
-
-Flashing writes the application to the board and replaces its current firmware. The monitor then displays serial output. Look for `Hello world!` and the example's runtime messages. Press **Ctrl+]** to exit the monitor.
-
-If flashing cannot connect, follow your board's download-mode procedure. On many boards, this means holding **BOOT**, pressing and releasing **RESET/EN**, then releasing **BOOT** before retrying. Button names and timing depend on the board.
-
-A successful build verifies the software toolchain. Successful flashing and readable application output verify the programming and serial connection as well. The `hello_world` example does not provide an LED test.
-
-## 11. Daily workflow
-
-For each new development session:
-
-1. From the included `esp32-s3` firmware project root, run the [terminal launcher](scripts/README.md) (`bash ../scripts/start-esp-idf.sh` in Git Bash). Alternatively, open the EIM IDF terminal or follow Steps 2, 3, and 6 manually. Tool installation is normally needed only once.
-2. Confirm you are in the firmware project directory containing its top-level `CMakeLists.txt`.
-3. Build and, when ready, flash and monitor:
-
-   ```powershell
-   idf.py build
-   idf.py -p COM5 flash monitor
-   ```
-
-You do not need to reinstall the tools or run `set-target` every session. To open the project's configuration menu, use `idf.py menuconfig` from the project directory.
-
-For extension builds, use the [VS Code workflow](vscode-esp-idf.md). For cleanup commands, see [Clean the project](esp32-s3/README.md#clean-the-project).
-
-## 12. Troubleshooting
+## Troubleshooting
 
 | Symptom | What to check or do |
 | --- | --- |
-| `MSys/Mingw is not supported` | You are using Git Bash/MSYS or a child shell inheriting `MSYSTEM`. Follow the Git Bash instructions in Step 2, or open the EIM IDF terminal directly. |
-| `python` is not recognized, followed by a dot-sourcing error | Complete the Python prerequisite check in Step 3. Verify `python --version`, install the tools if needed, and retry activation. |
-| Extension reports `cmake was not found` | Configure the extension environment using the [VS Code guide](vscode-esp-idf.md); terminal activation alone does not configure the extension host. |
-| `idf.py` is not recognized | Open the matching EIM IDF terminal or activate the script-based environment in this terminal. |
-| Wrong ESP-IDF version is reported | Close the terminal and activate the intended installation. Check `$env:IDF_PATH` and `Get-Command idf.py`. |
-| Python environment or compiler is missing | Confirm the installation completed. Repair the selected installation with EIM, or rerun `install.ps1 esp32s3` for the script-based setup, then activate it. |
-| Script execution is disabled | Use the session-scoped policy command in Step 5; check institutional policy if it remains blocked. |
-| Missing submodule files | For a Git checkout, run `git submodule update --init --recursive` in the framework directory. For an incomplete ZIP, use a complete official package or EIM. |
-| `CMakeLists.txt` cannot be found | Run commands from the firmware project root, such as the included `esp32-s3` folder, where the top-level `CMakeLists.txt` exists. |
-| COM port is absent or access is denied | Check the cable, connector, driver, and Device Manager; close any other program using the port. |
-| Flashing stays at `Connecting...` | Verify the port and chip target, then follow the board's download-mode procedure. |
-| Serial output is unreadable or absent | Check the monitor port and configured console interface. Press RESET/EN after opening the monitor; the example normally uses 115200 baud. |
-| Build errors after moving a project or changing ESP-IDF versions | Reactivate the intended environment and run `idf.py fullclean`, then rebuild. This removes generated build files; preserve any project work before changing configuration. |
+| `MSys/Mingw is not supported` | Windows: you are in Git Bash/MSYS or a child shell inheriting `MSYSTEM`. Follow Step W2, or open the EIM IDF terminal. |
+| `python` / `python3` is not recognized | Complete the prerequisite check for your OS (W3 or U1). |
+| Extension reports `cmake was not found` | Configure the extension using the [VS Code guide](vscode-esp-idf.md); terminal activation alone does not configure the extension host. |
+| `idf.py` is not recognized | Activate this terminal (launcher, `export.ps1` / `export.sh`, or EIM IDF terminal). |
+| Wrong ESP-IDF version | Close the terminal and activate the intended installation. Check `IDF_PATH` and `idf.py --version`. |
+| Python environment or compiler is missing | Finish tool install: `install.ps1 esp32s3` (Windows) or `./install.sh esp32s3` (macOS/Linux), then activate. |
+| Script execution is disabled (Windows) | Use the session-scoped policy command in Step W5. |
+| Missing submodule files | Run `git submodule update --init --recursive` in the framework directory. |
+| `CMakeLists.txt` cannot be found | Run commands from the firmware project root (`esp32-s3`). |
+| Serial port absent or access denied | Check cable, connector, drivers; on Linux check group permissions; close other programs using the port. |
+| Flashing stays at `Connecting...` | Verify port and chip target; follow the board’s download-mode procedure. |
+| Serial output unreadable or absent | Check port and console settings; press RESET/EN; example normally uses 115200 baud. |
+| Build errors after moving a project or changing ESP-IDF versions | Reactivate the intended environment and run `idf.py fullclean`, then rebuild. |
 
-## 13. Completion checklist
+## Completion checklist
 
-Record the following evidence before proceeding to the next lesson:
+- [ ] Git and Python work in the shell you will use for ESP-IDF.
+- [ ] `idf.py --version` reports the course’s v6.1 release.
+- [ ] `IDF_PATH` identifies the intended **framework** directory (not only the parent).
+- [ ] You opened [esp32-s3/README.md](esp32-s3/README.md) for build and flash (course project path).
+- [ ] `idf.py build` completes successfully in that project (record in lab notes).
+- [ ] Flashing and `Hello world!` on the serial monitor (when hardware is available).
+- [ ] You can close the terminal, open a fresh activated terminal via the launcher, and build again.
 
-- [ ] Git for Windows is installed, and `git --version` works in Git Bash and PowerShell.
-- [ ] `idf.py --version` reports the course's v6.1 release.
-- [ ] `$env:IDF_PATH` identifies the intended installation.
-- [ ] The practice project is outside the ESP-IDF framework directory.
-- [ ] The project uses the correct chip target.
-- [ ] `idf.py build` completes successfully.
-- [ ] Flashing completes successfully on the selected COM port.
-- [ ] The serial monitor displays `Hello world!` from the connected board.
-- [ ] You can close the terminal, open a fresh activated terminal, and build again.
-
-Save the version output, build result, COM port, and a screenshot or copy of the serial output in your lab notes. If hardware is unavailable, record the build result and mark flashing and runtime verification as pending.
+Save version output, build result, port name, and serial output in your lab notes. If hardware is unavailable, record the build result and mark flashing as pending.
 
 ## Verification record
 
-Software setup was exercised on this Windows computer on **19 October 2026**, using Windows PowerShell launched from the workspace environment. Existing Git and Python installations were reused. The Git Bash version commands were also run using the installed Windows Git Bash executable.
+Software setup was exercised on **Windows** on **19 October 2026**, using Windows PowerShell. Existing Git and Python installations were reused.
 
 | Check | Observed result |
 | --- | --- |
@@ -353,20 +410,23 @@ Software setup was exercised on this Windows computer on **19 October 2026**, us
 | Tool installation | `install.ps1 esp32s3` completed successfully |
 | Activation | Python dependency checks passed; `idf.py --version` reported `ESP-IDF v6.1` |
 | Build utilities | CMake 4.0.3; Ninja 1.12.1 |
-| Practice project | `D:\dev\projects\hello_world` |
-| Target and build | `esp32s3`; build completed successfully and generated application and bootloader binaries |
+| Course project (primary) | `nd1/docs/week03/lessons/esp32-s3` |
+| Optional practice copy | `D:\dev\projects\hello_world` (verifier-only; not required) |
+| Target and build | `esp32s3`; build completed successfully |
 | Fresh-session activation and rebuild | Passed in a new PowerShell process |
 | Flashing and serial output | Pending hardware verification |
-
-Different Git versions can appear when shells select different installed copies. The important prerequisite is that Git resolves successfully; record the version you actually use. Installation GUI steps and the Python/Git installation branches were documented from official instructions; those installers were not rerun because the prerequisites were already present.
+| Native macOS / Linux install in this record | Not exercised here; follow the macOS/Linux section and official Espressif guides |
+| Git versions | Git Bash reported 2.54.x; PowerShell resolved a different installed Git (2.43.x). Both must resolve; record the version you use. |
 
 ## References
 
-- [VS Code ESP-IDF extension: Manual configuration of ESP-IDF and tools](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/installation.html#manual-configuration-of-esp-idf-and-tools-in-the-esp-idf-extension-for-vs-code)
-
-- [Git for Windows download and installation](https://git-scm.com/install/windows)
+- [ESP-IDF terminal launchers (this course)](scripts/README.md)
+- [VS Code ESP-IDF extension: Manual configuration](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/installation.html#manual-configuration-of-esp-idf-and-tools-in-the-esp-idf-extension-for-vs-code)
+- [Git for Windows](https://git-scm.com/install/windows)
 - [ESP-IDF v6.1: Windows installation](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/windows-setup.html)
+- [ESP-IDF v6.1: macOS installation](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/macos-setup.html)
+- [ESP-IDF v6.1: Linux installation](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/linux-setup.html)
+- [ESP-IDF v6.1: Linux and macOS legacy (script-based) setup](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/linux-macos-setup-legacy.html)
 - [ESP-IDF v6.1: Start a project on Windows](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/windows-start-project.html)
-- [ESP-IDF v6.1: Script-based tool setup](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/windows-setup-update.html)
+- [ESP-IDF v6.1: Start a project on Linux and macOS](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/linux-macos-start-project.html)
 - [ESP-IDF Installation Manager: After installing](https://docs.espressif.com/projects/idf-im-ui/en/latest/after_installing.html)
-- [ESP-IDF tool manager source: MSYS/MinGW environment check](https://github.com/espressif/esp-idf/blob/v6.1/tools/idf_tools.py)

@@ -31,9 +31,9 @@ if [ ! -f "$idf_path/export.sh" ] || [ ! -f "$idf_path/tools/idf.py" ]; then
     exit 1
 fi
 if [ ! -d "$project_path" ]; then echo "Project directory does not exist: $project_path" >&2; exit 1; fi
-export KMUTT_IDF_PATH KMUTT_PROJECT_PATH KMUTT_INSTALL_TOOLS KMUTT_TARGET
-KMUTT_IDF_PATH=$(cd -- "$idf_path" && pwd)
-KMUTT_PROJECT_PATH=$(cd -- "$project_path" && pwd)
-KMUTT_INSTALL_TOOLS=$install_tools
-KMUTT_TARGET=$target
+export ND69_IDF_PATH ND69_PROJECT_PATH ND69_INSTALL_TOOLS ND69_TARGET
+ND69_IDF_PATH=$(cd -- "$idf_path" && pwd)
+ND69_PROJECT_PATH=$(cd -- "$project_path" && pwd)
+ND69_INSTALL_TOOLS=$install_tools
+ND69_TARGET=$target
 exec bash --noprofile --rcfile "$script_dir/esp-idf-shell.bash" -i
