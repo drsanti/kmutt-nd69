@@ -8,6 +8,8 @@
 
 Install Git, Python, and ESP-IDF on Windows, macOS, or Linux, then build the included ESP32-S3 Hello World project using a terminal or the VS Code ESP-IDF extension. The Windows path is verified in detail; macOS and Linux follow the same course steps with Espressif’s OS guides linked for prerequisites.
 
+**Windows:** use **PowerShell** for all ESP-IDF commands (`idf.py`, `export.ps1`, build, flash). Do **not** use Git Bash — MSYS/MinGW breaks Espressif’s toolchain.
+
 ## Table of contents
 
 - [Lessons](lessons/README.md)

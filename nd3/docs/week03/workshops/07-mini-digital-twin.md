@@ -112,10 +112,23 @@ with robotos.Node("twin") as node:
 
 ## Step 3 — Run the full loop
 
+> New terminal? See [Every new terminal](README.md#every-new-terminal-copy-paste)
+> (venv + `robotos` on PATH, work from `code/`).
+
 ```bash
+# macOS / Linux
+cd code
 python3 07-machine.py # terminal 1
 python3 07-twin.py    # terminal 2
 robotos ui            # terminal 3 — watch the two-node graph
+```
+
+```powershell
+# Windows PowerShell — python, not python3
+cd code
+python 07-machine.py  # terminal 1
+python 07-twin.py     # terminal 2
+robotos ui            # terminal 3
 ```
 
 The twin prints the machine's speed flat at `0.00`, **rising to
@@ -186,6 +199,7 @@ machine          /state          twin            /cmd           machine
 
 | Symptom | Try |
 |---|---|
+| `robotos` not recognized | new terminal lost PATH — [Every new terminal](README.md#every-new-terminal-copy-paste) |
 | Twin prints nothing after startup | machine not running — start `07-machine.py` first |
 | Twin sees 0.00 forever | START never reached it — check `/machine/01/cmd` with `topic echo` |
 | Machine state silent in echo | discovery lag — give it a few seconds, or pin endpoints |

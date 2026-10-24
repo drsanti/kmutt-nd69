@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package robotos.sensor.v1;
+
+message Vector3 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+// IMU sample. Conventions (see docs): timestamp_ns is Unix epoch
+// nanoseconds; acceleration in m/s^2; angular_velocity in rad/s.
+message Imu {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  Vector3 acceleration = 3;
+  Vector3 angular_velocity = 4;
+}

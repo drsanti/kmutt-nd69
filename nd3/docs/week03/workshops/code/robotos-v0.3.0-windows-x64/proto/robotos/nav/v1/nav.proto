@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package robotos.nav.v1;
+
+import "robotos/geometry/v1/geometry.proto";
+
+// Odometry — pose + velocity in a frame. Covariances are row-major
+// 6x6 (x y z roll pitch yaw); all-zero = unknown.
+message Odometry {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;         // usually "odom"
+  string child_frame_id = 3;   // usually "base_link"
+  robotos.geometry.v1.Pose pose = 4;
+  repeated double pose_covariance = 5;   // 36 values
+  robotos.geometry.v1.Twist twist = 6;
+  repeated double twist_covariance = 7;  // 36 values
+}

@@ -37,13 +37,15 @@ The selection configures the extension's environment. If no installation is list
 
 For the script-based installation, configure `idf.customExtraVars` in the project's `.vscode/settings.json`. These values belong to the extension's child processes; they do not change the system environment. The checked-in settings demonstrate a working Windows setup and must be regenerated on another computer.
 
-1. From Git Bash **in the project root**, activate the existing installation:
+1. In **Windows PowerShell** (not Git Bash), from the project root, activate the existing installation:
 
-   ```bash
-   bash ../scripts/start-esp-idf.sh
+   ```powershell
+   ..\scripts\start-esp-idf.cmd
    ```
 
-2. At the resulting **PowerShell** prompt, verify the tools:
+   Or: `. ..\scripts\start-esp-idf.ps1`
+
+2. At the **PowerShell** prompt, verify the tools:
 
    ```powershell
    idf.py --version
@@ -141,7 +143,7 @@ Reopen the same project folder and use the extension's Build command. The saved 
 | `Wait for ESP-IDF build to finish` | Let the current build finish. If a failed build left the extension busy, reload the window before retrying. |
 | Full clean reports missing `CMakeCache.txt` | The build folder may already be empty or deleted. Run Build to configure it again. |
 | Component manager reports a missing version value | Ensure the exported `ESP_IDF_VERSION` is included with the manual environment. |
-| `idf.py` is missing in Git Bash | Run the launcher and use its PowerShell prompt. The parent Git Bash session is not activated. |
+| `MSys/Mingw is not supported` or `idf.py` missing in Git Bash | Close Git Bash. Open **PowerShell**, run the launcher (§ Existing installation), and use that session. |
 | GCC-option diagnostics appear in the editor | Follow the project's [clangd instructions](esp32-s3/README.md#editor-diagnostics-vs-code-with-clangd); this is separate from the extension's build environment. |
 
 ## Verification record

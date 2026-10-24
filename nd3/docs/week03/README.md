@@ -20,5 +20,8 @@ and finish by building a mini digital twin.
 - Python ≥ 3.10 — the workshop language (SDK installs from a
   bundled wheel, no compilation)
 - One laptop — no network, no board, no compiler
+- **Windows shell:** **PowerShell** only (not Git Bash) — for
+  robotos this week, and for ESP-IDF (`idf.py`) when you install
+  it for the board next week
 
 <sub>[← Back to course root](../../../README.md)</sub>

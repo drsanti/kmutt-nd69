@@ -47,45 +47,66 @@ dozens of nodes without an N² web of direct connections.
 
 ## Step 1 — Install the Python SDK
 
-The SDK ships as a wheel in `code/` — one command, fully offline.
+> Session setup reminder: [Every new terminal](README.md#every-new-terminal-copy-paste).
+
+The SDK ships as a wheel **inside `code/`** (next to the `.py`
+scripts). Run these from `code/` — not from the `robotos-v0.3.0-*`
+package folder.
 
 **macOS / Linux:**
 
 ```bash
-# recommended: an isolated environment (venv)
+cd code
 python3 -m venv .venv && source .venv/bin/activate
-
-# install the bundled wheel — native library included, no env vars
-pip install code/robotos-0.3.0-py3-none-any.whl protobuf
+pip install ./robotos-0.3.0-py3-none-any.whl protobuf
 ```
 
-**Windows** (PowerShell):
+**Windows** — **PowerShell only** (not Git Bash):
 
 ```powershell
-# venv — activation script differs on Windows
+cd code        # folder that contains the .whl and 02-*.py — NOT robotos-v0.3.0-windows-x64
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1        # cmd.exe: .venv\Scripts\activate.bat
-
-pip install code\robotos-0.3.0-py3-none-any.whl protobuf
+.\.venv\Scripts\Activate.ps1
+pip install .\robotos-0.3.0-py3-none-win_amd64.whl protobuf
 ```
 
-Verify (all platforms):
+If activation is blocked: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+Verify:
 
 ```bash
-python3 -c "import robotos; print(robotos.Node.version())"   # Windows: python
+# macOS / Linux
+python3 -c "import robotos; print(robotos.Node.version())"
 # → 0.3.0
 ```
 
+```powershell
+# Windows PowerShell — use python, NOT python3
+python -c "import robotos; print(robotos.Node.version())"
+# → 0.3.0
+```
+
+> [!IMPORTANT]
+> **Interpreter name by OS (all workshops this week):**
+> | OS | command |
+> |---|---|
+> | macOS / Linux | `python3` |
+> | Windows (PowerShell) | `python` |
+>
+> On Windows, `python3` often bypasses `.venv` →
+> `ModuleNotFoundError: robotos` even with `(.venv)` in the prompt.
+
 > [!NOTE]
 > The wheel bundles `librobotos_ffi` — no `ROBOTOS_FFI_LIB` path
-> needed. Per-platform wheels follow standard Python packaging
-> practice (like numpy or grpcio). Install the wheel matching
-> **your** OS: `*-macos-*.whl`, `*-windows-*.whl`, `*-linux-*.whl`.
+> needed. Install the wheel matching **your** OS:
+> macOS/Linux → `robotos-0.3.0-py3-none-any.whl`,
+> Windows → `robotos-0.3.0-py3-none-win_amd64.whl`.
 
-> [!TIP]
-> **Naming conventions below** — commands show `python3`/`robotos`;
-> on Windows use `python` and `robotos.exe` (or just `python` /
-> `robotos` after PATH is set — cmd finds the `.exe` itself).
+> [!WARNING]
+> `pip install code\…whl` fails if your shell is already inside
+> `code\robotos-v0.3.0-windows-x64` — that path looks for a nested
+> `code\` that does not exist. Use `cd ..` (up to `code\`) then
+> `pip install .\robotos-0.3.0-py3-none-win_amd64.whl protobuf`.
 
 ## Step 2 — Write the publisher
 
@@ -118,12 +139,25 @@ Three ideas in 15 lines: `Node` = your process on the graph,
 ## Step 3 — Watch it without code
 
 ```bash
+# macOS / Linux
 cd code
 python3 02-sim_sensor.py       # terminal 1 — leave running
+```
 
-robotos node list              # terminal 2 → sim_sensor
+```powershell
+# Windows PowerShell
+cd code
+python 02-sim_sensor.py        # terminal 1 — leave running
+```
+
+Then in **another** terminal — use the
+[Every new terminal](README.md#every-new-terminal-copy-paste)
+setup (venv + PATH), then:
+
+```bash
+robotos node list              # → sim_sensor
 robotos topic list             # → /machine/01/sensor/imu
-robotos topic echo /machine/01/sensor/imu   # messages decoded live
+robotos topic echo /machine/01/sensor/imu
 ```
 
 Open `robotos ui` — the node and topic edge appear.
@@ -146,7 +180,13 @@ with robotos.Node("monitor") as node:
 ```
 
 ```bash
+# macOS / Linux
 python3 02-monitor.py          # terminal 3 — values stream in
+```
+
+```powershell
+# Windows PowerShell
+python 02-monitor.py
 ```
 
 `on_message(cb)` = event-driven push — the PLC→event-driven shift
@@ -187,7 +227,9 @@ sim_sensor       transport         monitor          inspector
 
 | Symptom | Try |
 |---|---|
-| `ModuleNotFoundError: robotos` | install the bundled wheel — `pip install code/robotos-0.3.0-py3-none-any.whl protobuf` |
+| `ModuleNotFoundError: robotos` | from `code/`, install the wheel — `pip install ./robotos-0.3.0-py3-none-any.whl protobuf` (Windows: `.\robotos-0.3.0-py3-none-win_amd64.whl`) |
+| `file does not exist` on `pip install code\…` | you are inside the package folder — `cd ..` into `code\`, then `pip install .\robotos-0.3.0-py3-none-win_amd64.whl` |
+| `robotos: The term 'robotos' is not recognized` | new terminal lost PATH — from `code\`: `$env:PATH = "$PWD\robotos-v0.3.0-windows-x64\bin;$env:PATH"`, or use permanent PATH (workshop 01 Option C) |
 | monitor prints nothing | is the publisher still running? Subscriber matching takes a few seconds on a fresh session — wait |
 | `topic echo` silent but `node list` works | multicast scouting flakiness — pin `ROBOTOS_LISTEN`/`ROBOTOS_CONNECT` to `tcp/127.0.0.1` |
 

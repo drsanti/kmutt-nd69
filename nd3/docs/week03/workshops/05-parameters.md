@@ -72,10 +72,24 @@ Three calls do the work: `declare_parameter` (name + default),
 
 ## Step 2 — Drive it from the CLI
 
+> New terminal? See [Every new terminal](README.md#every-new-terminal-copy-paste)
+> (venv + `robotos` on PATH, work from `code/`).
+
 ```bash
+# macOS / Linux
 cd code
 python3 05-tuning_node.py       # terminal 1 — prints setpoint=42
+```
 
+```powershell
+# Windows PowerShell — python, not python3
+cd code
+python 05-tuning_node.py        # terminal 1 — prints setpoint=42
+```
+
+Then in another terminal (venv + PATH set — CLI needs `robotos`):
+
+```bash
 robotos param list tuning_node              # declared params
 robotos param get tuning_node setpoint      # → 42
 robotos param set tuning_node setpoint 77   # write it live
@@ -146,6 +160,7 @@ you (CLI)        transport        tuning_node        main loop
 
 | Symptom | Try |
 |---|---|
+| `robotos` not recognized | new terminal lost PATH — [Every new terminal](README.md#every-new-terminal-copy-paste) |
 | `param list` errors | it needs the node **name** — `param list tuning_node`, not the topic |
 | `param set` denied | node didn't opt in — `set_allow_remote_params(True)` required |
 | `lifecycle set` → `unmanaged` | expected — Python nodes are auto-active; managed lifecycle is for Rust/embedded nodes |

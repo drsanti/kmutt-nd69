@@ -24,9 +24,29 @@ network or hardware is needed.
 | Item | Why | Where to get it |
 |---|---|---|
 | robotos package | CLI + shared library | bundled in [`code/`](code/) — `robotos-v*/` |
-| robotos Python SDK | workshop language SDK | bundled wheel — `code/robotos-0.3.0-*.whl` *(per-OS build — the wheel embeds the native lib; Windows wheel pending — see [`code/BUILDING.md`](code/BUILDING.md))* |
+| robotos Python SDK | workshop language SDK | bundled wheel — `code/robotos-0.3.0-*.whl` *(per-OS: macOS `*-any.whl`, Windows `*-win_amd64.whl` — each embeds that OS's native lib)* |
 | Python ≥ 3.10 | primary workshop language | python.org or system package |
+| Shell | run CLI + scripts | **Windows → PowerShell**; macOS/Linux → Terminal (bash/zsh) |
+| Python command | invoke the interpreter | **Windows → `python`**; macOS/Linux → `python3` |
 | A single machine | local transport needs no network | — |
+
+> [!IMPORTANT]
+> **Windows students: use PowerShell** (Windows Terminal →
+> PowerShell, or search “PowerShell”). Do **not** use Git Bash —
+> not for robotos this week, and **not for ESP-IDF** when you
+> install or flash later (`idf.py`, `export.ps1`, build/flash).
+>
+> - **Git Bash + robotos** rewrites topic paths like `/machine/…`
+>   into filesystem paths and breaks `robotos record`, `topic echo`,
+>   and similar commands.
+> - **Git Bash + ESP-IDF** sets `MSYSTEM`; Espressif’s tools refuse
+>   or mis-run under MSYS/MinGW. Use the ESP-IDF **PowerShell**
+>   environment (Espressif installer → “ESP-IDF PowerShell”, or
+>   `. $env:IDF_PATH\export.ps1` in PowerShell).
+>
+> Always use **`python`**, not `python3` — on Windows `python3`
+> often points outside your `.venv` and you get
+> `ModuleNotFoundError: robotos`.
 
 > [!IMPORTANT]
 > **No ESP32-S3 board required this week** — the board arrives next
@@ -37,6 +57,22 @@ network or hardware is needed.
 > **Runnable scripts live in [`code/`](code/)** — every workshop
 > program has a ready-to-run `.py` file (e.g. `code/02-sim_sensor.py`).
 > Type the code yourself for learning, or run the files directly.
+
+## Every new terminal (copy-paste)
+
+Full note + helpers: **[`code/SETUP.md`](code/SETUP.md)**.
+
+From `code/` after workshops 01–02:
+
+```powershell
+# Windows PowerShell
+. .\env.ps1
+```
+
+```bash
+# macOS / Linux
+source ./env.sh
+```
 
 ## 🗺️ How the week maps to week02
 

@@ -64,7 +64,7 @@ package manager for you:
 # macOS / Linux
 curl -fsSL https://vite.plus | bash
 
-# Windows (PowerShell)
+# Windows (PowerShell — not Git Bash)
 irm https://vite.plus/ps1 | iex
 ```
 

@@ -32,20 +32,27 @@ Open a terminal **in this project root** (folder that contains `CMakeLists.txt` 
 | Windows | `D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3` |
 | macOS / Linux | `~/kmutt-nd69/nd1/docs/week03/lessons/esp32-s3` |
 
-**Recommended (all platforms)** — from that folder:
+**Windows — PowerShell only** (not Git Bash):
+
+```powershell
+..\scripts\start-esp-idf.cmd
+```
+
+Or in the current PowerShell session: `. ..\scripts\start-esp-idf.ps1`
+
+**macOS / Linux:**
 
 ```bash
 bash ../scripts/start-esp-idf.sh
 ```
 
-Wait for **ESP-IDF ready**.
+Wait for **ESP-IDF ready**, then type all `idf.py` commands in that activated session (**PowerShell** on Windows, **Bash** on macOS/Linux).
 
-| Platform | Where to type `idf.py` after the launcher |
-|---|---|
-| Windows | The **PowerShell** child prompt (not the parent Git Bash) |
-| macOS / Linux | The **Bash** child session the launcher opened |
+> [!WARNING]
+> **Windows:** do not run `idf.py` in Git Bash. MSYS/MinGW (`MSYSTEM`)
+> breaks ESP-IDF. Use PowerShell or Espressif’s **ESP-IDF PowerShell**.
 
-Custom framework path: `--idf-path` / `-IdfPath` — see [scripts/README.md](../scripts/README.md). Advanced: Windows PowerShell can also run `. ..\scripts\start-esp-idf.ps1` from this folder.
+Custom framework path: `-IdfPath` (Windows) / `--idf-path` (macOS/Linux) — see [scripts/README.md](../scripts/README.md).
 
 ## 2. Build
 
@@ -125,7 +132,7 @@ Remove-Item -Recurse -Force .\build
 ```
 
 ```bash
-# macOS/Linux Bash, or Windows Git Bash
+# macOS / Linux Bash
 rm -rf -- ./build
 ```
 

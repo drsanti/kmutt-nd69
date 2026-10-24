@@ -44,10 +44,21 @@ a *tap* on the wire, not a change to it.
 
 ## Step 1 — Generate traffic
 
+> New terminal? See [Every new terminal](README.md#every-new-terminal-copy-paste)
+> (venv + `robotos` on PATH, work from `code/`).
+
 ```bash
+# macOS / Linux
 cd code
 python3 02-sim_sensor.py      # terminal 1 — Imu at 10 Hz (workshop 02)
 robotos ui                    # optional — watch while recording
+```
+
+```powershell
+# Windows PowerShell — python, not python3
+cd code
+python 02-sim_sensor.py
+robotos ui
 ```
 
 ## Step 2 — Record
@@ -58,6 +69,13 @@ robotos record /machine/01/sensor/imu -o machine_run.rbag --duration-s 10
 
 Records all messages on that topic for 10 seconds into
 `machine_run.rbag`. Without `--duration-s` it runs until Ctrl-C.
+
+> [!WARNING]
+> **Windows:** run this workshop in **PowerShell**, not Git Bash.
+> Git Bash rewrites `/machine/…` into `C:/Program Files/Git/…` and
+> `robotos record` fails with `invalid topic name`. Same rule for
+> ESP-IDF later — use **ESP-IDF PowerShell**, not Git Bash, for
+> `idf.py` build/flash.
 
 ## Step 3 — Inspect the bag
 
@@ -146,6 +164,9 @@ robotos presence --get         # one-shot list of who's alive
 
 | Symptom | Try |
 |---|---|
+| `robotos` not recognized | new terminal lost PATH — [Every new terminal](README.md#every-new-terminal-copy-paste) |
+| `invalid topic name "C:/Program Files/Git/…"` | you are in Git Bash — switch to **PowerShell** |
+| `MSys/Mingw is no longer supported` (idf.py) | ESP-IDF in Git Bash — use **ESP-IDF PowerShell** |
 | `played 38` but monitor saw nothing | subscriber wasn't matched in time — start monitor first, or pin `ROBOTOS_LISTEN`/`ROBOTOS_CONNECT` |
 | `no subscribers matched` warning | that's the honest report — a subscriber exists but its session never discovered the player; re-run or pin endpoints |
 | `record` captures 0 msgs | publisher running? topic name exact? (`topic list` to check) |

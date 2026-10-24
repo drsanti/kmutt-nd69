@@ -31,7 +31,7 @@ Activate the **framework** directory — the folder that contains `export.ps1` /
 > | macOS | `~/esp` | `~/esp/esp-idf` | `~/.espressif` |
 > | Linux | `~/esp` | `~/esp/esp-idf` | `~/.espressif` |
 >
-> On Windows, PowerShell `D:\dev\esp\v6.1\esp-idf` is Git Bash `/d/dev/esp/v6.1/esp-idf` (same folder, different spelling). Avoid spaces in framework and project paths.
+> On Windows, use PowerShell path spelling (`D:\dev\esp\v6.1\esp-idf`). Avoid spaces in framework and project paths.
 
 ---
 
@@ -45,33 +45,33 @@ Activate the **framework** directory — the folder that contains `export.ps1` /
 > | **A — Course scripts (recommended)** | W1 → W6 below (`git clone`, `install.ps1`, `export.ps1`) | W5 EIM alternative |
 > | **B — EIM only** | Official Windows guide + EIM **Open IDF Terminal**, then [esp32-s3/README.md](esp32-s3/README.md) | W4–W6 script commands |
 >
-> W2 PowerShell is for **install and first activation only**. Daily lab work uses the launcher from the `esp32-s3` folder (see the project README).
+> W2 PowerShell is for **install and first activation only**. Daily lab work uses the PowerShell launcher from the `esp32-s3` folder (see the project README).
 
-### W1. Install Git for Windows, including Git Bash
+> [!IMPORTANT]
+> **Windows students: PowerShell only for ESP-IDF.** Do **not** run
+> `idf.py`, `install.ps1`, or `export.ps1` in Git Bash. Git Bash sets
+> `MSYSTEM` (MSYS/MinGW); Espressif’s toolchain rejects that environment.
+> Use **Windows PowerShell**, the Espressif **ESP-IDF PowerShell**
+> shortcut, or the course `.ps1` / `.cmd` launcher.
+
+### W1. Install Git for Windows
 
 1. Download Git for Windows from the official [Windows download page](https://git-scm.com/install/windows).
-2. Run the installer. Include Git Bash and select **Git from the command line and also from 3rd-party software** when choosing the `PATH` option.
+2. Run the installer. Select **Git from the command line and also from 3rd-party software** when choosing the `PATH` option (so `git` works in PowerShell).
 3. Complete installation and close any terminals that were already open.
-4. Open **Git Bash** from Start and run:
+4. Open **Windows PowerShell** from Start and run:
 
-   ```bash
+   ```powershell
    git --version
-   bash --version
    ```
 
-Both commands must print version information. If already installed, perform these checks and continue.
+The command must print version information. If already installed, perform this check and continue. You do **not** need Git Bash for ESP-IDF labs.
 
-### W2. Open PowerShell from Git Bash
+### W2. Open Windows PowerShell
 
-In **Git Bash**, run:
+Open **Windows PowerShell** (Start → Windows PowerShell, or Windows Terminal → PowerShell). Wait for a prompt beginning with `PS`. **All subsequent Windows setup commands use this PowerShell session.** Keep it open throughout setup.
 
-```bash
-env -u MSYSTEM powershell.exe -NoLogo -NoExit
-```
-
-Wait for a prompt beginning with `PS`. **All subsequent Windows setup commands use PowerShell**, unless explicitly labeled otherwise. Keep this session open throughout setup.
-
-Git Bash uses MSYS/MinGW, which the installed ESP-IDF tool manager rejects. The command above opens Windows PowerShell and removes the inherited `MSYSTEM` marker from that child process. Do not run `install.sh` or source `export.sh` in Git Bash for this Windows setup.
+Do **not** use Git Bash for the steps below. Do not run `install.sh` or source `export.sh` under Git Bash on Windows.
 
 ### W3. Verify Python and Git in PowerShell
 
@@ -114,7 +114,7 @@ python --version
 
 If neither command works, install a supported Python release from [python.org](https://www.python.org/downloads/windows/). In the traditional installer, enable **Add python.exe to PATH**. An existing installation can be modified to enable this option; see [Python's Windows instructions](https://docs.python.org/3.11/using/windows.html#finding-the-python-executable). Alternatively, EIM can install missing prerequisites as described below.
 
-After installing Python or Git, close PowerShell and its parent Git Bash, reopen Git Bash, repeat Step W2, and verify both version commands. If Python opens Microsoft Store, check Windows **App execution aliases** and ensure `PATH` selects the installed interpreter.
+After installing Python or Git, close PowerShell, open a **new** PowerShell window (Step W2), and verify both version commands. If Python opens Microsoft Store, check Windows **App execution aliases** and ensure `PATH` selects the installed interpreter.
 
 **Continue only when both `python --version` and `git --version` succeed.**
 
@@ -346,7 +346,7 @@ Expect ESP-IDF v6.1, the correct framework directory, and version output for all
 
 When `idf.py --version` works, leave this install guide and follow:
 
-**[Hello World on ESP32-S3](esp32-s3/README.md)** — activate with `bash ../scripts/start-esp-idf.sh`, then `set-target`, `build`, flash, and monitor.
+**[Hello World on ESP32-S3](esp32-s3/README.md)** — activate with the launcher (**Windows:** PowerShell `..\scripts\start-esp-idf.cmd`; **macOS/Linux:** `bash ../scripts/start-esp-idf.sh`), then `set-target`, `build`, flash, and monitor.
 
 Optional scratch copy of Espressif’s example (not required for the course project):
 
@@ -370,7 +370,7 @@ cp -r "$IDF_PATH/examples/get-started/hello_world" ~/esp/projects/hello_world
 
 | Symptom | What to check or do |
 | --- | --- |
-| `MSys/Mingw is not supported` | Windows: you are in Git Bash/MSYS or a child shell inheriting `MSYSTEM`. Follow Step W2, or open the EIM IDF terminal. |
+| `MSys/Mingw is not supported` / `MSys/Mingw is no longer supported` | Windows: you are in **Git Bash** or a shell inheriting `MSYSTEM`. Close it; open **PowerShell** (Step W2), EIM **Open IDF Terminal**, or run `Remove-Item Env:MSYSTEM -ErrorAction SilentlyContinue` then `. .\export.ps1`. |
 | `python` / `python3` is not recognized | Complete the prerequisite check for your OS (W3 or U1). |
 | Extension reports `cmake was not found` | Configure the extension using the [VS Code guide](vscode-esp-idf.md); terminal activation alone does not configure the extension host. |
 | `idf.py` is not recognized | Activate this terminal (launcher, `export.ps1` / `export.sh`, or EIM IDF terminal). |
@@ -402,8 +402,7 @@ Software setup was exercised on **Windows** on **19 October 2026**, using Window
 
 | Check | Observed result |
 | --- | --- |
-| Git Bash | GNU Bash 5.3.9; Git 2.54.0.windows.1 |
-| Git resolved in PowerShell | Git 2.43.0 |
+| Git resolved in PowerShell | Git 2.43.0 (Git for Windows also available; ESP-IDF labs use PowerShell, not Git Bash) |
 | Python prerequisite | Python 3.11.9 |
 | Framework | `D:\dev\esp\v6.1\esp-idf`, tag `v6.1` |
 | Source-file checks | All three `Test-Path` checks passed; submodule status showed initialized submodules |
@@ -416,7 +415,7 @@ Software setup was exercised on **Windows** on **19 October 2026**, using Window
 | Fresh-session activation and rebuild | Passed in a new PowerShell process |
 | Flashing and serial output | Pending hardware verification |
 | Native macOS / Linux install in this record | Not exercised here; follow the macOS/Linux section and official Espressif guides |
-| Git versions | Git Bash reported 2.54.x; PowerShell resolved a different installed Git (2.43.x). Both must resolve; record the version you use. |
+| Shell for ESP-IDF | Windows PowerShell (not Git Bash) |
 
 ## References
 

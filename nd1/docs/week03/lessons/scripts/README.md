@@ -1,23 +1,23 @@
 # ESP-IDF development terminal launchers
 
 ```
-              ┌──────────────────┐
-              │ start-esp-idf.sh │
-              └────────┬─────────┘
-                       │
-          ┌────────────┴────────────┐
-          │                         │
-          ▼                         ▼
-┌───────────────────┐     ┌───────────────────┐
-│ Windows           │     │ macOS / Linux     │
-│ PowerShell child  │     │ Bash child        │
-└─────────┬─────────┘     └─────────┬─────────┘
-          │                         │
-          └────────────┬────────────┘
-                       ▼
-             ┌──────────────────┐
-             │  ESP-IDF ready   │
-             └──────────────────┘
+ Windows PowerShell              macOS / Linux Terminal
+ ┌─────────────────────┐         ┌─────────────────────┐
+ │ start-esp-idf.cmd   │         │ start-esp-idf.sh    │
+ │   or .ps1           │         │                     │
+ └──────────┬──────────┘         └──────────┬──────────┘
+            │                               │
+            ▼                               ▼
+ ┌─────────────────────┐         ┌─────────────────────┐
+ │ PowerShell session  │         │ Bash session        │
+ │ (export.ps1)        │         │ (export.sh)         │
+ └──────────┬──────────┘         └──────────┬──────────┘
+            │                               │
+            └───────────────┬───────────────┘
+                            ▼
+                  ┌──────────────────┐
+                  │  ESP-IDF ready   │
+                  └──────────────────┘
 ```
 
 The examples below assume your current directory is `nd1/docs/week03/lessons/esp32-s3`, the included firmware project root. If you cloned the repository elsewhere, use the same relative paths.
@@ -28,7 +28,7 @@ These scripts reuse an existing ESP-IDF installation. They do not download the f
 
 ## 1. Prepare the prerequisites once
 
-- **Windows:** install [Git for Windows, including Git Bash](https://git-scm.com/install/windows), and supported Windows Python with command-line access. Follow the [installation lesson](../install-esp-idf.md) through framework preparation. The launcher can refresh inherited Windows paths and find Python through the `py` launcher if available.
+- **Windows:** install [Git for Windows](https://git-scm.com/install/windows) (so `git` works in PowerShell) and supported Windows Python with command-line access. Follow the [installation lesson](../install-esp-idf.md) through framework preparation. The launcher can refresh inherited Windows paths and find Python through the `py` launcher if available. **Use PowerShell for ESP-IDF — not Git Bash.**
 - **macOS:** install the prerequisites and ESP-IDF source described in the [official macOS setup guide](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/macos-setup.html).
 - **Linux:** install the prerequisites and ESP-IDF source described in the [official Linux setup guide](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/linux-setup.html). WSL uses this route and a Linux toolchain; it does not reuse the Windows compiler installation.
 
@@ -36,53 +36,47 @@ Use a complete source checkout, including submodules. Keep framework and project
 
 If you installed with EIM and it uses custom tools or activation settings, prefer EIM's **Open IDF Terminal**. These launchers use the framework's `export.ps1` or `export.sh`; they are intended for the script-based setup. An intentionally configured `IDF_TOOLS_PATH` is inherited and must match the tool installation.
 
-## 2. Windows: launch from Git Bash
+> [!IMPORTANT]
+> **Windows:** run ESP-IDF in **PowerShell** only. Do not type `idf.py` in
+> Git Bash — MSYS/MinGW (`MSYSTEM`) is unsupported by Espressif’s tools.
 
-Assume you are already in the course firmware project root (`…/nd1/docs/week03/lessons/esp32-s3`). This folder **is** the firmware project. Run:
+## 2. Windows: launch from PowerShell
 
-```bash
-bash ../scripts/start-esp-idf.sh
+Assume you are already in the course firmware project root (`…/nd1/docs/week03/lessons/esp32-s3`). This folder **is** the firmware project. In **Windows PowerShell**, run:
+
+```powershell
+..\scripts\start-esp-idf.cmd
 ```
 
-This starts Windows PowerShell, handles inherited MSYS settings, activates `D:\dev\esp\v6.1\esp-idf`, and keeps the current directory as the working directory. Wait for **ESP-IDF ready** and a `PS ...>` prompt.
+Or activate in the current PowerShell session:
+
+```powershell
+. ..\scripts\start-esp-idf.ps1
+```
+
+This activates `D:\dev\esp\v6.1\esp-idf` (or `IDF_PATH` if set) and keeps the current directory as the working directory. Wait for **ESP-IDF ready** and a `PS ...>` prompt. Run all `idf.py` commands in that PowerShell session.
 
 For the first tool installation, run instead:
 
-```bash
-bash ../scripts/start-esp-idf.sh -InstallTools
+```powershell
+..\scripts\start-esp-idf.cmd -InstallTools
 ```
 
 Wait for installation and activation to finish. The installation target defaults to `esp32s3`. This installs tools; it does not change a project's chip target.
 
 For a different framework or an existing project:
 
-```bash
-bash ../scripts/start-esp-idf.sh -IdfPath 'D:\dev\esp\v6.1\esp-idf' -ProjectPath 'D:\dev\projects\hello_world'
-```
-
-Use **PowerShell parameter names on Windows**, even when starting through the `.sh` launcher. You can combine `-InstallTools` with `-Target esp32s3` and the path options.
-
-## 3. Windows: launch without Git Bash (advanced)
-
-Not the first-lab path. Prefer [§2 from Git Bash](#2-windows-launch-from-git-bash) so the working directory stays the project folder.
-
-Double-click `start-esp-idf.cmd` to open PowerShell with the default framework path. The working directory may be wrong; `cd` to your project before building.
-
-Or, from PowerShell in the firmware project root:
-
 ```powershell
-..\scripts\start-esp-idf.cmd
+..\scripts\start-esp-idf.cmd -IdfPath 'D:\dev\esp\v6.1\esp-idf' -ProjectPath 'D:\dev\projects\hello_world'
 ```
 
-To activate directly in an existing PowerShell session:
-
-```powershell
-. ..\scripts\start-esp-idf.ps1
-```
+You can combine `-InstallTools` with `-Target esp32s3` and the path options.
 
 If Windows blocks a trusted local script, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` in PowerShell, then retry the `.ps1` command in that same session. Institutional policy may require IT assistance. The launchers do not bypass execution policy.
 
-## 4. macOS or Linux: launch from Terminal
+Double-clicking `start-esp-idf.cmd` also opens PowerShell with the default framework path; `cd` to your project before building if the working directory is wrong.
+
+## 3. macOS or Linux: launch from Terminal
 
 From the course firmware project root, assuming the framework is at `~/esp/esp-idf`:
 
@@ -109,7 +103,7 @@ The launcher opens **Bash**, including when your normal macOS shell is Zsh. It l
 
 Execute the launcher with `bash`; do not `source` it. It opens a child shell, so activation ends when you type `exit`. Do not run `esp-idf-shell.bash` directly; it is the internal initialization file.
 
-## 5. Verify, then open the project guide
+## 4. Verify, then open the project guide
 
 Once **ESP-IDF ready** appears, run:
 
@@ -131,7 +125,8 @@ These launchers activate terminal sessions. They do not configure the ESP-IDF ex
 | Python or Git missing | Install the prerequisite and reopen the terminal. Installing the framework alone is insufficient. |
 | Missing compiler or Python environment | Run once with `-InstallTools` or `--install-tools`, using the same tools path as activation. |
 | Project directory does not exist | Create the project first or omit the project-path option to keep the current directory. |
-| `idf.py` unavailable back in Git Bash | Run the launcher again and use the PowerShell child session. Activation does not modify the parent Git Bash session. |
+| `MSys/Mingw is not supported` | You launched ESP-IDF from Git Bash. Close it; use **PowerShell** and §2. |
+| `idf.py` unavailable after closing the launcher | Activation is per session. Open PowerShell in the project root and run the launcher again. |
 | Wrong ESP-IDF version | Pass the intended framework path explicitly. |
 
 ## Sharing and regeneration
@@ -140,7 +135,7 @@ The launcher files contain no saved personal Python or compiler directory: they 
 
 ## Verification limits
 
-The Windows launcher was exercised with the installed ESP-IDF v6.1 on 19 October 2026: activation, the optional tool-installation route, and a `hello_world` build passed. The Git Bash entry point opened an interactive PowerShell session in the requested project directory, and `idf.py --version` worked at its prompt. Missing-framework handling returned a failure status.
+The Windows launcher was exercised with the installed ESP-IDF v6.1 on 19 October 2026: activation from PowerShell (`.cmd` / `.ps1`), the optional tool-installation route, and a `hello_world` build passed. `idf.py --version` worked at the activated PowerShell prompt. Missing-framework handling returned a failure status.
 
 On Linux, Bash syntax checks and fixture-based checks passed for activation, installation target forwarding, working-directory selection, activation failure, and invalid or missing paths/arguments. The fixture verifies launcher behavior; it is not a real ESP-IDF toolchain.
 

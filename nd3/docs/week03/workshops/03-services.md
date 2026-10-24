@@ -92,12 +92,24 @@ with robotos.Node("client") as node:
 
 ## Step 3 — Run it
 
+> New terminal? See [Every new terminal](README.md#every-new-terminal-copy-paste)
+> (venv + `robotos` on PATH, work from `code/`).
+
 ```bash
+# macOS / Linux
 cd code
 python3 03-echo_server.py      # terminal 1
 python3 03-client.py           # terminal 2
-# server prints the request, client prints the reply
 ```
+
+```powershell
+# Windows PowerShell — python, not python3
+cd code
+python 03-echo_server.py       # terminal 1
+python 03-client.py            # terminal 2
+```
+
+Server prints the request; client prints the reply.
 
 > [!NOTE]
 > The retry loop exists because service discovery takes a moment —
@@ -105,6 +117,8 @@ python3 03-client.py           # terminal 2
 > Same concept as a fieldbus device that hasn't been scanned yet.
 
 ## Step 4 — Inspect it
+
+Needs `robotos` on PATH (same terminal setup as Step 3).
 
 ```bash
 robotos service list           # → /test/echo
@@ -116,12 +130,19 @@ sends **raw payload bytes**, so you build the request as hex-encoded
 protobuf. `EchoRequest(text="hi", sequence=1)` encodes to `0a0268691001`:
 
 ```bash
+# macOS / Linux (line continuation with \)
 robotos service call /test/echo \
   --req-schema robotos.test.v1.EchoRequest \
   --rep-schema robotos.test.v1.EchoResponse \
   --data-hex 0a0268691001
-# → reply bytes printed as hex (same schema, decode mentally or in Python)
 ```
+
+```powershell
+# Windows PowerShell (one line, or use `)
+robotos service call /test/echo --req-schema robotos.test.v1.EchoRequest --rep-schema robotos.test.v1.EchoResponse --data-hex 0a0268691001
+```
+
+Reply bytes print as hex (same schema — decode mentally or in Python).
 
 For day-to-day work the Python client is easier — the raw-bytes form
 exists for quick reachability checks and scripting.
@@ -154,6 +175,7 @@ client           transport        echo_server        handler
 
 | Symptom | Try |
 |---|---|
+| `robotos` not recognized | new terminal lost PATH — [Every new terminal](README.md#every-new-terminal-copy-paste) |
 | Client prints `no responder` | server not running, or discovery too slow — start `03-echo_server.py` first |
 | `service call` errors about schemas | it needs `--req-schema`/`--rep-schema` + `--data-hex` — see Step 4 |
 | Server exits immediately | port/service already served by a leftover process — check `node list` |

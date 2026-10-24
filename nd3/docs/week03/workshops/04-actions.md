@@ -125,12 +125,24 @@ with robotos.Node("cycle_client") as node:
 
 ## Step 3 — Run and watch
 
+> New terminal? See [Every new terminal](README.md#every-new-terminal-copy-paste)
+> (venv + `robotos` on PATH, work from `code/`).
+
 ```bash
+# macOS / Linux
 cd code
 python3 04-cycle_server.py     # terminal 1
 python3 04-cycle_client.py     # terminal 2
-# client: goal accepted → feedback step 1/5 … 5/5 → result SUCCEEDED
 ```
+
+```powershell
+# Windows PowerShell — python, not python3
+cd code
+python 04-cycle_server.py      # terminal 1
+python 04-cycle_client.py      # terminal 2
+```
+
+Client: goal accepted → feedback step 1/5 … 5/5 → result SUCCEEDED.
 
 ## Step 4 — Cancel a running goal
 
@@ -179,6 +191,7 @@ client            action          cycle_server       handler loop
 
 | Symptom | Try |
 |---|---|
+| `robotos` not recognized | new terminal lost PATH — [Every new terminal](README.md#every-new-terminal-copy-paste) |
 | `server never came up` message | start `04-cycle_server.py` first — the client's 30 retries exhaust in ~15 s |
 | Goal accepted but no feedback | server died after accepting — check its terminal |
 | `send_goal` throws immediately | server not discovered yet — that's the `UNAVAILABLE` retry path |

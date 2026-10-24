@@ -24,6 +24,13 @@
 
 Pick **one** daily method: **terminal** (default for this course) **or** **VS Code Build button**. Do not mix them until both work separately.
 
+> [!IMPORTANT]
+> **Windows:** use **PowerShell** for every ESP-IDF command (`idf.py`,
+> `export.ps1`, install, build, flash). Do **not** run ESP-IDF in
+> Git Bash — MSYS/MinGW sets `MSYSTEM` and Espressif’s tools refuse
+> or mis-run. Open PowerShell (or ESP-IDF PowerShell), then the
+> course launcher under [esp32-s3/README.md](esp32-s3/README.md).
+
 ## Paths used in these lessons
 
 | Name | What it is |

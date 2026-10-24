@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package robotos.nav.v1;
+
+import "robotos/geometry/v1/geometry.proto";
+
+// PoseStamped — a pose in a frame at a time.
+message PoseStamped {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  robotos.geometry.v1.Pose pose = 3;
+}
+
+// Path — an ordered list of poses (planned path / trail).
+message Path {
+  uint64 timestamp_ns = 1;
+  string frame_id = 2;
+  repeated PoseStamped poses = 3;
+}

@@ -3,3 +3,9 @@
 **/slide-prompt-style.md
 **/*outline*.md
 **/.prompts/
+
+# Student local envs / bags (workshop 02+)
+**/.venv/
+**/__pycache__/
+**/*.rbag
+**/tune.toml

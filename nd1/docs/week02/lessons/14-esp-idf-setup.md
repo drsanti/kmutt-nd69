@@ -33,6 +33,10 @@ ESP-IDF extension ของ Espressif ติดตั้ง toolchain ทั้�
    terminal ที่มี env ครบ (PATH, IDF_PATH, python env) ใช้
    terminal ธรรมดาแล้ว `idf.py` ไม่เจอเป็นเรื่องปกติ
 
+**Windows:** ใช้ **PowerShell** หรือ **ESP-IDF Terminal** จาก
+extension เท่านั้น — **ห้ามใช้ Git Bash** กับ `idf.py`
+(MSYS/MinGW ทำให้ toolchain ของ Espressif พัง)
+
 ### macOS เฉพาะ
 
 - ไม่ต้องลง driver — S3 ใช้ native USB เห็น `/dev/cu.usbmodem*`

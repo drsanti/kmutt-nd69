@@ -26,6 +26,8 @@ The current extension documentation describes Espressif Installation Manager (EI
 
 On Windows and WSL, tool installation and USB access are separate concerns. Establish whether the build and serial client run in Windows or Linux, then verify that the selected environment can access the device. A working Windows COM port does not automatically imply a usable WSL `/dev/ttyACM*` device.
 
+**Windows:** run `idf.py` in **PowerShell** or the extension’s **ESP-IDF Terminal** (PowerShell-based). Do **not** use Git Bash — MSYS/MinGW (`MSYSTEM`) breaks Espressif’s toolchain.
+
 ## Verification stage 1: environment
 
 The order that has to succeed before the toolchain counts as ready:
