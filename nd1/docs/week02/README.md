@@ -17,7 +17,7 @@
 - [Thai illustrations](lessons/images/README.md)
 - [English illustrations](lessons/EN/images/README.md)
 - [Week 01](../week01/README.md)
-- [Week 03 — Install ESP-IDF on Windows](../week03/README.md)
+- [Week 03 — Install ESP-IDF (Windows, macOS, Linux)](../week03/README.md)
 - [Documents](../README.md)
 
 ## Lessons

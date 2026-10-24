@@ -1,18 +1,22 @@
 # Build with the VS Code ESP-IDF extension
 
-Use this guide after [installing ESP-IDF](install-esp-idf.md). The terminal and the VS Code extension run commands in separate environments. A successful build in an activated PowerShell terminal does not configure the extension's Build button.
+> [!NOTE]
+> Optional. If you build with `idf.py` in the activated terminal ([esp32-s3/README.md](esp32-s3/README.md)), you can skip this entire file.
 
-Official reference: [Manual configuration of ESP-IDF and tools in the VS Code extension](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/installation.html#manual-configuration-of-esp-idf-and-tools-in-the-esp-idf-extension-for-vs-code). Use this when connecting the extension to an existing installation.
+Use this guide after [installing ESP-IDF](install-esp-idf.md). The terminal and the VS Code extension are **separate** environments. A successful `idf.py build` in a launcher terminal does not configure the extension’s Build button.
+
+Official reference: [Manual configuration of ESP-IDF and tools in the VS Code extension](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/installation.html#manual-configuration-of-esp-idf-and-tools-in-the-esp-idf-extension-for-vs-code).
 
 ## 1. Open the firmware project
 
-In Windows VS Code, choose **File → Open Folder** and open:
+**File → Open Folder** and open the firmware project root (has `CMakeLists.txt` and `main/`), for example:
 
-```text
-D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3
-```
+| Platform | Example path |
+|---|---|
+| Windows | `D:\CODE\2027\kmutt-nd69\nd1\docs\week03\lessons\esp32-s3` |
+| macOS / Linux | `~/kmutt-nd69/nd1/docs/week03/lessons/esp32-s3` |
 
-This directory contains the project's top-level `CMakeLists.txt`. The repository root contains several lessons and is not itself the firmware project. Use Windows VS Code with the Windows toolchain; a VS Code WSL window needs a Linux installation instead.
+Do not open the repository root as the firmware project. Match the VS Code window to the toolchain: Windows VS Code ↔ Windows ESP-IDF; VS Code WSL ↔ Linux ESP-IDF inside WSL.
 
 Install **ESP-IDF** by Espressif from the Extensions view. All terminal commands below assume you are already in the firmware project root.
 
@@ -108,7 +112,10 @@ The environment must identify the intended framework, its Python environment, an
 
 Windows `Path` is one semicolon-separated string, not a JSON array. Forward slashes in the checked-in Windows paths are intentional and avoid doubled backslashes in JSON. The cleaned course settings omit unrelated `idf-exe`, DFU, and clangd directories from the build path; a fresh full tool export may include them. Do not remove compiler, Python, CMake, or Ninja paths merely to shorten the string.
 
-Settings are specific to the host operating system. A macOS/Linux user should select the native EIM installation or use native exports following the [official manual workflow](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/installation.html#manual-configuration-of-esp-idf-and-tools-in-the-esp-idf-extension-for-vs-code), rather than applying the Windows PowerShell procedure.
+Settings are specific to the host operating system.
+
+- **Windows script install:** use the PowerShell export block above.
+- **macOS / Linux:** prefer **ESP-IDF: Select Current ESP-IDF Version** if EIM registered the install. Otherwise activate with `bash ../scripts/start-esp-idf.sh`, then follow Espressif’s [manual configuration workflow](https://docs.espressif.com/projects/vscode-esp-idf-extension/en/latest/installation.html#manual-configuration-of-esp-idf-and-tools-in-the-esp-idf-extension-for-vs-code) using `python "$IDF_PATH/tools/idf_tools.py" export --format key-value` in that Bash session. Do not paste Windows `Path` / `%USERPROFILE%` values into a macOS or Linux `settings.json`.
 
 ## 3. Build and verify
 

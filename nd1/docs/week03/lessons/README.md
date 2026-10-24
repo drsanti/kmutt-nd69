@@ -10,33 +10,61 @@
 
 - [Week 03 index](../README.md)
 - [Week 02 lessons](../../week02/lessons/README.md)
-- [Install and Verify ESP-IDF on Windows](install-esp-idf.md)
-- [ESP-IDF terminal launchers for Windows, macOS, and Linux](scripts/README.md)
-- [Build with the VS Code ESP-IDF extension](vscode-esp-idf.md)
+- [Install and Verify ESP-IDF (Windows, macOS, Linux)](install-esp-idf.md)
 - [Hello World on ESP32-S3](esp32-s3/README.md)
+- [ESP-IDF terminal launchers (reference)](scripts/README.md)
+- [Build with the VS Code ESP-IDF extension (optional)](vscode-esp-idf.md)
+
+## Read in this order
+
+1. This page — paths and which track to pick  
+2. [install-esp-idf.md](install-esp-idf.md) — until `idf.py --version` works  
+3. [esp32-s3/README.md](esp32-s3/README.md) — launcher, build, flash (main lab)  
+4. Only if needed: [scripts/README.md](scripts/README.md) (custom paths) or [vscode-esp-idf.md](vscode-esp-idf.md) (Build button)
+
+Pick **one** daily method: **terminal** (default for this course) **or** **VS Code Build button**. Do not mix them until both work separately.
 
 ## Paths used in these lessons
 
-The **repository root** contains `nd1/`, `nd2/`, and `nd3/`. The **firmware project root** is `nd1/docs/week03/lessons/esp32-s3`, containing `CMakeLists.txt` and `main/`. The **framework directory** is a separate ESP-IDF installation, for example `D:\dev\esp\v6.1\esp-idf`.
+| Name | What it is |
+|---|---|
+| Repository root | Folder containing `nd1/`, `nd2/`, and `nd3/` |
+| Firmware project root | `nd1/docs/week03/lessons/esp32-s3` — has `CMakeLists.txt` and `main/` |
+| Framework (`IDF_PATH`) | Separate ESP-IDF install on your machine — has `export.ps1` / `export.sh` and `tools/idf.py` |
 
-After cloning the repository, open a terminal in the firmware project root before following build, launcher, or cleanup commands. Replace example drive letters, user directories, framework locations, and serial ports with your own.
+> [!NOTE]
+> Example paths (launcher defaults when `IDF_PATH` is unset). Use **your** paths.
+>
+> | Platform | Parent directory | Actual framework (`IDF_PATH`) |
+> |---|---|---|
+> | Windows | `D:\dev\esp` | `D:\dev\esp\v6.1\esp-idf` |
+> | macOS | `~/esp` | `~/esp/esp-idf` |
+> | Linux | `~/esp` | `~/esp/esp-idf` |
+>
+> Activate the **framework** directory, not the parent. Pass `-IdfPath` (Windows) or `--idf-path` (macOS/Linux) if your install is elsewhere.
+
+## Choose one install track
+
+| Track | Who it is for | Follow | Skip |
+|---|---|---|---|
+| **A — Course scripts (recommended)** | Students who want copy-paste steps matching this repo’s launchers | [install-esp-idf.md](install-esp-idf.md) Windows W1–W6 or macOS/Linux U1–U4 (script path) | EIM “Easy Install” blocks |
+| **B — EIM** | Students who prefer Espressif Installation Manager | Official OS guide + EIM **Open IDF Terminal**, then continue at [esp32-s3/README.md](esp32-s3/README.md) | Manual `git clone` / `install.ps1` / `install.sh` steps |
 
 ## Suggested workflow
 
-1. Install Git Bash, Python, ESP-IDF, and the ESP32-S3 tools using the setup lesson.
-2. Open the `esp32-s3` project directory. Project commands assume you are already in that directory.
-3. Choose the terminal launcher or configure the VS Code ESP-IDF extension once.
-4. Build Hello World, then flash and monitor when hardware is available.
-5. Use the project guide for cleanup and editor-diagnostic troubleshooting.
+| Order | What to do | Where |
+|---|---|---|
+| 1 | Install prerequisites + ESP-IDF v6.1 + ESP32-S3 tools for your OS (skip if `idf.py --version` already works) | [install-esp-idf.md](install-esp-idf.md) |
+| 2 | Open a terminal in `esp32-s3`, activate with the launcher, build, then flash when you have a board | [esp32-s3/README.md](esp32-s3/README.md) |
+| — | Custom framework path, `-InstallTools`, `.cmd` / `.ps1` | [scripts/README.md](scripts/README.md) (reference) |
+| — | VS Code Build button instead of terminal `idf.py` | [vscode-esp-idf.md](vscode-esp-idf.md) (optional) |
 
-The recorded Windows command-line builds and clangd checks passed. The extension UI and hardware output remain separate verification steps; native macOS/Linux toolchain activation has not been validated here.
+Step 2 is the main student lab. The FreeRTOS PC lab is separate: [free-rtos/README.md](free-rtos/README.md).
+
+Windows command-line builds and clangd checks were recorded on the course machine. Extension UI and hardware flash remain separate checks. Native macOS/Linux toolchain activation follows the same steps but was not re-verified on every host.
 
 ## Using these files from GitHub
 
-The source project, default target settings, launchers, and clangd configuration are reusable. The current `.vscode/settings.json` files contain Windows tool locations from the verified setup. Regenerate the extension environment for your computer using the [VS Code guide](vscode-esp-idf.md); do not assume a contributor's user-directory paths exist on your machine.
+Checked-in `.vscode/settings.json` may contain another computer’s tool paths. Regenerate them with [vscode-esp-idf.md](vscode-esp-idf.md) on your machine.
 
-Generated `build/`, `sdkconfig`, `sdkconfig.old`, and editor caches are local artifacts, not lesson source. Preserve `sdkconfig.defaults` when cleaning or sharing a project. After cloning, build once to generate the configuration headers and compilation database used by the editor.
-
-The [FreeRTOS folder](free-rtos/README.md) links to the companion
-[freertos-pc-workshops](https://github.com/drsanti/freertos-pc-workshops)
-exercises — follow that repository for the hands-on FreeRTOS lab.
+Generated `build/`, `sdkconfig`, `sdkconfig.old`, and editor caches are local. Keep `sdkconfig.defaults`. After cloning, build once so the editor can see generated headers.
