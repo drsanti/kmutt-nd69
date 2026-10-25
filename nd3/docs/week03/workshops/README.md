@@ -7,6 +7,10 @@ All workshops run **entirely on your laptop** — the ESP32-S3 board
 arrives next week. Everything here uses local transport, so no
 network or hardware is needed.
 
+Before the first terminal: skim
+**[System overview](../SYSTEM-OVERVIEW.md)** — one map of the
+host graph, SDKs, CLI/inspector, and how the board joins later.
+
 ## 📚 Workshop list
 
 | # | Workshop | What you get |
