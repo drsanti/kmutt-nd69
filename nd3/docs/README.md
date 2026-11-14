@@ -12,4 +12,5 @@ Course documents for the automation track.
 - [Week 01 — Introduction](week01/README.md)
 - [Week 02](week02/README.md)
 - [Week 03 — Hands-on](week03/README.md) · [System overview](week03/SYSTEM-OVERVIEW.md)
+- [Week 06 — Self-learning and Mini-Project #1](week06/README.md)
 - [Track index](../README.md)

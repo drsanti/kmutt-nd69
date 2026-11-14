@@ -12,4 +12,6 @@ Web Serial, Web Bluetooth, and TypeScript applications.
 - [Documents](docs/README.md)
 - [Week 01 — Introduction](docs/week01/README.md)
 - [Week 02](docs/week02/README.md)
+- [Week 03 — Browser Apps that Reach Hardware](docs/week03/README.md)
+- [Week 06 — Self-learning and Mini-Project #1](docs/week06/README.md)
 - [Course index](../README.md)

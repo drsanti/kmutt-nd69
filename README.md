@@ -18,6 +18,7 @@
 ## Table of contents
 
 - [Learning tracks](#learning-tracks)
+- [Mini-Project #1 (Week 06)](#mini-project-1-week-06)
 - [ND01 — Embedded & Hardware](#nd01--embedded--hardware)
 - [ND02 — Application Developers](#nd02--application-developers)
 - [ND03 — Automation & Robotics](#nd03--automation--robotics)
@@ -38,6 +39,18 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ---
 
+## Mini-Project #1 (Week 06)
+
+สัปดาห์แห่งการเรียนรู้ด้วยตนเองและจัดทำมินิโปรเจกต์ชิ้นที่ 1 (Self-learning & Mini-Project #1) — ทบทวนและสรุปองค์ความรู้ตลอด 5 สัปดาห์ที่ผ่านมา พร้อมฝึกปฏิบัติการใช้งาน Git & GitHub ([คู่มือ GitHub Hands-On](https://github.com/drsanti/github-hands-on))
+
+| Track | รายละเอียดและข้อกำหนด | แบบฟอร์มส่งงาน (Google Form) |
+|---|---|---|
+| **ND01** (Embedded & Hardware) | [nd1/docs/week06/README.md](nd1/docs/week06/README.md) | [แบบฟอร์มส่งงาน ND01](https://forms.gle/hGqHgoEBDFinh2BfA) |
+| **ND02** (Application Developers) | [nd2/docs/week06/README.md](nd2/docs/week06/README.md) | [แบบฟอร์มส่งงาน ND02](https://forms.gle/in4mUsBT5MvBwmXt6) |
+| **ND03** (Automation & Robotics) | [nd3/docs/week06/README.md](nd3/docs/week06/README.md) | [แบบฟอร์มส่งงาน ND03](https://forms.gle/pDp1SkyJ14mVRvfK7) |
+
+---
+
 ## ND01 — Embedded & Hardware
 
 > เสริมสร้างความเข้าใจโครงสร้างฮาร์ดแวร์ของบอร์ด ES3C28P (ESP32-S3R8) ตั้งแต่ระดับชิปเซ็ตไปจนถึงระดับเฟิร์มแวร์
@@ -47,6 +60,7 @@ Each folder has a `README.md` with its own table of contents. This page links th
 - [Week 01 — Introduction](nd1/docs/week01/README.md)
 - [Week 02 — ES3C28P Hardware](nd1/docs/week02/README.md)
 - [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](nd1/docs/week03/README.md)
+- [Week 06 — Self-learning and Mini-Project #1](nd1/docs/week06/README.md)
 - [Thai lessons](nd1/docs/week02/lessons/README.md)
 - [Thai illustrations](nd1/docs/week02/lessons/images/README.md)
 - [English edition](nd1/docs/week02/lessons/EN/README.md)
@@ -102,6 +116,8 @@ Each folder has a `README.md` with its own table of contents. This page links th
 - [Documents](nd2/docs/README.md)
 - [Week 01 — Introduction](nd2/docs/week01/README.md)
 - [Week 02 — Browser Hardware APIs](nd2/docs/week02/README.md)
+- [Week 03 — Browser Apps that Reach Hardware](nd2/docs/week03/README.md)
+- [Week 06 — Self-learning and Mini-Project #1](nd2/docs/week06/README.md)
 - [Thai lessons](nd2/docs/week02/lessons/README.md)
 - [Thai illustrations](nd2/docs/week02/lessons/images/README.md)
 - [English edition](nd2/docs/week02/lessons/EN/README.md)
@@ -146,6 +162,8 @@ Each folder has a `README.md` with its own table of contents. This page links th
 - [Documents](nd3/docs/README.md)
 - [Week 01 — Introduction](nd3/docs/week01/README.md)
 - [Week 02 — ROS Thinking & Digital Twin](nd3/docs/week02/README.md)
+- [Week 03 — Hands-on with robotos](nd3/docs/week03/README.md)
+- [Week 06 — Self-learning and Mini-Project #1](nd3/docs/week06/README.md)
 - [Thai lessons](nd3/docs/week02/lessons/README.md)
 - [Thai illustrations](nd3/docs/week02/lessons/images/README.md)
 - [English edition](nd3/docs/week02/lessons/EN/README.md)

@@ -13,4 +13,5 @@ ESP32-S3 board, firmware, and FreeRTOS.
 - [Week 01 — Introduction](docs/week01/README.md)
 - [Week 02 — ES3C28P hardware](docs/week02/README.md)
 - [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](docs/week03/README.md)
+- [Week 06 — Self-learning and Mini-Project #1](docs/week06/README.md)
 - [Course index](../README.md)
