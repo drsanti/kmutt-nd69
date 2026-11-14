@@ -7,11 +7,11 @@
 
 ![Course cover](images/cover.png)
 
-> เอกสารประกอบการเรียนการสอน — จาก hardware จริง สู่ software ที่เข้าใจโลกกายภาพ
+> เอกสารประกอบการเรียนการสอน — จากฮาร์ดแวร์จริง สู่ซอฟต์แวร์ที่เข้าใจโลกกายภาพ
 
-คอร์สนี้สอนให้คนทำงานสายต่าง ๆ **เข้าถึงและควบคุมฮาร์ดแวร์จริง** —
-เพราะในยุคที่ AI เขียน code ได้แล้ว ความแตกต่างอยู่ที่การเข้าใจ
-พารามิเตอร์จริงของโลกและสร้าง action จริง ไม่ใช่แค่สร้างข้อมูล
+หลักสูตรนี้มุ่งเน้นให้ผู้เรียนในหลากหลายสาขาวิชาชีพ **สามารถเข้าถึงและควบคุมฮาร์ดแวร์ได้จริง** —
+เนื่องจากในยุคที่ปัญญาประดิษฐ์ (AI) สามารถพัฒนาโค้ดได้แล้ว ความแตกต่างที่แท้จริงจึงอยู่ที่ความเข้าใจ
+พารามิเตอร์ในโลกกายภาพ และการสร้างการตอบสนองเชิงปฏิบัติการ (Action) ต่อวัตถุจริง มิใช่เพียงแค่การประมวลผลข้อมูล
 
 ---
 
@@ -40,7 +40,7 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ## ND01 — Embedded & Hardware
 
-> เข้าใจฮาร์ดแวร์จริงของบอร์ด ES3C28P (ESP32-S3R8) ตั้งแต่ชิปถึง firmware
+> เสริมสร้างความเข้าใจโครงสร้างฮาร์ดแวร์ของบอร์ด ES3C28P (ESP32-S3R8) ตั้งแต่ระดับชิปเซ็ตไปจนถึงระดับเฟิร์มแวร์
 
 - [Track](nd1/README.md)
 - [Documents](nd1/docs/README.md)
@@ -55,21 +55,21 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ### Thai
 
-- [ชิป ESP32-S3 บน board ES3C28P](nd1/docs/week02/lessons/01-esp32s3r8-the-chip.md)
-- [ประวัติ ESP32 — จาก ESP8266 ถึง ESP32-S3](nd1/docs/week02/lessons/02-esp32-history.md)
-- [Memory หลายชนิดบน ESP32-S3 — RAM, SRAM, PSRAM, Flash, ROM, eFuse](nd1/docs/week02/lessons/03-memory-types.md)
-- [Memory ในมุม Firmware — heap, stack, partition, NVS](nd1/docs/week02/lessons/04-memory-firmware-view.md)
-- [ESP-IDF — Toolchain ตัวจริงของ ESP32](nd1/docs/week02/lessons/05-esp-idf-toolchain.md)
-- [USB/Serial บน board นี้ — ไม่มีชิป USB-UART และกับดักที่ตามมา](nd1/docs/week02/lessons/06-usb-serial-caveat.md)
-- [ระบบไฟและแบตเตอรี่ — TP4054, LDO, และการวัดแบตผ่าน ADC](nd1/docs/week02/lessons/07-power-battery.md)
-- [จอ ILI9341V — SPI display 240×320 บน board ES3C28P](nd1/docs/week02/lessons/08-ili9341-display.md)
-- [Touch screen FT6336G — capacitive touch ผ่าน I2C](nd1/docs/week02/lessons/09-ft6336-touch.md)
-- [ระบบเสียง — ES8311 codec + FM8002E amp + MEMS mic](nd1/docs/week02/lessons/10-audio-chain.md)
-- [RGB LED WS2812 — เส้นเดียวต้อง timing เป๊ะ และทำไมต้อง RMT](nd1/docs/week02/lessons/11-ws2812-rmt-led.md)
-- [MicroSD บน ES3C28P — SDIO 4-bit เต็มสปีด](nd1/docs/week02/lessons/12-microsd-sdio.md)
-- [Expansion header และแผนที่ขาทั้ง board — ขาไหนว่าง ขาไหนห้าม](nd1/docs/week02/lessons/13-expansion-pins.md)
-- [ติดตั้ง ESP-IDF ผ่าน VS Code — พร้อมทดสอบบน board จริง](nd1/docs/week02/lessons/14-esp-idf-setup.md)
-- [Embedded C + FreeRTOS review — ฐานที่ต้องมีก่อนเขียน firmware จริง](nd1/docs/week02/lessons/15-embedded-c-freertos-review.md)
+- [สถาปัตยกรรมชิป ESP32-S3 บนบอร์ด ES3C28P](nd1/docs/week02/lessons/01-esp32s3r8-the-chip.md)
+- [วิวัฒนาการของ ESP32 — จาก ESP8266 สู่ ESP32-S3](nd1/docs/week02/lessons/02-esp32-history.md)
+- [โครงสร้างหน่วยความจำประเภทต่าง ๆ บน ESP32-S3 — RAM, SRAM, PSRAM, Flash, ROM และ eFuse](nd1/docs/week02/lessons/03-memory-types.md)
+- [การจัดการหน่วยความจำในมุมมองของเฟิร์มแวร์ — Heap, Stack, Partition และ NVS](nd1/docs/week02/lessons/04-memory-firmware-view.md)
+- [ESP-IDF — ชุดเครื่องมือพัฒนา (Toolchain) มาตรฐานของ ESP32](nd1/docs/week02/lessons/05-esp-idf-toolchain.md)
+- [การสื่อสารผ่าน USB/Serial บนบอร์ด — สถาปัตยกรรมที่ปราศจากชิปแปลง USB-UART และข้อควรระวัง](nd1/docs/week02/lessons/06-usb-serial-caveat.md)
+- [ระบบบริหารจัดการพลังงานและแบตเตอรี่ — วงจรชาร์จ TP4054, วงจรควบคุมแรงดัน LDO และการวัดระดับแรงดันผ่าน ADC](nd1/docs/week02/lessons/07-power-battery.md)
+- [การควบคุมจอแสดงผล ILI9341V — หน้าจอ SPI ขนาด 240×320 บนบอร์ด ES3C28P](nd1/docs/week02/lessons/08-ili9341-display.md)
+- [จอสัมผัสแบบเก็บประจุ FT6336G — การควบคุม Capacitive Touch ผ่านการสื่อสาร I2C](nd1/docs/week02/lessons/09-ft6336-touch.md)
+- [ระบบประมวลผลเสียง — วงจรถอดและเข้ารหัสสัญญาณเสียง ES8311, วงจรขยายเสียง FM8002E และไมโครโฟน MEMS](nd1/docs/week02/lessons/10-audio-chain.md)
+- [การควบคุมหลอดไฟ RGB LED WS2812 — ข้อกำหนดด้านเวลาของสายสัญญาณเดี่ยว และการประยุกต์ใช้โมดูล RMT](nd1/docs/week02/lessons/11-ws2812-rmt-led.md)
+- [การใช้งานการ์ด MicroSD บน ES3C28P — การสื่อสารความเร็วสูงผ่านโปรโตคอล SDIO แบบ 4 บิต](nd1/docs/week02/lessons/12-microsd-sdio.md)
+- [จุดเชื่อมต่อขยาย (Expansion Header) และผังการจัดสรรขาพอร์ต (Pinout) — การตรวจสอบสถานะและข้อจำกัดการใช้งานของแต่ละขา](nd1/docs/week02/lessons/13-expansion-pins.md)
+- [ขั้นตอนการติดตั้ง ESP-IDF ร่วมกับ VS Code — พร้อมการทดสอบการทำงานบนบอร์ดจริง](nd1/docs/week02/lessons/14-esp-idf-setup.md)
+- [ทบทวนหลักการภาษา Embedded C และระบบปฏิบัติการ FreeRTOS — พื้นฐานสำคัญก่อนการพัฒนาเฟิร์มแวร์จริง](nd1/docs/week02/lessons/15-embedded-c-freertos-review.md)
 
 ### English
 
@@ -96,7 +96,7 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ## ND02 — Application Developers
 
-> เข้าถึง hardware จาก browser — ไม่ต้องเขียน firmware เอง
+> การเข้าถึงและสั่งการฮาร์ดแวร์ผ่านเว็บเบราว์เซอร์ — โดยไม่ต้องพัฒนาเฟิร์มแวร์ขึ้นเอง
 
 - [Track](nd2/README.md)
 - [Documents](nd2/docs/README.md)
@@ -110,17 +110,17 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ### Thai
 
-- [ทำไมเรา software developer ต้องเข้าถึง hardware — ยุคที่ coding ไม่พอ](nd2/docs/week02/lessons/01-why-hardware-access.md)
-- [Browser hardware APIs — เว็บเพจที่แตะ hardware ได้](nd2/docs/week02/lessons/02-browser-hardware-apis.md)
-- [Web Serial — ช่องทางแบบสายในเชิงหลักการ](nd2/docs/week02/lessons/03-web-serial-concept.md)
-- [Web Serial in the wild — อุปกรณ์จริงที่คุย serial](nd2/docs/week02/lessons/04-web-serial-in-the-wild.md)
-- [Web Bluetooth — ช่องทางแบบไร้สายในเชิงหลักการ](nd2/docs/week02/lessons/05-web-bluetooth-concept.md)
-- [เลือกช่องทาง — Serial vs BLE vs WiFi ในสถานการณ์จริง](nd2/docs/week02/lessons/06-choosing-the-channel.md)
-- [Capability → cooperation design — ออกแบบการทำงานร่วมของสองเครื่อง](nd2/docs/week02/lessons/07-cooperation-design.md)
-- [Anatomy ของ monitor/control app — app ที่คุยกับ device](nd2/docs/week02/lessons/08-app-anatomy.md)
-- [เมื่อ device เดียวไม่พอ — สู่บริการกลาง](nd2/docs/week02/lessons/09-beyond-one-device.md)
-- [App แรก — ควบคุม LED และอ่านระดับเสียง](nd2/docs/week02/lessons/10-first-app-led-and-audio.md)
-- [เตรียมเครื่องมือ — Node.js, Vite+, TypeScript และพื้นฐานเว็บ](nd2/docs/week02/lessons/11-toolchain-setup.md)
+- [เหตุใดนักพัฒนาซอฟต์แวร์จึงจำเป็นต้องเข้าถึงฮาร์ดแวร์ — ในยุคที่การเขียนโค้ดเพียงอย่างเดียวไม่เพียงพอ](nd2/docs/week02/lessons/01-why-hardware-access.md)
+- [Browser Hardware APIs — การเชื่อมต่อฮาร์ดแวร์โดยตรงผ่านเว็บแอปพลิเคชัน](nd2/docs/week02/lessons/02-browser-hardware-apis.md)
+- [Web Serial — หลักการและแนวคิดของการสื่อสารแบบใช้สาย](nd2/docs/week02/lessons/03-web-serial-concept.md)
+- [การประยุกต์ใช้งาน Web Serial ในทางปฏิบัติ — ตัวอย่างอุปกรณ์จริงที่มีการสื่อสารผ่านพอร์ตซีเรียล](nd2/docs/week02/lessons/04-web-serial-in-the-wild.md)
+- [Web Bluetooth — หลักการและแนวคิดของการสื่อสารแบบไร้สายระยะใกล้](nd2/docs/week02/lessons/05-web-bluetooth-concept.md)
+- [การเลือกช่องทางการสื่อสาร — เปรียบเทียบ Serial, BLE และ Wi-Fi ในสถานการณ์การใช้งานจริง](nd2/docs/week02/lessons/06-choosing-the-channel.md)
+- [Capability สู่ Cooperation Design — การออกแบบสถาปัตยกรรมการทำงานร่วมกันระหว่างระบบ](nd2/docs/week02/lessons/07-cooperation-design.md)
+- [โครงสร้างสถาปัตยกรรมของแอปพลิเคชันเฝ้าสังเกตและควบคุม (Monitor & Control) — การสื่อสารระหว่างแอปพลิเคชันกับอุปกรณ์](nd2/docs/week02/lessons/08-app-anatomy.md)
+- [การขยายขีดความสามารถเมื่ออุปกรณ์เดี่ยวไม่เพียงพอ — การบูรณาการสู่ระบบบริการส่วนกลาง](nd2/docs/week02/lessons/09-beyond-one-device.md)
+- [การพัฒนาแอปพลิเคชันเบื้องต้น — การควบคุมหลอดไฟ LED และการอ่านค่าระดับเสียง](nd2/docs/week02/lessons/10-first-app-led-and-audio.md)
+- [การจัดเตรียมสภาพแวดล้อมและเครื่องมือพัฒนา — Node.js, Vite, TypeScript และพื้นฐานแพลตฟอร์มเว็บ](nd2/docs/week02/lessons/11-toolchain-setup.md)
 
 ### English
 
@@ -140,7 +140,7 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ## ND03 — Automation & Robotics
 
-> จาก PLC/DCS สู่ ROS-era — middleware + digital twin
+> การเปลี่ยนผ่านจากระบบ PLC/DCS สู่ยุคสมัยของ ROS — มิดเดิลแวร์ (Middleware) และระบบดิจิทัลทวิน (Digital Twin)
 
 - [Track](nd3/README.md)
 - [Documents](nd3/docs/README.md)
@@ -154,17 +154,17 @@ Each folder has a `README.md` with its own table of contents. This page links th
 
 ### Thai
 
-- [ทำไม automation ต้องไปยุค ROS และ Digital Twin](nd3/docs/week02/lessons/01-why-ros-and-digital-twin.md)
-- [The graph — node + topic: จาก scan cycle สู่ event-driven](nd3/docs/week02/lessons/02-the-graph.md)
-- [Message & schema — สัญญาข้อมูลของระบบ](nd3/docs/week02/lessons/03-messages-and-schema.md)
-- [Service & Action — คำสั่งสั้น vs งานยาวที่ยกเลิกได้](nd3/docs/week02/lessons/04-services-and-actions.md)
-- [Parameter & lifecycle — node มีชีวิตไม่ใช่แค่ "รันตลอด"](nd3/docs/week02/lessons/05-parameters-and-lifecycle.md)
-- [TF — frames & coordinate transforms: robot ต้องรู้ว่าอะไรอยู่ตรงไหน](nd3/docs/week02/lessons/06-tf-frames.md)
-- [Observe & debug — ดูระบบกระจายที่ไม่มี "โปรแกรมเดียว" ให้ดู](nd3/docs/week02/lessons/07-observe-and-debug.md)
-- [QoS & determinism — เมื่อ pub/sub ต้องเจอ deadline จริง](nd3/docs/week02/lessons/08-qos-and-determinism.md)
-- [Digital Twin คืออะไร — ภาพจำลองที่มีชีวิตของเครื่องจริง](nd3/docs/week02/lessons/09-digital-twin.md)
-- [Twin ↔ middleware — ทำให้ทั้งคู่ทำงานร่วมกัน + ปูทางสู่ hands-on](nd3/docs/week02/lessons/10-twin-meets-middleware.md)
-- [Concept เดียวกัน สามภาษา — C, Rust, Python](nd3/docs/week02/lessons/11-three-languages.md)
+- [เหตุผลที่ระบบอัตโนมัติต้องก้าวสู่สถาปัตยกรรม ROS และ Digital Twin](nd3/docs/week02/lessons/01-why-ros-and-digital-twin.md)
+- [โครงสร้างกราฟ (The Graph) — โหนดและหัวข้อ (Node & Topic): การเปลี่ยนผ่านจาก Scan Cycle สู่ Event-Driven](nd3/docs/week02/lessons/02-the-graph.md)
+- [โครงสร้างสารและสคีมา (Message & Schema) — ข้อกำหนดและมาตรฐานข้อมูลของระบบ](nd3/docs/week02/lessons/03-messages-and-schema.md)
+- [การสื่อสารแบบ Service และ Action — การประมวลผลคำสั่งระยะสั้นเทียบกับงานระยะยาวที่รองรับการยกเลิก](nd3/docs/week02/lessons/04-services-and-actions.md)
+- [พารามิเตอร์และวงจรการทำงาน (Parameter & Lifecycle) — การบริหารจัดการสถานะและวงจรชีวิตของโหนด](nd3/docs/week02/lessons/05-parameters-and-lifecycle.md)
+- [ระบบพิกัด TF (Frames & Transforms) — การแปลงพิกัดตำแหน่งเชิงพื้นที่ของหุ่นยนต์](nd3/docs/week02/lessons/06-tf-frames.md)
+- [การเฝ้าสังเกตและตรวจแก้ข้อผิดพลาด (Observe & Debug) — การติดตามการทำงานของระบบกระจายศูนย์ (Distributed Systems)](nd3/docs/week02/lessons/07-observe-and-debug.md)
+- [คุณภาพการบริการ (QoS) และสภาพกำหนดได้ (Determinism) — การบริหารจัดการระบบ Pub/Sub ภายใต้ข้อจำกัดด้านเวลาจริง (Real-time Deadlines)](nd3/docs/week02/lessons/08-qos-and-determinism.md)
+- [แนวคิดระบบ Digital Twin — แบบจำลองเสมือนจริงของเครื่องจักรที่มีการปฏิสัมพันธ์แบบเรียลไทม์](nd3/docs/week02/lessons/09-digital-twin.md)
+- [การบูรณาการแบบจำลอง Digital Twin ร่วมกับ Middleware — กลไกการทำงานร่วมกันและการเตรียมความพร้อมสู่ภาคปฏิบัติ](nd3/docs/week02/lessons/10-twin-meets-middleware.md)
+- [การนำแนวคิดเดียวกันไปประยุกต์ใช้ในสามภาษาโปรแกรม — C, Rust และ Python](nd3/docs/week02/lessons/11-three-languages.md)
 
 ### English
 
