@@ -15,6 +15,7 @@
 **/synth_dataset/
 **/dataset/
 **/imu_dataset/
+**/data/
 **/*artifacts*/
 **/*artifacts/
 **/*.npz
