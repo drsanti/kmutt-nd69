@@ -6,7 +6,7 @@
 #define KWS_LABEL_UNKNOWN 5
 
 // Input quantization reported by the converter (the firmware reads the real values
-// from the model at runtime; these are for reference): scale=0.0926637351512909, zero_point=21
+// from the model at runtime; these are for reference): scale=0.09064067900180817, zero_point=24
 
 static const char *const kKwsLabels[KWS_NUM_LABELS] = {
     "red",

@@ -81,7 +81,11 @@ pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
 ```bash
 robotos-kws --help
 ```
-*(Or use `python -m robotos_kws --help`)*
+
+Or use
+
+```bash
+python -m robotos_kws --help
 ```
 
 ---

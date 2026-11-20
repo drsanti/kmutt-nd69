@@ -90,9 +90,9 @@ for label, p in probs.items():
     print(f"  {label:<10}: {p:.1%}")
 ```
 
-Run the example with a test audio clip:
+Run the example with the included test audio clip (or any `.wav` file):
 ```bash
-python examples/03_classify_audio_file.py ../../../nd1/docs/week08/labs/python/dataset/blue/s01_me_pc_0000.wav
+python examples/03_classify_audio_file.py sample_audio.wav
 ```
 
 ---
