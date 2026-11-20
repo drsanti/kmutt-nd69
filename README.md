@@ -29,6 +29,7 @@
 ## Table of contents
 
 - [Learning tracks](#learning-tracks)
+- [Class schedule](#class-schedule)
 - [Mini-Project #1 (Week 06)](#mini-project-1-week-06)
 - [ND01 — Embedded & Hardware](#nd01--embedded--hardware)
 - [ND02 — Application Developers](#nd02--application-developers)
@@ -47,6 +48,20 @@ Each folder has a `README.md` with its own table of contents. This page links th
 | ND03 | Automation / PLC / machinery engineers | ROS-style middleware, digital twin | [nd3/README.md](nd3/README.md) |
 
 - [Cover image](images/README.md)
+
+---
+
+## Class schedule
+
+Session-by-session schedules (dates, format, times, topics and net hours) for each track. All schedules: [Schedule/README.md](Schedule/README.md)
+
+| Track | Course | Schedule |
+|---|---|---|
+| ND01 | Secure Edge AI and IoT Device Developer | [Schedule/ND1.md](Schedule/ND1.md) |
+| ND02 | Web and Mobile Application Developer for IoT and Edge Devices | [Schedule/ND2.md](Schedule/ND2.md) |
+| ND03 | Smart Industrial Solutions Developer with Digital Twins and AI | [Schedule/ND3.md](Schedule/ND3.md) |
+
+Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 
 ---
 
