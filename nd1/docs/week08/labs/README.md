@@ -1,4 +1,4 @@
-# Week 08 labs
+# Week 08 Labs: Embedded Edge AI with `robotos-kws`
 
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND01-0e7490?style=flat-square)
@@ -6,280 +6,176 @@
 ![lang](https://img.shields.io/badge/lang-EN-2563eb?style=flat-square)
 ![kind](https://img.shields.io/badge/kind-labs-2e8b57?style=flat-square)
 
-## Table of contents
-
-- [Week 08 index](../README.md)
-- [Lessons](../lessons/README.md)
-- [Python tools](python/README.md)
-- [Firmware: kws-inference (on-device step)](firmware/kws-inference/README.md)
-- [hardware-interface-workshop prebuilt firmware](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt) (on the board for collection and live tests)
-
-## Layout
-
-```text
-labs/
-├── python/                      run every command from here
-│   ├── wire.py                  workshop wire protocol: COBS + CRC-16 frames, protobuf messages, BoardSession
-│   ├── test_wire.py             protocol self-test (golden frames), no board needed
-│   ├── kws_common.py            keyword settings + feature pipeline + dataset helpers (the contract)
-│   ├── collect.py               ES3C28P board mic → dataset   (workshop prebuilt firmware)
-│   ├── collect_pc_mic.py        computer mic → dataset
-│   ├── make_synthetic_dataset.py  pipeline test without any microphone
-│   ├── train.py                 DS-CNN training + float32/int8 TFLite export
-│   ├── train_colab.ipynb        the same on Google Colab
-│   ├── evaluate.py              accuracy, confusion matrix, per-device, quantization drop
-│   ├── live_infer_board.py      live keyword spotting: board mic stream → model on the computer
-│   ├── live_infer_pc.py         live keyword spotting on the computer mic (or a wav file)
-│   ├── verify_c_features.py     compiles kws_features.c and compares it with Python
-│   ├── export_c_array.py        .tflite → model_data.cc + kws_labels.h
-│   ├── imu_common.py            IMU windows, normalisation, augmentation, dataset helpers
-│   ├── collect_imu.py           ws28p IMU → labelled 2 s windows (CSV)
-│   ├── train_imu.py             tiny 1D CNN + float32/int8 export + confusion matrix
-│   ├── live_infer_imu.py        live gestures: ws28p IMU stream → model on the computer
-│   └── requirements.txt
-└── firmware/                    ESP-IDF v6.1, only for the on-device step (Lesson 05)
-    ├── components/es3c28p_audio/   I2C + I2S + ES8311 microphone capture
-    └── kws-inference/           TFLite Micro keyword spotter (replaces the workshop firmware while flashed)
-```
-
-## Which firmware is on the board?
-
-| Activity | Board firmware | How to flash with `esptool` |
-|---|---|---|
-| `collect.py`, `live_infer_board.py` (ES3C28P) | workshop prebuilt `es3c28p` | `python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"` |
-| `collect_imu.py`, `live_infer_imu.py` (ws28p) | workshop prebuilt `ws28p` | `python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"` |
-| On-device keyword spotting (Lesson 05) | `kws-inference` | `idf.py flash` (in `firmware/kws-inference`); afterwards reflash prebuilt |
-
-> [!TIP]
-> **How to download and flash prebuilt firmware using `esptool` (no ESP-IDF required):**
->
-> Download or clone the prebuilt firmware from [`https://github.com/drsanti/hardware-interface-workshop`](https://github.com/drsanti/hardware-interface-workshop):
-> ```bash
-> # 1. Clone repository (or download ZIP from GitHub):
-> git clone https://github.com/drsanti/hardware-interface-workshop.git
-> 
-> # 2. Install esptool:
-> pip install esptool
-> 
-> # 3. Change to the prebuilt board folder:
-> cd hardware-interface-workshop/firmware-prebuilt/es3c28p   # (or ws28p for IMU)
-> 
-> # 4. Flash the board (replace <PORT> with COMx on Windows or /dev/ttyACM0 on Linux):
-> python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
-> # Windows Git Bash / CMD: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
-> ```
-
-Only one program can own the serial port: disconnect the workshop browser tab before running a board script.
-
-## Prerequisites: Python Setup (Python 3.10 – 3.13)
-
-> [!IMPORTANT]
-> **Use Python 3.10 to 3.13.**
-> Do **NOT** use Python 3.14+ (pre-release free-threaded builds break precompiled NumPy C-extensions and TensorFlow).
-
-### Which command runs Python on your system? (`py`, `python`, `python3`, `py3`)
-
-Depending on your Operating System, installed shells, and configurations, Python is invoked with different command words. Use this guide to identify and test yours:
-
-| Command word | Where it works | When to use |
-|---|---|---|
-| **`python`** | All OSes (Windows, Linux, macOS) | **Standard command.** Always use this when your `.venv` is activated. |
-| **`python3`** | Linux, macOS, WSL | Standard on Unix systems where `python` may refer to an older or system Python. |
-| **`py`** | Windows (CMD, PowerShell, Git Bash) | **Recommended on Windows.** Invokes the official Windows Python Launcher (`C:\Windows\py.exe`), automatically picking your latest stable Python. |
-| **`py -3.11`** (or `-3.12`) | Windows | Forces the launcher to use a specific version when multiple Python versions are installed. |
-| **`py3`** | Linux / custom aliases | Some Linux distributions or student configurations alias `python3` to `py3`. |
-| **`./.venv/Scripts/python`** | Windows Git Bash / CMD | Direct path to the virtual environment interpreter — always works even if PATH/activation is broken. |
-| **`./.venv/bin/python`** | Linux / macOS | Direct path to the virtual environment interpreter. |
-
-#### How to check and verify your command:
-
-Run these in your terminal to see which one works and which version it runs:
-
-```bash
-# 1. Test which command word is recognized and prints Python 3.10 - 3.13:
-python --version
-python3 --version
-py --version          # Windows only
-py -3.11 --version    # Windows only
-
-# 2. Check the exact path of the Python executable your shell is running:
-which python          # Linux, macOS, Git Bash
-where python          # Windows CMD
-Get-Command python    # Windows PowerShell
-```
-
-If `python --version` outputs `Python 3.14` or fails with NumPy C-extension errors, use **`py`** or **`py -3.11`** on Windows!
+**Focus for Group 1 (ND1 — Embedded Systems & IoT):**
+In this lab, you complete the end-to-end Edge AI development lifecycle using the production **`robotos-kws` CLI**. You will use your computer's microphone (no hardware board required for the core pipeline), collect clean multi-class datasets, train and quantize an int8 neural network, benchmark quantization loss, test real-time sliding-window detection, and export MCU-ready C arrays (`model_data.cc`) and headers for ESP32-S3 firmware.
 
 ---
 
-### 1. Create and Activate Virtual Environment
+## Table of Contents
 
-Inside `nd1/docs/week08/labs/python`:
+- [1. Environment Setup & CLI Installation](#1-environment-setup--cli-installation)
+- [2. Lab 1.1: Audio Sensing & Device Calibration](#2-lab-11-audio-sensing--device-calibration)
+- [3. Lab 1.2: Rigorous Multi-Class Audio Collection](#3-lab-12-rigorous-multi-class-audio-collection)
+- [4. Lab 1.3: Deep Learning Training & Int8 Quantization](#4-lab-13-deep-learning-training--int8-quantization)
+- [5. Lab 1.4: Model Evaluation & Confusion Matrix](#5-lab-14-model-evaluation--confusion-matrix)
+- [6. Lab 1.5: Real-Time Live Inference via PC Microphone](#6-lab-15-real-time-live-inference-via-pc-microphone)
+- [7. Lab 1.6: Embedded C Firmware Export & DSP Verification](#7-lab-16-embedded-c-firmware-export--dsp-verification)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## 1. Environment Setup & CLI Installation
+
+### Virtual Environment (Python 3.10 – 3.13)
 
 ```bash
 cd nd1/docs/week08/labs/python
 ```
 
-Choose your shell:
-
+- **Windows (PowerShell):**
+  ```powershell
+  py -3.11 -m venv .venv
+  .\.venv\Scripts\Activate.ps1
+  ```
 - **Linux / macOS:**
   ```bash
   python3 -m venv .venv
   source .venv/bin/activate
   ```
 
-- **Windows Git Bash (MINGW64):**
-  ```bash
-  # Use py -3.11 if python points to Python 3.14
-  py -3.11 -m venv .venv
-  source .venv/Scripts/activate
-  ```
-
-- **Windows PowerShell:**
-  ```powershell
-  # If you have multiple Python versions installed, specify Python 3.11 or 3.12:
-  py -3.11 -m venv .venv
-  .\.venv\Scripts\Activate.ps1
-  ```
-  *(If PowerShell blocks scripts: run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first).*
-
-- **Windows Command Prompt (cmd.exe):**
-  ```cmd
-  py -3.11 -m venv .venv
-  .venv\Scripts\activate.bat
-  ```
-
-### 2. Install Dependencies
+### Install Precompiled Wheel and Dependencies
 
 ```bash
 pip install -r requirements.txt
-```
-*(On Linux/Debian/Ubuntu, if `sounddevice` fails with PortAudio missing: `sudo apt install libportaudio2`).*
-
----
-
-## Lab Path A: Quick Start without Hardware (Synthetic Pipeline, 10 min)
-
-Test the complete training and export pipeline immediately without any microphone or board:
-
-> [!NOTE]
-> **Git Bash / Windows Users (`py` command):**
-> If you are running in **Git Bash** on Windows and `python` fails with a NumPy C-extension import error (or points to Python 3.14+), use `py` instead of `python`:
-> ```bash
-> py make_synthetic_dataset.py --out synth_dataset
-> ```
-> The Windows `py` launcher automatically routes to your installed stable Python 3.11/3.12 environment where packages are installed. You can use `py` for all script commands in this lab.
-
-```bash
-# 1. Generate synthetic test dataset
-python make_synthetic_dataset.py --out synth_dataset
-
-# 2. Train DS-CNN model and export float32 + int8 TFLite
-python train.py --data synth_dataset --out synth_artifacts --epochs 30
-
-# 3. Evaluate accuracy and quantization drop
-python evaluate.py --artifacts synth_artifacts --data synth_dataset
-
-# 4. Verify C feature extraction matches Python bit-for-bit
-python verify_c_features.py --data synth_dataset --max-clips 30
+pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
 ```
 
-IMU gesture track without hardware:
+Verify that the CLI is installed and operational:
 ```bash
-python test_wire.py
-python train_imu.py --synthetic --out imu_artifacts
+robotos-kws --help
 ```
 
 ---
 
-## Lab Path B: Collect Data & Live Test with PC Microphone
+## 2. Lab 1.1: Audio Sensing & Device Calibration
 
-No hardware board required! You can record real voice keywords directly with your computer microphone:
+Inspect available audio input devices connected to your computer:
 
 ```bash
-# 1. List audio input devices to check your microphone index
-python collect_pc_mic.py --list-devices
-# Windows Git Bash: py -3.11 collect_pc_mic.py --list-devices
-
-# 2. Record 20 takes for each keyword (say each word when prompted):
-# (Pass --device <index> if your desired mic is not default; e.g. --device 1)
-python collect_pc_mic.py --speaker me --session s01 --labels red green blue off --takes 20
-
-# Tip: To record only a specific keyword (e.g. just "blue" or "red"):
-python collect_pc_mic.py --speaker me --session s01 --labels blue --takes 20
-
-# Tip: To use a wider 2.0 s recording window before trimming:
-# python collect_pc_mic.py --speaker me --session s01 --labels blue --seconds 2.0 --takes 20
-
-# 3. Record background noise (stay quiet):
-python collect_pc_mic.py --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
-
-# 4. Train the model on your real recorded dataset:
-python train.py --data dataset --out artifacts --epochs 40
-
-# 5. Run live keyword detection through your PC microphone:
-python live_infer_pc.py --model artifacts/model_int8.tflite
+robotos-kws devices
 ```
+
+Look for your default input device index. Note the sampling rate ($16\text{ kHz}$) and 16-bit PCM dynamic range.
 
 ---
 
-## Lab Path C: Collect Data & Live Test with ES3C28P Board
+## 3. Lab 1.2: Rigorous Multi-Class Audio Collection
 
-> [!WARNING]
-> **Serial Port Exclusivity**: Close any open serial monitors, IDE consoles, or workshop browser tabs (`WebSerial`) before running board scripts. Only one program can access the COM port at a time.
+Collect labelled audio clips using your computer's microphone. All audio is automatically centered, trimmed to 1.0 second (16,000 samples @ 16 kHz), and validated against minimum SNR thresholds.
 
+### 3.1 Collect Keyword Commands
+Record 20 takes for each of the target keywords (`red`, `green`, `blue`, `off`):
 ```bash
-# 1. Check board connection and tune microphone gain (e.g. COM5 or /dev/ttyUSB0):
-# Speak while this runs. Aim for speech RMS around -26 to -18 dBFS (peak 4,000 to 15,000).
-# If speech is too quiet (< -38 dBFS), test with --gain 80 or --gain 85:
-python collect.py --port COM5 --info --gain 80
-# Windows Git Bash: py collect.py --port COM5 --info --gain 80
+robotos-kws collect-pc --speaker me --session s01 --labels red green blue off --takes 20
+```
+> Press **Enter**, wait for the **GO** prompt, and speak clearly into your microphone.
 
-# 2. Record keyword dataset from board MEMS microphone with tuned gain:
-python collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20
-# Windows Git Bash: py collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20
+### 3.2 Collect Ambient Silence (Negative Class)
+Record background room noise (fans, keyboard typing, ambient stillness) without speech prompts:
+```bash
+robotos-kws collect-pc --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
+```
 
-# Tip: To collect only a single keyword (e.g. "blue") or re-record one word:
-# python collect.py --port COM5 --speaker me --session s01 --labels blue --gain 80 --takes 20
-
-# 3. Train combined model (PC + board clips):
-python train.py --data dataset --out artifacts --epochs 40
-
-# 4. Run live keyword spotting streamed from the board (use the same --gain):
-python live_infer_board.py --port COM5 --gain 80 --model artifacts/model_int8.tflite
-
-# 5. Export C array for flashing to firmware (Lesson 05):
-python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
+### 3.3 Collect Unknown Speech (Negative Class)
+Record non-keyword words (e.g. *"computer"*, *"robot"*, *"yellow"*, numbers) to teach the model to ignore other speech:
+```bash
+robotos-kws collect-pc --speaker me --session s01 --labels _unknown_ --takes 20
 ```
 
 > [!TIP]
-> **Audio Level & Gain Guide (`dBFS`):**
-> - **Sweet Spot (Target):** Peak between **4,000 and 15,000** (−18 to −6 dBFS), speech RMS between **−26 and −18 dBFS**.
-> - **Too Quiet (< −38 dBFS RMS, peak < 2,000):** Microphone is too quiet. Use `--gain 80` or `--gain 85` and speak ~15–30 cm from the board.
-> - **Clipping (Peak 32,767):** Audio is distorted. Lower gain (e.g. `--gain 50` or `40`).
-> - **Automatic Quality Checks:** Takes that clip (peak ≥ 32,000) or are too quiet (speech RMS < −40 dBFS for keywords; relaxed to < −52 dBFS for `_unknown_` to allow soft speech and whispers) are automatically discarded and retried so bad clips never enter your dataset.
-> - **Record a specific keyword (`--labels`):** By default, both scripts cycle through all 4 words (`red`, `green`, `blue`, `off`). To record or re-record only one keyword, pass `--labels blue` (or multiple: `--labels red blue`). For silence, pass `--labels _silence_ --no-prompt --takes 30`.
-> - Keep `--gain` consistent across `collect.py` and `live_infer_board.py`!
-
-> [!NOTE]
-> **Clip Length vs. Record Window (`CLIP_SAMPLES` vs `--seconds`):**
-> - **Default Saved Clip:** Exactly **1.0 second** (16,000 samples @ 16 kHz), defined by `CLIP_SAMPLES = 16000` in `kws_common.py`.
-> - **Raw Record Window (`--seconds`):** The script records a 1.5 s raw buffer (default `--seconds 1.5`), then centers on the loudest speech energy to extract the exact 1.0 s clip.
-> - **How to change clip length to 1.5 seconds (24,000 samples):**
->   1. In `kws_common.py`: set `CLIP_SAMPLES = 24000` (automatically resizes CNN input frames from 49 to 74).
->   2. In `collect.py` and `collect_pc_mic.py`: add `--seconds 2.0` so there is enough raw audio to center a 1.5 s word.
->   3. If building ESP32-S3 firmware: in `firmware/kws-inference/main/kws_features.h`, set `#define KWS_CLIP_SAMPLES 24000`.
+> **No Mic Available or Need Quick Test?**
+> You can generate a 100% synthetic test dataset in 5 seconds without recording:
+> ```bash
+> robotos-kws synth-data --out dataset
+> ```
 
 ---
 
-## Troubleshooting & Help
+## 4. Lab 1.3: Deep Learning Training & Int8 Quantization
 
-Encountering an issue? See the detailed guide in [troubleshooting.md](../troubleshooting.md):
-- Python 3.14 / NumPy `_multiarray_umath` C-extension error
-- Microphone muted, PortAudio missing, or quiet dBFS warnings
-- Serial port busy / access denied
-- TFLite arena size adjustments for firmware deploy
+Train a Depthwise Separable Convolutional Neural Network (DS-CNN) with 4× data augmentation (time-shifts, additive noise, volume scaling) and perform Post-Training Quantization (PTQ) to int8:
 
-## Status
+```bash
+robotos-kws train --data dataset --out artifacts --epochs 40 --augment 4
+```
 
-The Python tools were run end-to-end on synthetic data (Linux, Python 3.13, TensorFlow 2.21). The board tools were run against a simulated board on a pseudo-terminal that sends real workshop frames, including noise and dropped frames; `wire.py` was cross-checked byte-for-byte against the workshop's TypeScript codec. No real board was attached. `kws-inference` has not been built with `idf.py` or flashed; see its README.
+### Key Concepts Observed:
+- **Log-Mel Spectrogram Extraction**: Turns 16,000 PCM samples into a $49 \times 40$ time-frequency matrix.
+- **Post-Training Quantization (PTQ)**: Scales weights and activations from float32 ($32\text{ bits}$) to int8 ($8\text{ bits}$) using representative calibration samples.
+- **Model Footprint**: The resulting `model_int8.tflite` is only ~18.8 KiB (fitting comfortably inside an ESP32-S3's internal SRAM).
+
+---
+
+## 5. Lab 1.4: Model Evaluation & Confusion Matrix
+
+Benchmark the quantized int8 model on held-out test splits and generate an evaluation report:
+
+```bash
+robotos-kws evaluate --artifacts artifacts --data dataset
+```
+
+Open and inspect `artifacts/report.md`:
+- Review the confusion matrix (checking for confusion between words).
+- Verify precision, recall, and F1-score across all classes.
+- Measure quantization loss (comparing float32 vs int8 accuracy).
+
+---
+
+## 6. Lab 1.5: Real-Time Live Inference via PC Microphone
+
+Run continuous, sliding-window keyword spotting in real time directly on your computer microphone:
+
+```bash
+robotos-kws live-pc --model artifacts/model_int8.tflite --threshold 0.85
+```
+
+- Speak keywords (`"red"`, `"green"`, `"blue"`, `"off"`) into your microphone.
+- Observe:
+  - **Sliding Window**: Step size ($200\text{ ms}$ hop) and $1.0\text{ s}$ window.
+  - **Refractory Window**: $1000\text{ ms}$ cooldown preventing duplicate triggers for a single utterance.
+  - **Softmax Confidence**: Triggers only when probability exceeds $0.85$.
+
+---
+
+## 7. Lab 1.6: Embedded C Firmware Export & DSP Verification
+
+As an Embedded Systems engineer, your final task is preparing the model for bare-metal / RTOS firmware deployment.
+
+### 7.1 Verify C DSP Feature Parity
+Verify that the C-based log-mel filterbank implementation in ESP-IDF matches the Python DSP bit-for-bit:
+
+```bash
+robotos-kws verify-c --data dataset --max-clips 30
+```
+
+### 7.2 Export Model Array for ESP-IDF Firmware
+Convert the quantized int8 TFLite model into a byte-aligned C array and header:
+
+```bash
+robotos-kws export --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
+```
+
+Inspect the generated files:
+- `../firmware/kws-inference/main/model_data.cc`: Contains `alignas(16) const unsigned char g_model[]` mapped to flash memory (`.rodata`).
+- `../firmware/kws-inference/main/kws_labels.h`: Contains the label enum and string array.
+
+---
+
+## Troubleshooting
+
+- **Microphone too quiet / "Signal too quiet" warning:**
+  Speak 15–30 cm from the microphone. If using a laptop mic, check your OS input volume levels in Sound Settings.
+- **Python version conflicts:**
+  Ensure you are using Python 3.10–3.13. On Windows, use `py -3.11 -m venv .venv`.
+- **PortAudio missing on Linux:**
+  Run `sudo apt install libportaudio2`.
