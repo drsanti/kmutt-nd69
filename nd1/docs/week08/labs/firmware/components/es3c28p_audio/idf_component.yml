@@ -1,0 +1,4 @@
+## ES8311 codec driver used by both Week 08 firmware projects.
+dependencies:
+  idf: ">=5.3"
+  espressif/esp_codec_dev: "~1.6.2"

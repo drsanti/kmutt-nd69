@@ -1,0 +1,12 @@
+# Week 08 kws-inference (ESP-IDF v6.1, ES3C28P / ESP32-S3R8)
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+# Optimise for speed: features + inference run every 500 ms.
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+# TFLite Micro + model need more than the default 1 MB app partition.
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+# FreeRTOS run-time stats are handy for the CPU-load exercise in Lesson 05.
+CONFIG_FREERTOS_USE_TRACE_FACILITY=y
+CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y
+CONFIG_FREERTOS_USE_STATS_FORMATTING_FUNCTIONS=y

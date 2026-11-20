@@ -1,0 +1,3 @@
+## Dependencies of this project are declared by ../components/es3c28p_audio/idf_component.yml
+dependencies:
+  idf: ">=5.3"

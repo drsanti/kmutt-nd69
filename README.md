@@ -87,6 +87,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 02 — ES3C28P Hardware](nd1/docs/week02/README.md)
 - [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](nd1/docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](nd1/docs/week06/README.md)
+- [Week 08 — Edge AI Data, Training, Testing, and Firmware](nd1/docs/week08/README.md)
 - [Thai lessons](nd1/docs/week02/lessons/README.md)
 - [Thai illustrations](nd1/docs/week02/lessons/images/README.md)
 - [English edition](nd1/docs/week02/lessons/EN/README.md)
@@ -131,6 +132,14 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Install and Verify ESP-IDF (Windows, macOS, Linux)](nd1/docs/week03/lessons/install-esp-idf.md)
 - [VS Code ESP-IDF extension setup](nd1/docs/week03/lessons/vscode-esp-idf.md)
 - [ESP32-S3 Hello World project](nd1/docs/week03/lessons/esp32-s3/README.md)
+- [Week 08 Lesson 01 — The Edge AI Pipeline and ESP32-S3 Limits](nd1/docs/week08/lessons/01-edge-ai-pipeline.md)
+- [Week 08 Lesson 02 — Data Collection: Board Mic, PC Mic, and Dataset Hygiene](nd1/docs/week08/lessons/02-data-collection.md)
+- [Week 08 Lesson 03 — Log-Mel Features and a Small DS-CNN](nd1/docs/week08/lessons/03-features-and-model.md)
+- [Week 08 Lesson 04 — Testing, Confusion Matrix, and int8 Quantization](nd1/docs/week08/lessons/04-testing-and-quantization.md)
+- [Week 08 Lesson 05 — Firmware: TFLite Micro on FreeRTOS](nd1/docs/week08/lessons/05-firmware-inference.md)
+- [Week 08 Lesson 06 — Secure Edge AI: Protecting the Model and Firmware](nd1/docs/week08/lessons/06-secure-edge-ai.md)
+- [Week 08 Lesson 07 — Alternative Track: Touch-Screen Gesture Classifier](nd1/docs/week08/lessons/07-touch-gesture-alternative.md)
+- [Week 08 labs (firmware + Python)](nd1/docs/week08/labs/README.md)
 
 ---
 

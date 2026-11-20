@@ -13,4 +13,5 @@ Course documents for the embedded track.
 - [Week 02 — ES3C28P hardware](week02/README.md)
 - [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](week06/README.md)
+- [Week 08 — Edge AI Data, Training, Testing, and Firmware](week08/README.md)
 - [Track index](../README.md)
