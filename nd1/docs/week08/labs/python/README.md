@@ -12,7 +12,8 @@
 
 > [!IMPORTANT]
 > **Use Python 3.10 to 3.13.**
-> Check with `python --version`. On Windows with multiple Python versions installed, specify Python 3.11 with `py -3.11 -m venv .venv`. Avoid Python 3.14+ (incompatible with pre-compiled TensorFlow/NumPy C-extensions).
+> Check your command with `python --version`, `python3 --version`, or `py --version` (Windows).
+> On Windows with multiple Python versions installed, specify Python 3.11 with `py -3.11 -m venv .venv`. Avoid Python 3.14+ (incompatible with pre-compiled TensorFlow/NumPy C-extensions).
 
 ```bash
 # Linux / macOS:
@@ -37,8 +38,11 @@ pip install -r requirements.txt
 ## Commands
 
 > [!NOTE]
-> **Git Bash / Windows (`py` command):**
-> If you are using Git Bash on Windows and `python` defaults to Python 3.14 (causing NumPy import failures), run scripts using `py` instead of `python` (e.g. `py test_wire.py`, `py make_synthetic_dataset.py --out synth_dataset`).
+> **Which command to use? (`python`, `python3`, `py`, or `py3`)**
+> - **Inside activated `.venv` (all OSes):** `python <script>.py`
+> - **Linux / macOS:** `python3 <script>.py` (or `py3` if aliased)
+> - **Windows (Git Bash, PowerShell, CMD):** `py <script>.py` or `py -3.11 <script>.py` (especially if `python` points to an incompatible Python 3.14+ version)
+> - **Direct fallback:** `./.venv/Scripts/python <script>.py` (Windows) or `./.venv/bin/python <script>.py` (Linux/macOS)
 
 Board scripts need the board running the [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) **prebuilt firmware** (`rb flash-bin`) and the workshop browser tab disconnected.
 

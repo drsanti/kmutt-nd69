@@ -56,10 +56,42 @@ Only one program can own the serial port: disconnect the workshop browser tab be
 
 > [!IMPORTANT]
 > **Use Python 3.10 to 3.13.**
-> Do **NOT** use Python 3.14+ (pre-release free-threaded builds break precompiled NumPy C-extensions and TensorFlow). Check your version:
-> ```bash
-> python --version
-> ```
+> Do **NOT** use Python 3.14+ (pre-release free-threaded builds break precompiled NumPy C-extensions and TensorFlow).
+
+### Which command runs Python on your system? (`py`, `python`, `python3`, `py3`)
+
+Depending on your Operating System, installed shells, and configurations, Python is invoked with different command words. Use this guide to identify and test yours:
+
+| Command word | Where it works | When to use |
+|---|---|---|
+| **`python`** | All OSes (Windows, Linux, macOS) | **Standard command.** Always use this when your `.venv` is activated. |
+| **`python3`** | Linux, macOS, WSL | Standard on Unix systems where `python` may refer to an older or system Python. |
+| **`py`** | Windows (CMD, PowerShell, Git Bash) | **Recommended on Windows.** Invokes the official Windows Python Launcher (`C:\Windows\py.exe`), automatically picking your latest stable Python. |
+| **`py -3.11`** (or `-3.12`) | Windows | Forces the launcher to use a specific version when multiple Python versions are installed. |
+| **`py3`** | Linux / custom aliases | Some Linux distributions or student configurations alias `python3` to `py3`. |
+| **`./.venv/Scripts/python`** | Windows Git Bash / CMD | Direct path to the virtual environment interpreter — always works even if PATH/activation is broken. |
+| **`./.venv/bin/python`** | Linux / macOS | Direct path to the virtual environment interpreter. |
+
+#### How to check and verify your command:
+
+Run these in your terminal to see which one works and which version it runs:
+
+```bash
+# 1. Test which command word is recognized and prints Python 3.10 - 3.13:
+python --version
+python3 --version
+py --version          # Windows only
+py -3.11 --version    # Windows only
+
+# 2. Check the exact path of the Python executable your shell is running:
+which python          # Linux, macOS, Git Bash
+where python          # Windows CMD
+Get-Command python    # Windows PowerShell
+```
+
+If `python --version` outputs `Python 3.14` or fails with NumPy C-extension errors, use **`py`** or **`py -3.11`** on Windows!
+
+---
 
 ### 1. Create and Activate Virtual Environment
 

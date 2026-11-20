@@ -27,6 +27,17 @@
   pip install -r requirements.txt
   ```
 
+### Which Python command should I use? (`python`, `python3`, `py`, or `py3`)
+
+| Error / Symptom | Cause | Solution |
+|---|---|---|
+| **`bash: py: command not found`** | `py` is the Windows Python launcher; it does not exist on Linux or macOS. | Use `python3` or `python` instead. |
+| **`python: command not found`** | Python is not symlinked to `python` or virtual environment is not activated. | On Linux/macOS: use `python3`. On Windows: use `py`. Or activate your `.venv`. |
+| **Windows opens Microsoft Store** | Windows 10/11 "App Execution Aliases" intercepts `python.exe` when no Python path is found. | Run `py` instead, or disable the Microsoft Store alias in *Windows Settings → Apps → Advanced app settings → App execution aliases*. |
+| **`ModuleNotFoundError: ... numpy`** (when python 3.14 is installed) | System PATH defaults to Python 3.14 which breaks C-extensions. | On Windows: use `py` or `py -3.11`. |
+
+---
+
 ### Windows PowerShell: "running scripts is disabled on this system" (`PSSecurityException`)
 
 - **Cause:** Windows PowerShell default execution policy blocks running downloaded `.ps1` scripts.
