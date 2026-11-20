@@ -42,7 +42,7 @@ The file name carries the metadata that `train.py` and `evaluate.py` need:
 
 ## Path A — the board microphone (main lab)
 
-Your ES3C28P still runs the **workshop prebuilt firmware** (`firmware-prebuilt/es3c28p`, flashed with `rb flash-bin`). It already knows how to stream microphone audio over USB — that is what the workshop's ex28 recorder and ex30/ex32 feature and classifier labs use. `collect.py` is a Python version of that same host code.
+Your ES3C28P still runs the **workshop prebuilt firmware** (`firmware-prebuilt/es3c28p`, flashed with `esptool`). It already knows how to stream microphone audio over USB — that is what the workshop's ex28 recorder and ex30/ex32 feature and classifier labs use. `collect.py` is a Python version of that same host code.
 
 ```text
 MEMS mic ─► ES8311 ADC ─I2S─► ESP32-S3 (prebuilt firmware)                  ─USB─► collect.py ─► dataset/

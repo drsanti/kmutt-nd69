@@ -9,3 +9,10 @@
 **/__pycache__/
 **/*.rbag
 **/tune.toml
+
+# Lab datasets and training artifacts (week 08+)
+**/synth_dataset/
+**/dataset/
+**/imu_dataset/
+**/*artifacts/
+**/*.npz

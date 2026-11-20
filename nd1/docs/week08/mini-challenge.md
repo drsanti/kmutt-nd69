@@ -28,7 +28,7 @@ Build a keyword spotter on the ES3C28P (or an IMU gesture classifier on the ws28
 
 5. Record at least one full session with the **board** microphone (`collect.py`, workshop firmware) and report board-only test accuracy (`--device board`).
 6. Host-side action: extend `live_infer_board.py` so a detected word sends a command back to the board over the same wire protocol (for example an LED colour with `MSG_LED_FX` `0x8e`, as in the workshop LED labs). The board keeps the workshop firmware.
-7. Advanced (ESP-IDF): run `verify_c_features.py` (must print `MATCH`), export, flash `kws-inference`, match the input level (Lesson 05), and fill in the latency table. **Reflash the workshop firmware afterwards** (`rb flash-bin`).
+7. Advanced (ESP-IDF): run `verify_c_features.py` (must print `MATCH`), export, flash `kws-inference`, match the input level (Lesson 05), and fill in the latency table. **Reflash the workshop firmware afterwards** (`python -m esptool write-flash "@flash_args"`).
 8. Make each command do something visible: LED colours, a message on the display, or a sound through the speaker (amplifier enable GPIO1 is active-low).
 
 ### IMU track (ws28p)

@@ -12,7 +12,7 @@ The workflow is the same as the keyword track — collect → train → test →
 
 ## 1. What the board sends
 
-Flash the workshop's **ws28p** prebuilt firmware (`rb config --port <PORT> --board ws28p`, `rb flash-bin`). The board then streams IMU data by itself; nothing has to be enabled. This is the stream you used in workshop labs ex20 (IMU hello) and ex21 (shake → beep).
+Flash the workshop's **ws28p** prebuilt firmware (`cd hardware-interface-workshop/firmware-prebuilt/ws28p` → `python -m esptool -p <PORT> write-flash "@flash_args"`). The board then streams IMU data by itself; nothing has to be enabled. This is the stream you used in workshop labs ex20 (IMU hello) and ex21 (shake → beep).
 
 | Item | Value |
 |---|---|

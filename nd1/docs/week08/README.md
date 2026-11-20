@@ -8,7 +8,7 @@
 
 **Session:** Saturday 21 November 2026 · Online · 09:00–12:00 · Topic: *Data collection, model training, model testing, and firmware/algorithms for Edge AI*
 
-In this session you build a complete Edge AI pipeline: record labelled data, train a small neural network, test and quantize it, then run it live. You start from where the [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) ended: your board already runs the workshop's **prebuilt firmware** (flashed with `rb flash-bin`, no ESP-IDF), and it already streams sensor data over USB with the workshop wire protocol. This week a Python program on your computer speaks that same protocol, so **you do not need to flash anything to collect data or test a model**.
+In this session you build a complete Edge AI pipeline: record labelled data, train a small neural network, test and quantize it, then run it live. You start from where the [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) ended: your board already runs the workshop's **prebuilt firmware** (flashed with `esptool`, no ESP-IDF), and it already streams sensor data over USB with the workshop wire protocol. This week a Python program on your computer speaks that same protocol, so **you do not need to flash anything to collect data or test a model**.
 
 - **Main track — keyword spotting (ES3C28P, board microphone).** Listen for `red`, `green`, `blue`, `off`. The board streams 16 kHz audio; the model runs on your computer (`live_infer_board.py`).
 - **Alternative track — IMU gestures (ws28p).** Recognise `idle`, `shake`, `circle`, `lift` from the 50 Hz accelerometer + gyroscope stream (`live_infer_imu.py`).
@@ -65,7 +65,7 @@ Pick the path that matches your hardware. Paths A and B produce the same keyword
 
 ## Prerequisites
 
-- The [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) prebuilt firmware on your board ([`firmware-prebuilt/`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt): `rb config --port <PORT> --board es3c28p` or `ws28p`, then `rb flash-bin`). Nothing else to flash for the main labs.
+- The [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) prebuilt firmware on your board ([`firmware-prebuilt/`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt): `python -m esptool -p <PORT> write-flash "@flash_args"`). Nothing else to flash for the main labs.
 - Python 3.10–3.13 with a virtual environment, or a Google account for Colab (training only).
 - Only for the on-device block (Lesson 05): ESP-IDF **v6.1** working from a terminal — see [Week 03](../week03/lessons/install-esp-idf.md).
 - Background: workshop labs ex03 (BoardInfo), ex20–21 (IMU), ex28 (mic recorder), ex30 (mic features), ex32 (mic classify); Week 02 [Lesson 10 — Audio chain](../week02/lessons/EN/10-audio-chain.md) and [Lesson 15 — FreeRTOS](../week02/lessons/EN/15-embedded-c-freertos-review.md).

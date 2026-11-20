@@ -14,9 +14,9 @@ Listens continuously to the onboard microphone, runs a TensorFlow Lite Micro int
 > **This firmware replaces the hardware-interface-workshop prebuilt firmware while it is on the board.** It does not speak the workshop wire protocol, so `collect.py`, `live_infer_board.py`, and the workshop browser demos will not work until you put the prebuilt firmware back:
 >
 > ```bash
-> cd hardware-interface-workshop/firmware-prebuilt
-> ./rb flash-bin                 # Windows: .\rb flash-bin   (uses the port/board saved by "rb config")
-> # or: ./rb config --port <PORT> --board es3c28p  then  ./rb flash-bin
+> cd hardware-interface-workshop/firmware-prebuilt/es3c28p
+> python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
+> # Windows: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
 > ```
 >
 > In class this is an **instructor demo / advanced lab** (it needs ESP-IDF v6.1) and the starting point for Mini-Project 2 (5 December).

@@ -12,7 +12,7 @@ Put the int8 model into firmware as a C array, run it with TensorFlow Lite Micro
 > Until now the board ran the **workshop prebuilt firmware** and the model ran on your computer. In this lesson the model moves **onto the ESP32-S3**. That means flashing a different program, `kws-inference`, built with ESP-IDF v6.1:
 >
 > - While `kws-inference` is on the board, the workshop protocol is gone: `collect.py`, `live_infer_board.py`, and the workshop browser demos will not connect.
-> - When you are done, **reflash the prebuilt firmware**: `cd hardware-interface-workshop/firmware-prebuilt` → `./rb flash-bin` (Windows `.\rb flash-bin`; run `rb config --port <PORT> --board es3c28p` first on a new PC).
+> - When you are done, **reflash the prebuilt firmware**: `cd hardware-interface-workshop/firmware-prebuilt/es3c28p` → `python -m esptool -p <PORT> write-flash "@flash_args"`.
 > - In class the instructor demonstrates this step; students with ESP-IDF set up can follow along. It is also the starting point for **Mini-Project 2** (5 December).
 
 ## Host inference vs device inference
@@ -76,8 +76,9 @@ idf.py build flash monitor          # add -p COM5 / -p /dev/ttyACM0 if needed; C
 ## Step 3 — put the workshop firmware back
 
 ```bash
-cd hardware-interface-workshop/firmware-prebuilt
-./rb flash-bin                      # Windows PowerShell: .\rb flash-bin
+cd hardware-interface-workshop/firmware-prebuilt/es3c28p
+python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
+# Windows: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
 ```
 
 Then `python collect.py --port <PORT> --info` should print the `BoardInfo` line again.

@@ -92,9 +92,9 @@ Symptoms for `collect.py`, `collect_imu.py`, `live_infer_board.py`, and `live_in
 | Symptom | Likely cause → fix |
 |---|---|
 | `cannot open COM5` / port busy / access denied | **Another program owns the port** — most often the workshop demo tab in Chrome/Edge (Web Serial keeps the port while the tab is connected). Click *Disconnect* or close the tab; also close serial monitors, `idf.py monitor`, Arduino IDE, `rbdev`, and other scripts. **Linux:** add yourself to `dialout` (or `uucp`), then log out and in. **macOS:** use `/dev/cu.usbmodem…`, not `/dev/tty.…`. List ports with `python -m serial.tools.list_ports` |
-| `No BoardInfo frame received` | Wrong port, or the board is not running the workshop firmware (for example `kws-inference` is still flashed). Reflash: `cd hardware-interface-workshop/firmware-prebuilt` → `./rb flash-bin` (Windows `.\rb flash-bin`). BoardInfo comes at boot and about every 10 s, so the script waits up to 12 s |
+| `No BoardInfo frame received` | Wrong port, or the board is not running the workshop firmware (for example `kws-inference` is still flashed). Reflash with `esptool`: `cd hardware-interface-workshop/firmware-prebuilt/es3c28p` → `python -m esptool -p <PORT> write-flash "@flash_args"`. BoardInfo comes at boot and about every 10 s, so the script waits up to 12 s |
 | `Wrong board for collect.py … needs MIC` | A ws28p (caps `0x3c`) is attached. Use the ES3C28P (caps `0x33`), or record with `collect_pc_mic.py` |
-| `Wrong board for collect_imu.py … needs IMU` | An ES3C28P (caps `0x33`, no IMU) is attached. Use the ws28p and its prebuilt image (`rb config --board ws28p`, `rb flash-bin`) |
+| `Wrong board for collect_imu.py … needs IMU` | An ES3C28P (caps `0x33`, no IMU) is attached. Use the ws28p and its prebuilt image (`cd firmware-prebuilt/ws28p` → `python -m esptool -p <PORT> write-flash "@flash_args"`) |
 | `No reply from board - is the workshop prebuilt firmware on the board?` | The `MicCmd` got no `CmdAck` within 2.5 s. Old or different firmware, or the board is rebooting. Reflash the prebuilt image; unplug/replug |
 | `board rejected MicCmd (rc=…)` | The firmware refused the command (for example the audio codec did not start). Check the board's screen/log, power-cycle |
 | `[retry] … chunk(s) lost on USB (seq gap)` now and then | `MicPcm.seq` jumped: USB dropped a frame. The take is re-recorded automatically. If it happens on every take: close heavy programs, avoid USB hubs, do not run two board scripts at once |
@@ -103,7 +103,7 @@ Symptoms for `collect.py`, `collect_imu.py`, `live_infer_board.py`, and `live_in
 | Board resets when the port opens | Normal with native USB on some hosts. The scripts wait 2.5 s (`SETTLE_S` in `wire.py`) before trusting data |
 | `--info` level stays near −90 dBFS | Microphone muted or gain 0: run with `--gain 60`. If still silent, check the mic in workshop lab ex11/ex28 (browser) |
 | Clips are clipped (peak 32767) | Lower `--gain` (for example 40) and re-record that session; keep the same gain for all sessions |
-| `rb flash-bin` cannot find the port | Close everything that holds the port (see first row). Set it explicitly: `rb config --port <PORT> --board es3c28p` |
+| `esptool` cannot find the port | Close everything that holds the port (see first row). Set it explicitly: `-p COMx` or `-p /dev/ttyACM0` |
 | Board stops responding after flashing | Native USB re-enumerates after reset. Unplug and replug, or hold BOOT while pressing RESET to enter download mode (Week 02, Lesson 06) |
 
 ## Training and testing
@@ -129,7 +129,7 @@ Symptoms for `collect.py`, `collect_imu.py`, `live_infer_board.py`, and `live_in
 | `model shape/type does not match` | You exported a model with a different input size or label count; re-export and check `kws_labels.h` |
 | `dropped` keeps growing | Inference is slower than the hop: increase `KWS_HOP_BLOCKS`, keep `-O2`, and check that the ESP-NN optimisations are on (default in esp-tflite-micro) |
 | `kws-inference` works poorly but `live_infer_board.py` was fine | Capture path differs (Lesson 05): compare the dBFS column with your `collect.py` levels and adjust `KWS_MIC_GAIN_DB`; try `KWS_MIC_SLOT` 0 or 1 |
-| After `kws-inference`, the board scripts and browser demos no longer connect | Expected: it replaced the workshop firmware. Reflash with `rb flash-bin` |
+| After `kws-inference`, the board scripts and browser demos no longer connect | Expected: it replaced the workshop firmware. Reflash with `esptool`: `cd firmware-prebuilt/es3c28p` → `python -m esptool -p <PORT> write-flash "@flash_args"` |
 | LED never lights | GPIO42, WS2812 model, and colour order (GRB) — Week 02, Lesson 11. Also check whether the score ever reaches `KWS_THRESHOLD` in the log |
 | Always detects the same word | Placeholder model still in use (it was trained on synthetic tones). Export your own model |
 

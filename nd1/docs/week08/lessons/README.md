@@ -38,6 +38,6 @@
 |---|---|
 | Python labs | `nd1/docs/week08/labs/python` — run every `python ...` command from here |
 | Board protocol (Python) | `nd1/docs/week08/labs/python/wire.py` — same frames as the workshop's `demos/src/lib/wire/*.ts` |
-| Board firmware for collection and live tests | hardware-interface-workshop [`firmware-prebuilt/`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt) (`rb flash-bin`) |
+| Board firmware for collection and live tests | hardware-interface-workshop [`firmware-prebuilt/`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt) (flashed with `esptool`) |
 | On-device inference firmware | `nd1/docs/week08/labs/firmware/kws-inference` (ESP-IDF; replaces the prebuilt firmware while flashed) |
 | Audio driver used by `kws-inference` | `nd1/docs/week08/labs/firmware/components/es3c28p_audio` |

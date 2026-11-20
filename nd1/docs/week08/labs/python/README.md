@@ -44,7 +44,7 @@ pip install -r requirements.txt
 > - **Windows (Git Bash, PowerShell, CMD):** `py <script>.py` or `py -3.11 <script>.py` (especially if `python` points to an incompatible Python 3.14+ version)
 > - **Direct fallback:** `./.venv/Scripts/python <script>.py` (Windows) or `./.venv/bin/python <script>.py` (Linux/macOS)
 
-Board scripts need the board running the [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) **prebuilt firmware** (`rb flash-bin`) and the workshop browser tab disconnected.
+Board scripts need the board running the [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) **prebuilt firmware** (flashed with `esptool write-flash "@flash_args"`) and the workshop browser tab disconnected.
 
 | Step | Command | Output |
 |---|---|---|

@@ -44,11 +44,25 @@ labs/
 
 ## Which firmware is on the board?
 
-| Activity | Board firmware |
-|---|---|
-| `collect.py`, `live_infer_board.py` (ES3C28P) | workshop prebuilt `es3c28p` — `rb config --board es3c28p`, `rb flash-bin` |
-| `collect_imu.py`, `live_infer_imu.py` (ws28p) | workshop prebuilt `ws28p` — `rb config --board ws28p`, `rb flash-bin` |
-| On-device keyword spotting (Lesson 05) | `kws-inference` (`idf.py flash`); afterwards reflash the prebuilt image |
+| Activity | Board firmware | How to flash with `esptool` |
+|---|---|---|
+| `collect.py`, `live_infer_board.py` (ES3C28P) | workshop prebuilt `es3c28p` | `python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"` |
+| `collect_imu.py`, `live_infer_imu.py` (ws28p) | workshop prebuilt `ws28p` | `python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"` |
+| On-device keyword spotting (Lesson 05) | `kws-inference` | `idf.py flash` (in `firmware/kws-inference`); afterwards reflash prebuilt |
+
+> [!TIP]
+> **How to flash prebuilt firmware using `esptool` (no ESP-IDF required):**
+> ```bash
+> # 1. Install esptool:
+> pip install esptool
+> 
+> # 2. Change to the prebuilt board folder:
+> cd hardware-interface-workshop/firmware-prebuilt/es3c28p   # (or ws28p for IMU)
+> 
+> # 3. Flash the board (replace <PORT> with COMx on Windows or /dev/ttyACM0 on Linux):
+> python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
+> # On Windows with py: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
+> ```
 
 Only one program can own the serial port: disconnect the workshop browser tab before running a board script.
 
