@@ -54,6 +54,14 @@ cd nd3/docs/week08/labs/robotics
   source .venv/bin/activate
   ```
 
+> [!TIP]
+> **Already set up ND1 or ND2? Reuse your existing `.venv`!**
+> If you already configured the virtual environment in `nd1` (or `nd2`), you do not need to download or install dependencies again (~1.5 GB). You can simply activate the existing environment:
+> - **Git Bash:** `source ../../../nd1/docs/week08/labs/python/.venv/Scripts/activate`
+> - **PowerShell:** `..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\Activate.ps1`
+> - **CMD:** `..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\activate.bat`
+> - **Linux / macOS:** `source ../../../nd1/docs/week08/labs/python/.venv/bin/activate`
+
 ### 1.2 Install Requirements & Wheel
 
 ```bash

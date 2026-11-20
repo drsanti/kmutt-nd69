@@ -51,6 +51,14 @@ cd nd2/docs/week08/labs/web-app
   source .venv/bin/activate
   ```
 
+> [!TIP]
+> **Already set up ND1? Reuse your existing `.venv`!**
+> If you already configured the virtual environment in `nd1`, you do not need to download or install TensorFlow again (~1.5 GB). You can simply activate the existing ND1 environment:
+> - **Git Bash:** `source ../../../nd1/docs/week08/labs/python/.venv/Scripts/activate`
+> - **PowerShell:** `..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\Activate.ps1`
+> - **CMD:** `..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\activate.bat`
+> - **Linux / macOS:** `source ../../../nd1/docs/week08/labs/python/.venv/bin/activate`
+
 ### 1.2 Install Requirements & `robotos_kws` Wheel
 
 ```bash
