@@ -222,21 +222,32 @@ python live_infer_pc.py --model artifacts/model_int8.tflite
 > **Serial Port Exclusivity**: Close any open serial monitors, IDE consoles, or workshop browser tabs (`WebSerial`) before running board scripts. Only one program can access the COM port at a time.
 
 ```bash
-# 1. Check board connection and microphone audio level (e.g. COM5 or /dev/ttyUSB0):
-python collect.py --port COM5 --info
+# 1. Check board connection and tune microphone gain (e.g. COM5 or /dev/ttyUSB0):
+# Speak while this runs. Aim for speech RMS around -26 to -18 dBFS (peak 4,000 to 15,000).
+# If speech is too quiet (< -38 dBFS), test with --gain 80 or --gain 85:
+python collect.py --port COM5 --info --gain 80
+# Windows Git Bash: py collect.py --port COM5 --info --gain 80
 
-# 2. Record keyword dataset from board MEMS microphone:
-python collect.py --port COM5 --speaker me --session s01 --takes 20
+# 2. Record keyword dataset from board MEMS microphone with tuned gain:
+python collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20
+# Windows Git Bash: py collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20
 
 # 3. Train combined model (PC + board clips):
 python train.py --data dataset --out artifacts --epochs 40
 
-# 4. Run live keyword spotting streamed from the board:
-python live_infer_board.py --port COM5 --model artifacts/model_int8.tflite
+# 4. Run live keyword spotting streamed from the board (use the same --gain):
+python live_infer_board.py --port COM5 --gain 80 --model artifacts/model_int8.tflite
 
 # 5. Export C array for flashing to firmware (Lesson 05):
 python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
 ```
+
+> [!TIP]
+> **Audio Level & Gain Guide (`dBFS`):**
+> - **Sweet Spot (Target):** Peak between **4,000 and 15,000** (−18 to −6 dBFS), speech RMS between **−26 and −18 dBFS**.
+> - **Too Quiet (< −38 dBFS RMS, peak < 2,000):** Microphone is too quiet. Use `--gain 80` or `--gain 85` and speak ~15–30 cm from the board.
+> - **Clipping (Peak 32,767):** Audio is distorted. Lower gain (e.g. `--gain 50` or `40`).
+> - Keep `--gain` consistent across `collect.py` and `live_infer_board.py`!
 
 ---
 

@@ -57,17 +57,17 @@ MEMS mic ─► ES8311 ADC ─I2S─► ESP32-S3 (prebuilt firmware)            
    ```bash
    cd nd1/docs/week08/labs/python
    python test_wire.py                     # protocol self-test, no board needed
-   python collect.py --port COM5 --info    # speak while it runs
+   python collect.py --port COM5 --info --gain 80   # speak while it runs
    ```
 
-   `--info` prints the `BoardInfo` line (model, firmware, capabilities), a live level meter from the board's `AudioLevel` messages, and a 1-second test stream. Speech should peak around −20 to −6 dBFS. If it clips, use `--gain 40`; if it is very quiet, try `--gain 80`.
+   `--info` prints the `BoardInfo` line (model, firmware, capabilities), a live level meter from the board's `AudioLevel` messages, and a 1-second test stream. Speech should peak around −20 to −6 dBFS (peak amplitude 4,000 to 15,000, speech RMS −26 to −18 dBFS). If it clips, use `--gain 50`; if it is very quiet (< −38 dBFS), use `--gain 80` or `--gain 85`.
 
-3. Record:
+3. Record (keep the same `--gain` you found):
 
    ```bash
-   python collect.py --port COM5 --speaker alice --session s01 --takes 20
-   python collect.py --port COM5 --speaker alice --session s01 --labels _silence_ --takes 30 --no-prompt
-   python collect.py --port COM5 --speaker alice --session s01 --labels _unknown_ --takes 30
+   python collect.py --port COM5 --speaker alice --session s01 --gain 80 --takes 20
+   python collect.py --port COM5 --speaker alice --session s01 --gain 80 --labels _silence_ --takes 30 --no-prompt
+   python collect.py --port COM5 --speaker alice --session s01 --gain 80 --labels _unknown_ --takes 30
    ```
 
    macOS: `--port /dev/cu.usbmodem…`; Linux: `--port /dev/ttyACM0`.

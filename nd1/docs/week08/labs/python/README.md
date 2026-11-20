@@ -49,14 +49,14 @@ Board scripts need the board running the [hardware-interface-workshop](https://g
 | Step | Command | Output |
 |---|---|---|
 | Protocol self-test | `python test_wire.py` | `ALL OK` (no board needed) |
-| Record (ES3C28P mic) | `python collect.py --port COM5 --speaker me --session s01 --takes 20` | `dataset/<label>/sNN_me_board_NNNN.wav` |
-| Mic level / board check | `python collect.py --port COM5 --info` | BoardInfo, live level, 1 s test stream |
+| Record (ES3C28P mic) | `python collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20` | `dataset/<label>/sNN_me_board_NNNN.wav` |
+| Mic level / board check | `python collect.py --port COM5 --info --gain 80` | BoardInfo, live level meter, 1 s test stream |
 | Record (PC mic) | `python collect_pc_mic.py --speaker me --session s01 --takes 20` | `dataset/<label>/sNN_me_pc_NNNN.wav` |
 | Slice a long wav (also an ex28 recorder WAV) | `python collect_pc_mic.py --labels _silence_ --from-wav noise.wav --takes 60` | `_silence_` clips |
 | Test data | `python make_synthetic_dataset.py --out synth_dataset` | synthetic clips (plumbing test only) |
 | Train | `python train.py --data dataset --out artifacts` | `model.keras`, `model_float.tflite`, `model_int8.tflite`, `meta.json`, `splits.json` |
 | Test | `python evaluate.py --artifacts artifacts --data dataset [--device board]` | `artifacts/report.md` |
-| Live (board mic) | `python live_infer_board.py --port COM5 --model artifacts/model_int8.tflite` | detections on screen, lost-chunk count |
+| Live (board mic) | `python live_infer_board.py --port COM5 --gain 80 --model artifacts/model_int8.tflite` | detections on screen, lost-chunk count |
 | Live (PC mic) | `python live_infer_pc.py --model artifacts/model_int8.tflite [--wav file.wav]` | detections on screen |
 | Check C features | `python verify_c_features.py --data dataset` | `MATCH` / `MISMATCH` |
 | Export | `python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main` | `model_data.cc`, `kws_labels.h` |
