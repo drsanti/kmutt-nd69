@@ -13,4 +13,6 @@ Course documents for the application track.
 - [Week 02](week02/README.md)
 - [Week 03 — Browser Apps that Reach Hardware](week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](week06/README.md)
+- [Week 07 — Edge AI Theory](week07/README.md)
+- [Week 08 — Practical Edge AI Labs](week08/labs/README.md)
 - [Track index](../README.md)

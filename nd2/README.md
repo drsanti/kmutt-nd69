@@ -14,4 +14,6 @@ Web Serial, Web Bluetooth, and TypeScript applications.
 - [Week 02](docs/week02/README.md)
 - [Week 03 — Browser Apps that Reach Hardware](docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](docs/week06/README.md)
+- [Week 07 — Edge AI Theory](docs/week07/README.md)
+- [Week 08 — Practical Edge AI Labs](docs/week08/labs/README.md)
 - [Course index](../README.md)

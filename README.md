@@ -23,6 +23,16 @@
 ---
 
 > [!NOTE]
+> ### 📖 Week 07 — Foundations of Sensors, Signal Processing, and Edge AI
+> Detailed theory in Markdown, before the Week 08 practical laboratories:
+> - 🟢 **ND01 Theory:** [Embedded & Hardware](nd1/docs/week07/README.md)
+> - 🔵 **ND02 Theory:** [Application Developers](nd2/docs/week07/README.md)
+> - 🟣 **ND03 Theory:** [Automation & Robotics](nd3/docs/week07/README.md)
+> - 📚 **Shared foundations:** [Sensors → ADC → DSP → ML → Inference](shared/week07/foundations/README.md)
+
+---
+
+> [!NOTE]
 > ### 🔬 Week 08 Labs (Machine Learning)
 > เอกสารและคู่มือปฏิบัติการ Edge AI ประจำสัปดาห์ที่ 8 สำหรับทั้ง 3 สายการเรียนรู้
 > - 🟢 **ND01 Labs:** [คู่มือปฏิบัติการ Lab ND01](nd1/docs/week08/labs/README.md)
@@ -53,6 +63,7 @@
 ## Table of contents
 
 - [Learning tracks](#learning-tracks)
+- [Week 07 — Foundations of Edge AI](#week-07--foundations-of-edge-ai)
 - [Class schedule](#class-schedule)
 - [Mini-Project #1 (Week 06)](#mini-project-1-week-06)
 - [ND01 — Embedded & Hardware](#nd01--embedded--hardware)
@@ -72,6 +83,19 @@ Each folder has a `README.md` with its own table of contents. This page links th
 | ND03 | Automation / PLC / machinery engineers | ROS-style middleware, digital twin | [nd3/README.md](nd3/README.md) |
 
 - [Cover image](images/README.md)
+
+---
+
+## Week 07 — Foundations of Edge AI
+
+Read the theory in Week 07 before completing the existing Week 08 practical activities.
+
+| Audience | Theory material | Practical follow-up |
+|---|---|---|
+| All tracks | [Common foundations](shared/week07/foundations/README.md) | Track-specific labs |
+| ND01 | [Embedded Edge AI theory](nd1/docs/week07/README.md) | [ND01 Week 08 labs](nd1/docs/week08/labs/README.md) |
+| ND02 | [AI application theory](nd2/docs/week07/README.md) | [ND02 Week 08 labs](nd2/docs/week08/labs/README.md) |
+| ND03 | [Robotic perception theory](nd3/docs/week07/README.md) | [ND03 Week 08 labs](nd3/docs/week08/labs/README.md) |
 
 ---
 
@@ -111,6 +135,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 02 — ES3C28P Hardware](nd1/docs/week02/README.md)
 - [Week 03 — ESP-IDF Setup and ESP32-S3 Hello World](nd1/docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](nd1/docs/week06/README.md)
+- [Week 07 — Edge AI Theory](nd1/docs/week07/README.md)
 - [Week 08 — Edge AI Data, Training, Testing, and Firmware](nd1/docs/week08/README.md)
 - [Thai lessons](nd1/docs/week02/lessons/README.md)
 - [Thai illustrations](nd1/docs/week02/lessons/images/README.md)
@@ -177,6 +202,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 02 — Browser Hardware APIs](nd2/docs/week02/README.md)
 - [Week 03 — Browser Apps that Reach Hardware](nd2/docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](nd2/docs/week06/README.md)
+- [Week 07 — Edge AI Theory](nd2/docs/week07/README.md)
 - [Week 08 — Edge AI: Web Audio Analyser & Real-time KWS Inference (Web App Lab)](nd2/docs/week08/labs/README.md)
 - [Thai lessons](nd2/docs/week02/lessons/README.md)
 - [Thai illustrations](nd2/docs/week02/lessons/images/README.md)
@@ -224,6 +250,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 02 — ROS Thinking & Digital Twin](nd3/docs/week02/README.md)
 - [Week 03 — Hands-on with robotos](nd3/docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](nd3/docs/week06/README.md)
+- [Week 07 — Edge AI Theory](nd3/docs/week07/README.md)
 - [Week 08 — Edge AI: 50 Hz IMU Gesture Recognition & Robot FSM (Robotics Lab)](nd3/docs/week08/labs/README.md)
 - [Thai lessons](nd3/docs/week02/lessons/README.md)
 - [Thai illustrations](nd3/docs/week02/lessons/images/README.md)

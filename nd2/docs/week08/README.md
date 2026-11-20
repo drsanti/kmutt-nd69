@@ -1,5 +1,7 @@
 # ND02 — Week 08: Edge AI as a Service (Backend & Frontend Track)
 
+> **Before the practical:** [ND02 — Week 07 Edge AI theory](../week07/README.md). Week 07 explains the foundational concepts; this Week 08 section applies them in labs.
+
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
 ![week](https://img.shields.io/badge/week-08-334155?style=flat-square)

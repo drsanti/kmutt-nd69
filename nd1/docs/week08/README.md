@@ -1,5 +1,7 @@
 # ND01 — Week 08: Edge AI Data, Training, Testing, and Firmware
 
+> **Before the practical:** [ND01 — Week 07 Edge AI theory](../week07/README.md). Week 07 explains the foundational concepts; this Week 08 section applies them in labs.
+
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND01-0e7490?style=flat-square)
 ![week](https://img.shields.io/badge/week-08-334155?style=flat-square)

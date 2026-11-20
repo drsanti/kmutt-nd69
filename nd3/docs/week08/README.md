@@ -1,5 +1,7 @@
 # ND03 — Week 08: Robotic IMU Perception & Motion Telemetry
 
+> **Before the practical:** [ND03 — Week 07 Edge AI theory](../week07/README.md). Week 07 explains the foundational concepts; this Week 08 section applies them in labs.
+
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND03-6d28d9?style=flat-square)
 ![week](https://img.shields.io/badge/week-08-334155?style=flat-square)
