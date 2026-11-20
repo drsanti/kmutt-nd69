@@ -12,13 +12,14 @@
 > [!NOTE]
 > ### 📢 ยืนยันเข้าร่วม On-site ครั้งที่ 2 | KMUTT ND69
 > สำหรับผู้ที่ยืนยันจะมา On-site ครั้งที่ 2 กรุณาเลือกเฉพาะ Module ที่ลงทะเบียนไว้และจะเข้าร่วมจริง
-> - 🟢 **ND69-1 (ND01 — Embedded & Hardware):** วันเสาร์ที่ 12 ธ.ค. 2026 | 09:00–12:15 น.
-> - 🔵 **ND69-2 (ND02 — Application Developers):** วันเสาร์ที่ 12 ธ.ค. 2026 | 13:00–16:15 น.
-> - 🟣 **ND69-3 (ND03 — Automation & Robotics):** วันอาทิตย์ที่ 13 ธ.ค. 2026 | 09:00–12:15 น.
+> - 🟢 **ND69-1 (ND01 — Embedded & Hardware):** วันเสาร์ที่ 12 ธ.ค. 2026 | 09:00–12:15 น. · [🔬 คู่มือปฏิบัติการ Lab](nd1/docs/week08/labs/README.md)
+> - 🔵 **ND69-2 (ND02 — Application Developers):** วันเสาร์ที่ 12 ธ.ค. 2026 | 13:00–16:15 น. · [🔬 คู่มือปฏิบัติการ Lab](nd2/docs/week08/labs/README.md)
+> - 🟣 **ND69-3 (ND03 — Automation & Robotics):** วันอาทิตย์ที่ 13 ธ.ค. 2026 | 09:00–12:15 น. · [🔬 คู่มือปฏิบัติการ Lab](nd3/docs/week08/labs/README.md)
 >
 > 📍 **สถานที่:** อาคารเรียนรวม 4 (CB4 / S12) ชั้น 7 มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี (บางมด) — [🗺️ Google Maps](https://www.google.com/maps/dir//10140+126+Phuttha+Bucha+Rd,+Bang+Mot,+Thung+Khru,+Bangkok+10140/data=!4m6!4m5!1m1!4e2!1m2!1m1!1s0x30e2a3d6dafa8c75:0x96e2ce9e0645dae1?entry=s&ved=1t:269504&ictx=111) (มีทีม TA รอต้อนรับและนำไปยังห้องอบรม)  
 > ⏳ **กำหนดการ:** ปิดรับและปิดแก้ไขข้อมูล **วันจันทร์ที่ 7 ธันวาคม 2026 เวลา 23:59 น.** (เวลาไทย)  
-> 📝 **แบบฟอร์มลงทะเบียน:** [ยืนยันเข้าร่วม On-site ครั้งที่ 2 (Google Form)](https://forms.gle/xDbBq7BiJg9rANkJ8)
+> 📝 **แบบฟอร์มลงทะเบียน:** [ยืนยันเข้าร่วม On-site ครั้งที่ 2 (Google Form)](https://forms.gle/xDbBq7BiJg9rANkJ8)  
+> 🔬 **คู่มือปฏิบัติการ On-site Lab (Week 08 Edge AI):** [ND01 Lab (Embedded)](nd1/docs/week08/labs/README.md) · [ND02 Lab (Web App)](nd2/docs/week08/labs/README.md) · [ND03 Lab (Robotics)](nd3/docs/week08/labs/README.md)
 
 ---
 
@@ -168,6 +169,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 02 — Browser Hardware APIs](nd2/docs/week02/README.md)
 - [Week 03 — Browser Apps that Reach Hardware](nd2/docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](nd2/docs/week06/README.md)
+- [Week 08 — Edge AI: Web Audio Analyser & Real-time KWS Inference (Web App Lab)](nd2/docs/week08/labs/README.md)
 - [Thai lessons](nd2/docs/week02/lessons/README.md)
 - [Thai illustrations](nd2/docs/week02/lessons/images/README.md)
 - [English edition](nd2/docs/week02/lessons/EN/README.md)
@@ -214,6 +216,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 02 — ROS Thinking & Digital Twin](nd3/docs/week02/README.md)
 - [Week 03 — Hands-on with robotos](nd3/docs/week03/README.md)
 - [Week 06 — Self-learning and Mini-Project #1](nd3/docs/week06/README.md)
+- [Week 08 — Edge AI: 50 Hz IMU Gesture Recognition & Robot FSM (Robotics Lab)](nd3/docs/week08/labs/README.md)
 - [Thai lessons](nd3/docs/week02/lessons/README.md)
 - [Thai illustrations](nd3/docs/week02/lessons/images/README.md)
 - [English edition](nd3/docs/week02/lessons/EN/README.md)
