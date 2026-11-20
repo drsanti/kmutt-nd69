@@ -99,3 +99,19 @@ The controls analogy is a wiring diagram that says what is connected to what. A 
 | What does the frame tree give you? | A path from any frame to any other, so a point in the camera can become a point in the hand and a point in the map. |
 | Does a transform stay still? | Only the bolted ones. A joint's transform is a stream, and you must use the sample from the right time. |
 | What happens if you drop the frame id? | The value is silently wrong. That is worse than a value that is obviously wrong. |
+
+
+## Current robotos source support (2026-11-16)
+
+The tree above explains physical TF. The newer source SDK implements scoped
+Frame/Convention values, explicit startup configuration, read-only UUID discovery
+and host endpoint quantity bindings; it does not yet implement time-aware physical
+TF lookup. Frames use `frame.directions` (alias `frame.dirs`) and explicit world,
+body or sensor ownership. `world_frame`/`frame` are ordinary references, not globals.
+
+Same-origin BasisChange is convention math, not calibration: quaternion conversion
+needs both parent and child bases. A bare Twist has no frame_id and needs an
+explicit topic/endpoint contract. Existing workshop messages remain XY floor/Z-yaw
+while the simulator renders Y-up/XZ. Do not switch existing controllers to angular.y.
+Older student packs lack the new APIs; use only builds verified for the optional
+separate Y-up profile topics. Firmware sensor/body axes are unchanged.

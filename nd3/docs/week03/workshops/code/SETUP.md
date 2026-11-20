@@ -45,3 +45,13 @@ source ./env.sh
 ```
 
 Check: `python3 -c "import robotos; print(robotos.Node.version())"` and `robotos version`.
+
+## Simulator coordinate compatibility (2026-11-15)
+
+The separate warehouse simulator uses Y-up (XZ floor). Its odometry topics
+retain ROS-style XY floor coordinates: odom x = sim x, odom y = -sim z;
+yaw is about message +Z. Keep Twist.linear.x and Twist.angular.z.
+See [coordinate frames](coordinate-frames.md). The Windows CLI/library and
+both Windows/macOS Python wheels were refreshed from the current workshop
+bundles; these wheels now include geometry, nav, laser, tf and viz messages.
+Linux/macOS native CLI binaries were not rebuilt on Windows.

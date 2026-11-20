@@ -127,3 +127,17 @@ frames ทั้งหมดของระบบเชื่อมกันเ�
 | frame tree ทำอะไร | เชื่อมทุกจุด — แปลงจากตาไปถึงมือไปถึงโลกได้เสมอ |
 | transform เปลี่ยนไหม | เปลี่ยนตลอด — เป็น stream ไม่ใช่ค่าคงที่ — ต้องเลือกเวลาถูก |
 | ลืม frame_id แล้ว | ค่าผิดเงียบ ๆ — แย่กว่าค่าผิดชัด ๆ |
+
+
+## สถานะใน robotos source (2026-11-16)
+
+แผนภาพด้านบนอธิบายแนวคิด physical TF ส่วน SDK source รุ่นใหม่มี Frame/Convention,
+ไฟล์ตั้งค่าตอนเริ่มโปรแกรม, การอ่าน metadata ตาม UUID และ quantity binding ของ endpoint
+แต่ยังไม่มีบริการค้นหา physical TF ตามเวลา ใช้ `frame.directions` หรือ `frame.dirs`
+โดยระบุ world/body/sensor ให้ชัดเจน `world_frame` และ `frame` เป็นชื่อตัวแปรธรรมดา
+
+BasisChange เปลี่ยนฐานพิกัดที่จุดกำเนิดเดียวกัน ไม่ใช่การหาตำแหน่งกล้องหรือ calibration
+Twist ไม่มี frame_id ในตัว จึงต้องอ้างอิงข้อตกลงของ topic/endpoint บทฝึกเดิมยังใช้ข้อความ
+พื้น XY และ yaw รอบ Z แม้ simulator จะแสดงพื้น XZ และแกน Y ขึ้น อย่าเปลี่ยนคำสั่งเดิม
+เป็น angular.y ชุด binary ที่แจกก่อนหน้านี้ยังไม่มี API ใหม่ ต้องใช้ชุดที่ตรวจสอบแล้ว
+สำหรับ topic Y-up แยกต่างหาก และการตั้งค่า world ไม่เปลี่ยนแกน sensor/body ของ firmware
