@@ -1,0 +1,9 @@
+# Week 08 Python labs (Python 3.10-3.13). Install in a virtual environment:
+#   python -m venv .venv && source .venv/bin/activate    (Windows: .venv\Scripts\activate)
+#   pip install -r requirements.txt
+numpy>=1.26
+tensorflow>=2.16          # training + TFLite conversion (Colab already has it)
+ai-edge-litert>=1.2       # optional fast TFLite interpreter; scripts fall back to tf.lite
+pyserial>=3.5             # board scripts: collect.py, collect_imu.py, live_infer_board.py, live_infer_imu.py
+scipy>=1.10               # optional: better resampling if a board streams at a rate other than 16 kHz
+sounddevice>=0.4.6        # collect_pc_mic.py, live_infer_pc.py (computer microphone)
