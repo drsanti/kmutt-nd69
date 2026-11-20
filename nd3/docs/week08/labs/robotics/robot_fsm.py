@@ -8,7 +8,7 @@ States:
 - TRANSPORT_MODE : Robot lifted off the ground (triggered by 'lift').
 
 Usage:
-    python robot_fsm.py --port COM7 --model imu_artifacts/model_int8.tflite
+    python robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite
     python robot_fsm.py --replay sample_gesture.csv
 """
 from __future__ import annotations
@@ -86,7 +86,7 @@ class RobotController:
 
 def main():
     parser = argparse.ArgumentParser(description="Robotic FSM controller driven by IMU telemetry.")
-    parser.add_argument("--port", help="Serial port, e.g. COM7 or /dev/ttyACM0")
+    parser.add_argument("--port", help="Serial port, e.g. COM17 or /dev/ttyACM0")
     parser.add_argument("--model", type=Path, default=Path("imu_artifacts/model_int8.tflite"), help="Path to int8 model")
     parser.add_argument("--replay", type=Path, help="Replay CSV take instead of connecting to real board")
     args = parser.parse_args()

@@ -100,7 +100,7 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
 
 1. Connect your **ws28p** board (Waveshare ESP32-S3-Touch-LCD-2.8) to your computer with a USB-C data cable.
 2. Identify your serial port:
-   - Windows: `COMx` (e.g. `COM7`, check in Device Manager)
+   - Windows: `COM17` (check in Device Manager)
    - Linux: `/dev/ttyACM0` or `/dev/ttyUSB0`
    - macOS: `/dev/cu.usbmodem*`
 3. If not already flashed with the workshop firmware:
@@ -119,9 +119,9 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
 Test the board connection and verify the 50 Hz IMU telemetry stream:
 
 ```bash
-robotos-kws check-imu --port COM7
+robotos-kws check-imu --port COM17
 ```
-*(Replace `COM7` with your actual serial port).*
+*(Replace `COM17` with your actual serial port if different).*
 
 ### Expected Output:
 - Reads `BoardInfo`: Caps `0x3c` (IMU + RTC + BATT).
@@ -136,7 +136,7 @@ robotos-kws check-imu --port COM7
 Collect labelled motion windows from the physical board:
 
 ```bash
-robotos-kws collect-imu --port COM7 --person student_a --session s01 --takes 20
+robotos-kws collect-imu --port COM17 --person student_a --session s01 --takes 20
 ```
 
 ### The 4 Gestures to Record:
@@ -199,7 +199,7 @@ Now run real-time hardware inference connected to a robotic state machine.
 ### 7.1 Direct CLI Live Inference
 Run real-time sliding-window inference on the live USB stream:
 ```bash
-robotos-kws live-imu --port COM7 --model imu_artifacts/model_int8.tflite
+robotos-kws live-imu --port COM17 --model imu_artifacts/model_int8.tflite
 ```
 Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
 
@@ -215,7 +215,7 @@ Run the included robot controller script:
 
 **With Physical ws28p Board:**
 ```bash
-python robot_fsm.py --port COM7 --model imu_artifacts/model_int8.tflite
+python robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite
 ```
 
 **Offline / Replay Mode (Without Board):**
