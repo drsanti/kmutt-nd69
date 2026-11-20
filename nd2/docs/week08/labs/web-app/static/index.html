@@ -114,19 +114,22 @@
             <span id="threshDisplay" class="text-amber-400 font-bold text-sm">0.80 (80%)</span>
           </div>
 
-          <!-- Slider Range Input -->
-          <input type="range" id="thresholdSlider" min="0.50" max="0.98" step="0.01" value="0.80" class="w-full">
+          <!-- Slider Range Input (Allow down to 0.10 / 10%) -->
+          <input type="range" id="thresholdSlider" min="0.10" max="0.99" step="0.01" value="0.80" class="w-full">
 
           <!-- Preset Sensitivity Buttons -->
-          <div class="flex items-center gap-1.5 pt-1">
-            <button id="presetRelaxed" class="flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
-              Relaxed 60%
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button id="presetLow" class="py-1 px-1 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
+              Low 10%
             </button>
-            <button id="presetBalanced" class="flex-1 py-1 px-1.5 rounded bg-sky-950/50 hover:bg-sky-900/60 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center transition">
-              Balanced 80%
+            <button id="presetRelaxed" class="py-1 px-1 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
+              Mid 50%
             </button>
-            <button id="presetStrict" class="flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
-              Strict 95%
+            <button id="presetBalanced" class="py-1 px-1 rounded bg-sky-950/50 hover:bg-sky-900/60 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center transition">
+              Norm 80%
+            </button>
+            <button id="presetStrict" class="py-1 px-1 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
+              High 95%
             </button>
           </div>
         </div>

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const headerThresholdBadge = document.getElementById("headerThresholdBadge");
   const threshDisplay = document.getElementById("threshDisplay");
   const thresholdSlider = document.getElementById("thresholdSlider");
+  const presetLow = document.getElementById("presetLow");
   const presetRelaxed = document.getElementById("presetRelaxed");
   const presetBalanced = document.getElementById("presetBalanced");
   const presetStrict = document.getElementById("presetStrict");
@@ -119,16 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Update preset button highlights
-    if (presetRelaxed && presetBalanced && presetStrict) {
-      presetRelaxed.className = Math.abs(currentThreshold - 0.60) < 0.02
-        ? "flex-1 py-1 px-1.5 rounded bg-sky-950/50 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center"
-        : "flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center";
-      presetBalanced.className = Math.abs(currentThreshold - 0.80) < 0.02
-        ? "flex-1 py-1 px-1.5 rounded bg-sky-950/50 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center"
-        : "flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center";
-      presetStrict.className = Math.abs(currentThreshold - 0.95) < 0.02
-        ? "flex-1 py-1 px-1.5 rounded bg-sky-950/50 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center"
-        : "flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center";
+    if (presetLow && presetRelaxed && presetBalanced && presetStrict) {
+      const activeClass = "py-1 px-1 rounded bg-sky-950/50 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center";
+      const inactiveClass = "py-1 px-1 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center";
+
+      presetLow.className = Math.abs(currentThreshold - 0.10) < 0.03 ? activeClass : inactiveClass;
+      presetRelaxed.className = Math.abs(currentThreshold - 0.50) < 0.05 ? activeClass : inactiveClass;
+      presetBalanced.className = Math.abs(currentThreshold - 0.80) < 0.03 ? activeClass : inactiveClass;
+      presetStrict.className = Math.abs(currentThreshold - 0.95) < 0.03 ? activeClass : inactiveClass;
     }
   }
 
@@ -156,10 +155,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (presetLow) {
+    presetLow.addEventListener("click", () => {
+      updateThresholdUI(0.10);
+      pushThresholdToServer(0.10);
+    });
+  }
   if (presetRelaxed) {
     presetRelaxed.addEventListener("click", () => {
-      updateThresholdUI(0.60);
-      pushThresholdToServer(0.60);
+      updateThresholdUI(0.50);
+      pushThresholdToServer(0.50);
     });
   }
   if (presetBalanced) {

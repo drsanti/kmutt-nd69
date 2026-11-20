@@ -146,8 +146,8 @@ async def update_threshold(req: ThresholdUpdateRequest):
     """Dynamically set the detection confidence threshold."""
     if not detector:
         raise HTTPException(status_code=503, detail="Detector model not loaded.")
-    if not (0.1 <= req.threshold <= 1.0):
-        raise HTTPException(status_code=400, detail="Threshold must be between 0.1 and 1.0")
+    if not (0.01 <= req.threshold <= 1.0):
+        raise HTTPException(status_code=400, detail="Threshold must be between 0.01 and 1.0")
     detector.threshold = round(float(req.threshold), 3)
     payload = {
         "event": "threshold_updated",
