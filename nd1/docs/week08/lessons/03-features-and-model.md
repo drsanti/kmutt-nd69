@@ -1,6 +1,6 @@
 # Lesson 03 — Log-Mel Features and a Small DS-CNN
 
-> Week 08 · ES3C28P / ESP32-S3 · 09:50–10:25
+> Week 08 · ES3C28P / ESP32-S3 · 09:50–10:20
 
 [Lesson index](README.md) · [Previous: Lesson 02](02-data-collection.md) · [Next: Lesson 04](04-testing-and-quantization.md)
 

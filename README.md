@@ -138,7 +138,7 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 08 Lesson 04 — Testing, Confusion Matrix, and int8 Quantization](nd1/docs/week08/lessons/04-testing-and-quantization.md)
 - [Week 08 Lesson 05 — Firmware: TFLite Micro on FreeRTOS](nd1/docs/week08/lessons/05-firmware-inference.md)
 - [Week 08 Lesson 06 — Secure Edge AI: Protecting the Model and Firmware](nd1/docs/week08/lessons/06-secure-edge-ai.md)
-- [Week 08 Lesson 07 — Alternative Track: Touch-Screen Gesture Classifier](nd1/docs/week08/lessons/07-touch-gesture-alternative.md)
+- [Week 08 Lesson 07 — Alternative Track: IMU Gesture Classifier (ws28p)](nd1/docs/week08/lessons/07-imu-gesture-alternative.md)
 - [Week 08 labs (firmware + Python)](nd1/docs/week08/labs/README.md)
 
 ---

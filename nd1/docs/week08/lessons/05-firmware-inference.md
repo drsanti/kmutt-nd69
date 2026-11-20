@@ -1,12 +1,29 @@
 # Lesson 05 — Firmware: TFLite Micro on FreeRTOS
 
-> Week 08 · ES3C28P / ESP32-S3 · 10:55–11:40
+> Week 08 · ES3C28P / ESP32-S3 · 10:55–11:35 · instructor demo / advanced lab
 
 [Lesson index](README.md) · [Previous: Lesson 04](04-testing-and-quantization.md) · [Next: Lesson 06](06-secure-edge-ai.md)
 
 ## Learning objectives
 
 Put the int8 model into firmware as a C array, run it with TensorFlow Lite Micro from a static tensor arena, split the work into a FreeRTOS capture task and a lower-priority inference task connected by a queue, and measure the latency of every stage with `esp_timer`.
+
+> [!IMPORTANT]
+> Until now the board ran the **workshop prebuilt firmware** and the model ran on your computer. In this lesson the model moves **onto the ESP32-S3**. That means flashing a different program, `kws-inference`, built with ESP-IDF v6.1:
+>
+> - While `kws-inference` is on the board, the workshop protocol is gone: `collect.py`, `live_infer_board.py`, and the workshop browser demos will not connect.
+> - When you are done, **reflash the prebuilt firmware**: `cd hardware-interface-workshop/firmware-prebuilt` → `./rb flash-bin` (Windows `.\rb flash-bin`; run `rb config --port <PORT> --board es3c28p` first on a new PC).
+> - In class the instructor demonstrates this step; students with ESP-IDF set up can follow along. It is also the starting point for **Mini-Project 2** (5 December).
+
+## Host inference vs device inference
+
+| | Host inference (Lesson 04) | Device inference (this lesson) |
+|---|---|---|
+| Board firmware | Workshop prebuilt (unchanged) | `kws-inference` (ESP-IDF build) |
+| Where features + model run | Your computer, Python | ESP32-S3, C / C++ with TFLite Micro |
+| Audio leaves the board? | Yes, over USB | No — only the result is used |
+| Iteration speed | Seconds (change a flag, rerun) | Minutes (export, build, flash) |
+| What it proves | The model works with the real microphone | The model fits the memory, time, and power budget |
 
 ## Project layout
 
@@ -19,7 +36,7 @@ labs/firmware/
     └── main/
         ├── idf_component.yml      espressif/esp-tflite-micro ~1.4.3, espressif/led_strip ~3.1.1
         ├── kws_main.cc            tasks, queue, TFLM interpreter, decision logic, LED
-        ├── kws_config.h           gain, slot, hop, threshold, arena size, priorities
+        ├── kws_config.h           gain, mic slot, hop, threshold, arena size, priorities
         ├── kws_features.c/.h      log-mel in C (twin of kws_common.py)
         ├── model_data.cc          the model as a C array (generated)
         └── kws_labels.h           label order (generated)
@@ -48,11 +65,22 @@ const unsigned int g_kws_model_len = 19240;
 
 ## Step 2 — build and flash
 
+Close the workshop browser tab first (it holds the port).
+
 ```bash
 cd ../firmware/kws-inference
 idf.py set-target esp32s3
-idf.py build flash monitor          # Ctrl+] leaves the monitor
+idf.py build flash monitor          # add -p COM5 / -p /dev/ttyACM0 if needed; Ctrl+] leaves the monitor
 ```
+
+## Step 3 — put the workshop firmware back
+
+```bash
+cd hardware-interface-workshop/firmware-prebuilt
+./rb flash-bin                      # Windows PowerShell: .\rb flash-bin
+```
+
+Then `python collect.py --port <PORT> --info` should print the `BoardInfo` line again.
 
 > [!NOTE]
 > These projects were written against ESP-IDF v6.1 and the component versions above, and their API use was checked against those sources. They have **not** been built with `idf.py` or flashed for this course yet. Record your build result and your hardware result separately, as in Week 03.
@@ -104,11 +132,26 @@ ESP_LOGI(TAG, "arena used %u", (unsigned)interpreter.arena_used_bytes());
 
 ### On-device features must match training
 
-`kws_features.c` implements the same steps as `kws_common.log_mel()`, with the same constants (`KWS_FRAME_LEN 480`, `KWS_FRAME_STEP 320`, `KWS_FFT_LEN 512`, `KWS_NUM_MEL 40`, 20–7600 Hz, `ln(x + 1e-6)`). It is plain C99 and builds on a PC, so `verify_c_features.py` can compare it with Python on your own clips. The other settings that must match data collection are in `kws_config.h`:
+`kws_features.c` implements the same steps as `kws_common.log_mel()`, with the same constants (`KWS_FRAME_LEN 480`, `KWS_FRAME_STEP 320`, `KWS_FFT_LEN 512`, `KWS_NUM_MEL 40`, 20–7600 Hz, `ln(x + 1e-6)`). It is plain C99 and builds on a PC, so `verify_c_features.py` can compare it with Python on your own clips.
+
+The **audio** feeding those features is a different story. Your training clips came through the workshop firmware's capture chain; `kws-inference` has its own, simpler one:
+
+| | Workshop prebuilt firmware (training clips) | `kws-inference` (on-device) |
+|---|---|---|
+| Channel | louder of the two I2S slots | `KWS_MIC_SLOT -1` does the same (or pick 0 / 1) |
+| Gain | `MicCmd.gain_pct` (`collect.py --gain`, default 60 %) spread over PGA + ADC scale + digital volume | `KWS_MIC_GAIN_DB` through `esp_codec_dev` |
+| Filters | 40 Hz high-pass, 6.5 kHz low-pass, soft limiter | none (the feature code removes the mean of each frame) |
+
+So the board may hear the same word **louder or quieter, and slightly brighter**, than the clips the model learned from. Log-mel features turn a level difference into a constant offset, and the training augmentation only covers about ±6 dB. To match:
+
+1. Each log line ends with the **dBFS level** of the newest 500 ms.
+2. Say a keyword at the same distance you used for collection and compare with the `rms` that `collect.py` printed for your clips.
+3. Change `KWS_MIC_GAIN_DB` until the two are within a few dB, rebuild, and test again.
+4. Better still (Mini-Project 2): record a few clips **through `kws-inference`** itself, or add the same 40 Hz / 6.5 kHz filters to the capture task, and check the confusion matrix again.
 
 ```c
-#define KWS_MIC_GAIN_DB  30.0f   // (!) same as audio-logger MIC_GAIN_DB
-#define KWS_MIC_SLOT     0       // (!) same as audio-logger MIC_SLOT
+#define KWS_MIC_GAIN_DB  30.0f   // (!) match the level of your training clips (see the dBFS column)
+#define KWS_MIC_SLOT     (-1)    // (!) louder slot, like the workshop firmware
 ```
 
 ### Measuring latency with `esp_timer`
@@ -126,7 +169,7 @@ const int64_t t3 = esp_timer_get_time();
 Each inference prints one line:
 
 ```text
-red        0.86 DETECTED | features  xx.x ms  quant  x.x ms  invoke  xx.x ms | queue 0/16 dropped 0
+red        0.86 DETECTED | features  xx.x ms  quant  x.x ms  invoke  xx.x ms | queue 0/16 dropped 0 |  -xx.x dBFS
 ```
 
 Fill in this table from your board's log (no hardware numbers are given here because the course build has not been run on a board yet):
@@ -152,10 +195,12 @@ Fill in this table from your board's log (no hardware numbers are given here bec
 3. Temporarily give the inference task a **higher** priority than capture, on the same core. What happens to `dropped`, and why?
 4. Print `interpreter.arena_used_bytes()` and reduce `KWS_ARENA_BYTES` to fit.
 5. Use `vTaskGetRunTimeStats()` (enabled in `sdkconfig.defaults`) to print CPU use per task every 10 s.
-6. Collect 20 board clips of a keyword the board misses, retrain, export, and reflash. Did the confusion matrix and the board behaviour both improve?
+6. Collect 20 board clips of a keyword the board misses (reflash the workshop firmware, `collect.py`), retrain, export, and flash `kws-inference` again. Did the confusion matrix and the board behaviour both improve?
+7. Match levels: compare the dBFS column with your `collect.py` clips and tune `KWS_MIC_GAIN_DB`.
 
 ## Check your understanding
 
 1. Why does the capture task use a zero timeout in `xQueueSend`?
 2. What happens if you register `AddConv2D` but forget `AddMean`?
 3. Where do the model weights live at run time, and where do the activations live?
+4. After this lesson, `collect.py` reports "No BoardInfo frame received". Why, and what is the fix?

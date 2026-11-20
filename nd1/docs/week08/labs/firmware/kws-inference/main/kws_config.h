@@ -1,8 +1,15 @@
 #pragma once
-// Week 08 kws-inference settings. Values marked (!) must match data collection.
+// Week 08 kws-inference settings. Values marked (!) affect what the model hears.
+//
+// The training clips came from the workshop prebuilt firmware (collect.py). That firmware
+// sets the ES8311 from MicCmd.gain_pct and filters the audio (40 Hz high-pass, 6.5 kHz
+// low-pass, soft limiter). This project uses its own simpler capture path, so match the
+// LEVEL by ear and by numbers: the log prints the dBFS of every hop - say the same word at
+// the same distance as during collection and adjust KWS_MIC_GAIN_DB until the level is
+// close to what collect.py printed (within a few dB).
 
-#define KWS_MIC_GAIN_DB        30.0f   // (!) same as audio-logger MIC_GAIN_DB
-#define KWS_MIC_SLOT           0       // (!) same as audio-logger MIC_SLOT
+#define KWS_MIC_GAIN_DB        30.0f   // (!) ES8311 input gain via esp_codec_dev
+#define KWS_MIC_SLOT           (-1)    // (!) -1 = louder slot per sample (like the workshop firmware), or 0 / 1
 
 #define KWS_BLOCK_SAMPLES      320     // 20 ms per capture block
 #define KWS_QUEUE_DEPTH        16      // 320 ms of buffering between capture and inference

@@ -1,8 +1,8 @@
 # Lesson 06 — Secure Edge AI: Protecting the Model and Firmware
 
-> Week 08 · ES3C28P / ESP32-S3 · 11:40–11:50
+> Week 08 · ES3C28P / ESP32-S3 · 11:35–11:45
 
-[Lesson index](README.md) · [Previous: Lesson 05](05-firmware-inference.md) · [Next: Lesson 07](07-touch-gesture-alternative.md)
+[Lesson index](README.md) · [Previous: Lesson 05](05-firmware-inference.md) · [Next: Lesson 07](07-imu-gesture-alternative.md)
 
 ## Learning objectives
 
@@ -16,6 +16,8 @@ Identify what an attacker can do with physical access to an Edge AI device, and 
 | Model and code confidentiality | Someone reads the flash with a USB cable | Your trained model copied into a competing product |
 | Data | Recorded audio or user data in flash/SD | Voice clips extracted from a lost device |
 | Decisions | Adversarial inputs | A sound pattern that triggers `off` |
+
+**Host inference is a privacy trade-off too.** With the workshop firmware, the board streams raw microphone audio to any program that opens its USB port — that is exactly what `collect.py` and `live_infer_board.py` use. Fine for a lab; in a product, raw sensor streams should be off by default, need an explicit command, and never leave the device unless the user agreed.
 
 On the board, the model is just bytes in flash: `g_kws_model` sits in the app image. Without protection, reading the flash over USB with `esptool` (`read-flash`) copies it in seconds.
 
@@ -62,3 +64,4 @@ These tie into the 12 December onsite session on connecting securely to the clou
 1. Secure boot is on, flash encryption is off. Can an attacker copy your model? Can they run modified firmware?
 2. Why must the signing private key never be committed to your project repository?
 3. Name one attack on an Edge AI system that neither secure boot nor flash encryption prevents.
+4. The workshop firmware streams microphone audio over USB when asked. What would you change before shipping such a device?

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "es3c28p_audio.h"
 
 #include <string.h>
@@ -63,7 +64,7 @@ static esp_err_t amp_off(void)
 
 esp_err_t es3c28p_audio_init(const es3c28p_audio_config_t *cfg)
 {
-    s_mic_slot = cfg->mic_slot ? 1 : 0;
+    s_mic_slot = cfg->mic_slot < 0 ? -1 : (cfg->mic_slot ? 1 : 0);
     ESP_RETURN_ON_ERROR(amp_off(), TAG, "amp");
     ESP_RETURN_ON_ERROR(init_i2c(), TAG, "i2c bus");
     ESP_RETURN_ON_ERROR(init_i2s_rx(), TAG, "i2s rx");
@@ -129,7 +130,13 @@ esp_err_t es3c28p_audio_read_mono(int16_t *mono, size_t n)
         size_t frames = n < CHUNK_FRAMES ? n : CHUNK_FRAMES;
         ESP_RETURN_ON_ERROR(es3c28p_audio_read_stereo(chunk, frames), TAG, "read");
         for (size_t i = 0; i < frames; i++) {
-            mono[i] = chunk[2 * i + s_mic_slot];
+            if (s_mic_slot >= 0) {
+                mono[i] = chunk[2 * i + s_mic_slot];
+            } else {
+                /* auto: keep the louder of the two slots, as the workshop prebuilt firmware does */
+                const int16_t l = chunk[2 * i], r = chunk[2 * i + 1];
+                mono[i] = (abs(l) >= abs(r)) ? l : r;
+            }
         }
         mono += frames;
         n -= frames;

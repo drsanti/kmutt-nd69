@@ -149,6 +149,14 @@ static void inference_task(void *arg)
         memcpy(s_window, &s_ring[write_pos], tail * sizeof(int16_t));
         memcpy(&s_window[tail], s_ring, write_pos * sizeof(int16_t));
 
+        // Level of the newest hop, to compare with collect.py / live_infer_board.py (same speech, same distance)
+        double sum_sq = 0.0;
+        for (size_t i = KWS_CLIP_SAMPLES - KWS_HOP_BLOCKS * KWS_BLOCK_SAMPLES; i < KWS_CLIP_SAMPLES; i++) {
+            sum_sq += (double)s_window[i] * s_window[i];
+        }
+        const float level_dbfs =
+            20.0f * log10f(sqrtf((float)(sum_sq / (KWS_HOP_BLOCKS * KWS_BLOCK_SAMPLES))) / 32768.0f + 1e-6f);
+
         const int64_t t0 = esp_timer_get_time();
         kws_features_compute(s_window, s_features);
         const int64_t t1 = esp_timer_get_time();
@@ -185,10 +193,11 @@ static void inference_task(void *arg)
             refractory = KWS_REFRACTORY_HOPS;
             show_label(top);
         }
-        printf("%-10s %.2f %s| features %5.1f ms  quant %4.1f ms  invoke %5.1f ms | queue %u/%d dropped %lu\n",
+        printf("%-10s %.2f %s| features %5.1f ms  quant %4.1f ms  invoke %5.1f ms | queue %u/%d dropped %lu | %6.1f dBFS\n",
                kKwsLabels[top], avg[top], detected ? "DETECTED " : "         ",
                (t1 - t0) / 1000.0, (t2 - t1) / 1000.0, (t3 - t2) / 1000.0,
-               (unsigned)uxQueueMessagesWaiting(s_audio_q), KWS_QUEUE_DEPTH, (unsigned long)s_dropped_blocks.load());
+               (unsigned)uxQueueMessagesWaiting(s_audio_q), KWS_QUEUE_DEPTH, (unsigned long)s_dropped_blocks.load(),
+               level_dbfs);
     }
 }
 
