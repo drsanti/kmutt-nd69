@@ -129,6 +129,20 @@ def get_model_info():
     )
 
 
+@app.get("/api/v1/sample-audio")
+def get_sample_audio():
+    """Serves the built-in sample WAV clip for quick one-click REST testing."""
+    candidates = [
+        Path(__file__).parent / "sample_audio.wav",
+        Path("sample_audio.wav"),
+        Path(__file__).parent.parent.parent.parent / "nd1" / "docs" / "week08" / "labs" / "python" / "sample_audio.wav",
+    ]
+    p = next((c for c in candidates if c.exists()), None)
+    if p:
+        return FileResponse(p, media_type="audio/wav", filename="sample_audio.wav")
+    raise HTTPException(status_code=404, detail="sample_audio.wav not found.")
+
+
 @app.post("/api/v1/classify", response_model=ClassificationResponse)
 async def classify_audio(file: UploadFile = File(...)):
     if not detector:

@@ -98,11 +98,27 @@
       <!-- REST API File Upload Tester -->
       <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur shadow-xl">
         <h3 class="text-sm font-semibold tracking-wider uppercase text-slate-400 mb-2">Test REST API (`/classify`)</h3>
-        <p class="text-xs text-slate-400 mb-4">Upload a 1-second WAV audio sample to test the POST endpoint.</p>
+        <p class="text-xs text-slate-400 mb-4">Classify audio using the included sample, your browser mic, or upload a WAV file:</p>
 
-        <form id="uploadForm" class="space-y-3">
+        <!-- Quick 1-Click Test Actions -->
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <button type="button" id="useSampleBtn" class="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition flex items-center justify-center gap-1.5 shadow">
+            <span>📁 Use Built-in Sample</span>
+          </button>
+          <button type="button" id="recordBrowserMicBtn" class="py-2 px-3 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 font-medium text-xs border border-emerald-500/30 transition flex items-center justify-center gap-1.5 shadow">
+            <span id="recordMicIcon">🎙️</span> <span id="recordMicText">Record Mic (1s)</span>
+          </button>
+        </div>
+
+        <div class="relative flex py-1 items-center">
+          <div class="flex-grow border-t border-slate-800"></div>
+          <span class="flex-shrink mx-2 text-[10px] uppercase tracking-wider text-slate-500">or upload custom file</span>
+          <div class="flex-grow border-t border-slate-800"></div>
+        </div>
+
+        <form id="uploadForm" class="space-y-3 mt-2">
           <input type="file" id="audioFileInput" accept=".wav" class="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
-          <button type="submit" id="classifyBtn" class="w-full py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition shadow-lg shadow-blue-600/20">Classify Audio File</button>
+          <button type="submit" id="classifyBtn" class="w-full py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition shadow-lg shadow-blue-600/20">Classify Uploaded File</button>
         </form>
 
         <div id="restResult" class="mt-4 p-3 rounded-lg bg-slate-950/70 border border-slate-800 font-mono text-xs hidden">

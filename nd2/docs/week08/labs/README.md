@@ -136,6 +136,7 @@ The server starts at `http://127.0.0.1:8000`.
 
 ### Endpoints Available:
 - `GET /api/v1/model/info`: Returns active model metadata, labels, and input parameters.
+- `GET /api/v1/sample-audio`: Downloads the included `sample_audio.wav` test clip.
 - `POST /api/v1/classify`: Accepts a multipart form upload containing a `.wav` file and returns structured JSON predictions:
   ```json
   {
@@ -152,9 +153,14 @@ The server starts at `http://127.0.0.1:8000`.
   }
   ```
 
-Test the API via Swagger documentation:
-- Open your browser to `http://127.0.0.1:8000/docs`.
-- Try out the `/api/v1/classify` endpoint by uploading an audio clip.
+### How to Test the Classification Endpoint:
+You do **not** need to manually record audio for this track. You can test it in multiple ways:
+1. **Via Web Dashboard (Easiest)**: Visit [http://127.0.0.1:8000](http://127.0.0.1:8000) and click **"📁 Use Built-in Sample"** or **"🎙️ Record Mic (1s)"**.
+2. **Via Swagger Docs**: Visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs), expand `POST /api/v1/classify`, click *Try it out*, and upload `sample_audio.wav`.
+3. **Via cURL (Terminal)**:
+   ```bash
+   curl -X POST "http://127.0.0.1:8000/api/v1/classify" -F "file=@sample_audio.wav"
+   ```
 
 ---
 
@@ -180,16 +186,22 @@ Clients connect to `ws://localhost:8000/ws/kws` and immediately receive real-tim
 
 ## 5. Lab 2.4: Full-Stack Voice-Reactive Dashboard
 
-Open `http://localhost:8000` in your browser.
+Open `http://localhost:8000` (or `http://127.0.0.1:8000`) in your browser.
 
-The single-page web dashboard provides:
-1. **Live Audio Status Indicator**: Shows whether the server's microphone stream is actively listening.
-2. **Real-Time Probability Bars**: Visually renders the confidence distribution across all recognized keywords.
-3. **Reactive UI State Machine**:
-   - Speak `"red"` $\to$ UI triggers **Emergency Stop** modal with high-visibility red alert.
-   - Speak `"green"` $\to$ UI enters **Active / Running** state.
-   - Speak `"blue"` $\to$ UI switches to **Manual Navigation / Steering** mode.
-   - Speak `"off"` $\to$ UI enters **Standby / Sleep** mode.
+The single-page web dashboard provides two interactive modalities:
+
+### 1. Live Continuous Speech Recognition (WebSocket)
+The FastAPI server listens to your computer microphone in the background. Speak keywords into your microphone:
+- Speak `"red"` $\to$ UI triggers **Emergency Stop** modal with high-visibility red alert.
+- Speak `"green"` $\to$ UI enters **Active / Running** state.
+- Speak `"blue"` $\to$ UI switches to **Manual Navigation / Steering** mode.
+- Speak `"off"` $\to$ UI enters **Standby / Sleep** mode.
+
+### 2. On-Demand REST Classification Testing
+In the right panel, you can test the REST endpoint without manual recording:
+- Click **"📁 Use Built-in Sample"** $\to$ Immediately sends `sample_audio.wav` and renders live confidence probability bars.
+- Click **"🎙️ Record Mic (1s)"** $\to$ Records 1 second of speech directly in your browser tab via Web Audio API and classifies it.
+- Or use the file picker to upload any custom `.wav` file.
 
 ---
 

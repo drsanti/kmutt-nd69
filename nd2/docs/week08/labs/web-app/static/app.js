@@ -182,18 +182,10 @@ document.addEventListener("DOMContentLoaded", () => {
     eventLog.innerHTML = '<div class="text-slate-500 italic p-2">Log cleared. Listening for events...</div>';
   });
 
-  // 6. Test REST API via File Upload
-  uploadForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const file = audioFileInput.files[0];
-    if (!file) {
-      alert("Please select a .wav file to classify.");
-      return;
-    }
-
+  // 6. Test REST API: Shared classification dispatcher
+  async function sendAudioBlobForClassification(blob, filename = "audio.wav") {
     const formData = new FormData();
-    formData.append("file", file);
-
+    formData.append("file", blob, filename);
     restResult.classList.remove("hidden");
     restResult.innerHTML = '<span class="text-slate-400">Uploading and running inference...</span>';
 
@@ -216,8 +208,128 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
+
+      if (data.top_class && data.confidence > 0.5) {
+        handleKeywordDetected(data.top_class, data.confidence, 0.0);
+      }
     } catch (err) {
       restResult.innerHTML = `<span class="text-red-400">Error: ${err.message}</span>`;
     }
+  }
+
+  // 6.1 Test with Built-in Sample Audio Button
+  const useSampleBtn = document.getElementById("useSampleBtn");
+  if (useSampleBtn) {
+    useSampleBtn.addEventListener("click", async () => {
+      restResult.classList.remove("hidden");
+      restResult.innerHTML = '<span class="text-slate-400">Fetching sample_audio.wav from server...</span>';
+      try {
+        const res = await fetch("/api/v1/sample-audio");
+        if (!res.ok) throw new Error("sample_audio.wav not found on server");
+        const blob = await res.blob();
+        await sendAudioBlobForClassification(blob, "sample_audio.wav");
+      } catch (err) {
+        restResult.innerHTML = `<span class="text-red-400">Error: ${err.message}</span>`;
+      }
+    });
+  }
+
+  // 6.2 Browser Microphone Audio Recorder & Encoder
+  function encodeWav(samples, sampleRate) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(buffer);
+    function writeString(offset, string) {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    }
+    writeString(0, "RIFF");
+    view.setUint32(4, 36 + samples.length * 2, true);
+    writeString(8, "WAVE");
+    writeString(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // PCM
+    view.setUint16(22, 1, true); // 1 channel
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true); // 16-bit
+    writeString(36, "data");
+    view.setUint32(40, samples.length * 2, true);
+
+    let offset = 44;
+    for (let i = 0; i < samples.length; i++, offset += 2) {
+      const s = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    }
+    return buffer;
+  }
+
+  async function recordBrowserWav(durationMs = 1000) {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+    const source = audioContext.createMediaStreamSource(stream);
+    const processor = audioContext.createScriptProcessor(4096, 1, 1);
+    const pcmChunks = [];
+
+    return new Promise((resolve) => {
+      processor.onaudioprocess = (e) => {
+        pcmChunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+      };
+      source.connect(processor);
+      processor.connect(audioContext.destination);
+
+      setTimeout(() => {
+        processor.disconnect();
+        source.disconnect();
+        stream.getTracks().forEach((t) => t.stop());
+        audioContext.close();
+
+        const totalLen = pcmChunks.reduce((acc, c) => acc + c.length, 0);
+        const full = new Float32Array(totalLen);
+        let offset = 0;
+        pcmChunks.forEach((c) => {
+          full.set(c, offset);
+          offset += c.length;
+        });
+        const samples = full.subarray(0, 16000);
+        const wavBuffer = encodeWav(samples, 16000);
+        resolve(new Blob([wavBuffer], { type: "audio/wav" }));
+      }, durationMs);
+    });
+  }
+
+  const recordBrowserMicBtn = document.getElementById("recordBrowserMicBtn");
+  if (recordBrowserMicBtn) {
+    recordBrowserMicBtn.addEventListener("click", async () => {
+      const icon = document.getElementById("recordMicIcon");
+      const txt = document.getElementById("recordMicText");
+      try {
+        icon.textContent = "🔴";
+        txt.textContent = "Listening (1s)...";
+        recordBrowserMicBtn.classList.add("animate-pulse", "bg-red-900/60", "border-red-500/60");
+        const blob = await recordBrowserWav(1000);
+        icon.textContent = "🎙️";
+        txt.textContent = "Record Mic (1s)";
+        recordBrowserMicBtn.classList.remove("animate-pulse", "bg-red-900/60", "border-red-500/60");
+        await sendAudioBlobForClassification(blob, "browser_mic.wav");
+      } catch (err) {
+        icon.textContent = "🎙️";
+        txt.textContent = "Record Mic (1s)";
+        recordBrowserMicBtn.classList.remove("animate-pulse", "bg-red-900/60", "border-red-500/60");
+        alert("Microphone permission denied or not supported in this browser: " + err.message);
+      }
+    });
+  }
+
+  // 6.3 Test via File Upload
+  uploadForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const file = audioFileInput.files[0];
+    if (!file) {
+      alert("Please select a .wav file or click 'Use Built-in Sample'.");
+      return;
+    }
+    await sendAudioBlobForClassification(file, file.name);
   });
 });
