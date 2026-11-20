@@ -184,24 +184,25 @@ Clients connect to `ws://localhost:8000/ws/kws` and immediately receive real-tim
 
 ---
 
-## 5. Lab 2.4: Full-Stack Voice-Reactive Dashboard
+## 5. Lab 2.4: Full-Stack Voice-Reactive Dashboard (VS Code Theme)
 
 Open `http://localhost:8000` (or `http://127.0.0.1:8000`) in your browser.
 
-The single-page web dashboard provides two interactive modalities:
+The dashboard uses a modern **VS Code-style split-panel industrial layout**:
 
-### 1. Live Continuous Speech Recognition (WebSocket)
-The FastAPI server listens to your computer microphone in the background. Speak keywords into your microphone:
-- Speak `"red"` $\to$ UI triggers **Emergency Stop** modal with high-visibility red alert.
-- Speak `"green"` $\to$ UI enters **Active / Running** state.
-- Speak `"blue"` $\to$ UI switches to **Manual Navigation / Steering** mode.
-- Speak `"off"` $\to$ UI enters **Standby / Sleep** mode.
-
-### 2. On-Demand REST Classification Testing
-In the right panel, you can test the REST endpoint without manual recording:
-- Click **"📁 Use Built-in Sample"** $\to$ Immediately sends `sample_audio.wav` and renders live confidence probability bars.
-- Click **"🎙️ Record Mic (1s)"** $\to$ Records 1 second of speech directly in your browser tab via Web Audio API and classifies it.
-- Or use the file picker to upload any custom `.wav` file.
+1. **Activity Bar & Primary Sidebar (Left)**:
+   - **Model Profile**: Architecture specs (`DS-CNN int8`), active vocab labels, threshold settings.
+   - **Inference Actions**: One-click **"📁 Use Built-in Sample"**, **"🎙️ Record Mic (1s)"**, or custom file upload.
+2. **Main SCADA Stage (Center)**:
+   - **Industrial HUD State Monitor**: Large glowing status indicator reacting with hazard stripes on `"red"` (E-STOP), emerald glow on `"green"` (DRIVE), sky glow on `"blue"` (NAV), and amber glow on `"off"` (STANDBY).
+   - **Safety Interlock Matrix**: Status cards defining the 4-state deterministic robot FSM.
+   - **Live Audio Activity Indicator**: Shows continuous 16 kHz PCM server stream status.
+3. **Softmax Distribution Meters (Right)**:
+   - High-precision segmented probability bars and percentage readouts across all classes.
+4. **Bottom Terminal / Output Panel**:
+   - Tabbed output console (`WEBSOCKET TELEMETRY`, `REST INSPECTOR`, `MODEL META`) streaming real-time timestamped event logs with color-coded tags.
+5. **VS Code Status Bar (Bottom)**:
+   - Displays git branch, live WebSocket link, DSP frame specs, and runtime telemetry.
 
 ---
 
