@@ -1,27 +1,185 @@
-/* Custom enhancements for Voice Dashboard */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 1);
+/* Modern Industrial VS Code Theme Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --vscode-bg-darkest: #0c1017;
+  --vscode-bg-sidebar: #121721;
+  --vscode-bg-editor: #161c27;
+  --vscode-bg-panel: #0e131c;
+  --vscode-border: #1f2736;
+  --vscode-border-light: #2c364a;
+  --industrial-amber: #f59e0b;
+  --industrial-red: #ef4444;
+  --industrial-green: #10b981;
+  --industrial-blue: #0284c7;
 }
 
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--vscode-bg-darkest);
+  color: #e2e8f0;
+  overflow: hidden;
+}
+
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace;
+}
+
+/* VS Code Minimal Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(12, 16, 23, 0.7);
+}
+::-webkit-scrollbar-thumb {
+  background: #252f40;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #37445a;
+}
+
+/* Industrial Grid Pattern */
+.industrial-grid {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Hazard Stripes for E-Stop */
+.hazard-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(239, 68, 68, 0.15),
+    rgba(239, 68, 68, 0.15) 12px,
+    rgba(15, 23, 42, 0.7) 12px,
+    rgba(15, 23, 42, 0.7) 24px
+  );
+}
+
+.hazard-stripes-amber {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(245, 158, 11, 0.12),
+    rgba(245, 158, 11, 0.12) 12px,
+    rgba(15, 23, 42, 0.7) 12px,
+    rgba(15, 23, 42, 0.7) 24px
+  );
+}
+
+/* State Glows */
 .glow-red {
-  box-shadow: 0 0 35px -5px rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 35px -5px rgba(239, 68, 68, 0.45);
+  border-color: rgba(239, 68, 68, 0.7) !important;
 }
 
 .glow-green {
-  box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.45);
+  border-color: rgba(16, 185, 129, 0.7) !important;
 }
 
 .glow-blue {
-  box-shadow: 0 0 35px -5px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 0 35px -5px rgba(2, 132, 199, 0.45);
+  border-color: rgba(2, 132, 199, 0.7) !important;
+}
+
+.glow-amber {
+  box-shadow: 0 0 35px -5px rgba(245, 158, 11, 0.45);
+  border-color: rgba(245, 158, 11, 0.7) !important;
+}
+
+/* Activity Bar Icon Button */
+.activity-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.activity-icon:hover {
+  color: #cbd5e1;
+}
+
+.activity-icon.active {
+  color: #ffffff;
+}
+
+.activity-icon.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background-color: #38bdf8;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Tab Header */
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  border-right: 1px solid var(--vscode-border);
+  background: #111622;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+
+.tab-item:hover {
+  color: #f1f5f9;
+  background: #151c2a;
+}
+
+.tab-item.active {
+  color: #ffffff;
+  background: var(--vscode-bg-editor);
+  border-top: 2px solid #38bdf8;
+  padding-top: 5px;
+}
+
+/* Terminal Tab */
+.term-tab {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.term-tab:hover {
+  color: #cbd5e1;
+}
+
+.term-tab.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+}
+
+/* VU Meter Animation */
+@keyframes vuPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.vu-active {
+  animation: vuPulse 1.2s infinite ease-in-out;
 }

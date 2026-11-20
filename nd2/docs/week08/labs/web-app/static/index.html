@@ -1,137 +1,354 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RobotOS KWS Voice Dashboard (ND02)</title>
+  <title>RobotOS Edge AI Studio (ND02 SCADA)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="h-full flex flex-col bg-[#0c1017] text-slate-200 select-none overflow-hidden">
 
-  <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
-        AI
+  <!-- VS Code Title Bar -->
+  <header class="h-9 bg-[#0b0e14] border-b border-[#1b2230] flex items-center justify-between px-3 text-xs flex-shrink-0 z-50">
+    <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 font-bold tracking-wider text-[11px]">
+        <span>⚡ ROBOTOS</span>
+        <span class="text-[9px] px-1 rounded bg-blue-500/20 text-blue-300">SCADA</span>
       </div>
-      <div>
-        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-          RobotOS KWS Dashboard
-          <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">ND02 Full-Stack</span>
-        </h1>
-        <p class="text-xs text-slate-400">Real-time edge speech recognition & API control</p>
-      </div>
+      <span class="text-slate-600">/</span>
+      <span class="text-slate-400 font-mono text-[11px]">kmutt-nd69 &bull; nd02-web &bull; Edge AI Studio</span>
     </div>
-    <div class="flex items-center gap-3">
-      <span id="wsStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+
+    <!-- Center Document Breadcrumb -->
+    <div class="hidden md:flex items-center gap-1.5 text-slate-400 font-mono text-[11px] bg-[#121722] px-3 py-1 rounded border border-[#1b2333]">
+      <span class="text-slate-500">workspace</span>
+      <span class="text-slate-600">&rsaquo;</span>
+      <span class="text-slate-400">nd2</span>
+      <span class="text-slate-600">&rsaquo;</span>
+      <span class="text-sky-400 font-semibold">robot_voice_controller.scada</span>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-2">
+      <span id="wsStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-mono font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
         Connecting...
       </span>
-      <a href="/docs" target="_blank" class="text-xs px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">OpenAPI Docs</a>
+      <a href="/docs" target="_blank" class="px-2.5 py-0.5 rounded bg-[#18202e] hover:bg-[#222c3f] text-slate-300 text-[11px] font-mono border border-slate-700/60 transition">API Docs &rarr;</a>
     </div>
   </header>
 
-  <!-- Main Content Grid -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Workbench Body -->
+  <div class="flex-1 flex overflow-hidden">
 
-    <!-- Left Column: Robot State & Audio Visualizer -->
-    <div class="lg:col-span-2 space-y-6">
+    <!-- Activity Bar (Far Left Dock) -->
+    <aside class="w-12 bg-[#0a0d13] border-r border-[#19202c] flex flex-col items-center justify-between py-2 flex-shrink-0 z-40">
+      <div class="flex flex-col items-center w-full space-y-1">
+        <button id="actNavExplorer" class="activity-icon active" title="Explorer / Model Artifacts">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+        </button>
+        <button id="actNavScada" class="activity-icon" title="Industrial Telemetry">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        </button>
+        <button id="actNavApi" class="activity-icon" title="REST API Tester">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </button>
+      </div>
 
-      <!-- Active Robot State Display -->
-      <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur shadow-xl relative overflow-hidden">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold tracking-wider uppercase text-slate-400">Current Robot State</span>
-          <span id="lastTriggerTime" class="text-xs text-slate-500">Awaiting voice command...</span>
+      <div class="flex flex-col items-center w-full space-y-2 text-slate-600">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="System Operational"></div>
+        <div class="text-[9px] font-mono font-bold text-slate-500">ND02</div>
+      </div>
+    </aside>
+
+    <!-- Primary Sidebar -->
+    <aside id="primarySidebar" class="w-64 bg-[#0f141d] border-r border-[#1c2433] flex flex-col flex-shrink-0 text-xs overflow-y-auto">
+      <!-- Sidebar Header -->
+      <div class="px-3 py-2 border-b border-[#1c2433] flex items-center justify-between font-mono font-bold text-[11px] text-slate-400 tracking-wider">
+        <span>EXPLORER</span>
+        <span class="text-[10px] text-slate-500">EDGE AI</span>
+      </div>
+
+      <!-- Tree Section 1: Model Specifications -->
+      <div class="p-3 border-b border-[#1c2433]/80 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            Model Profile
+          </span>
+          <span id="modelStatusPill" class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">READY</span>
         </div>
 
-        <div id="stateBanner" class="p-8 rounded-xl border-2 border-slate-700 bg-slate-900/80 flex flex-col items-center justify-center text-center transition-all duration-300">
-          <div id="stateIcon" class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-black mb-3 bg-slate-800 text-slate-400 shadow-inner">
-            -
+        <div class="bg-[#141b27] rounded-lg p-2.5 border border-[#1e2738] space-y-1.5 font-mono text-[11px]">
+          <div class="flex justify-between text-slate-400">
+            <span>Arch:</span>
+            <span class="text-slate-200">DS-CNN int8</span>
           </div>
-          <h2 id="stateTitle" class="text-3xl font-extrabold tracking-tight text-slate-200">STANDBY</h2>
-          <p id="stateDesc" class="text-sm text-slate-400 mt-1 max-w-sm">Speak <code class="text-blue-400 font-mono">"red"</code>, <code class="text-emerald-400 font-mono">"green"</code>, <code class="text-sky-400 font-mono">"blue"</code>, or <code class="text-slate-400 font-mono">"off"</code> into your microphone.</p>
+          <div class="flex justify-between text-slate-400">
+            <span>Sample Rate:</span>
+            <span class="text-slate-200">16,000 Hz</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Input Matrix:</span>
+            <span class="text-slate-200">49 &times; 40 Mel</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Threshold:</span>
+            <span class="text-amber-400">0.80 (80%)</span>
+          </div>
         </div>
 
-        <!-- Trigger Badges -->
-        <div class="grid grid-cols-4 gap-3 mt-4 text-center text-xs">
-          <div class="p-2.5 rounded-lg bg-red-950/30 border border-red-500/20 text-red-300">
-            <span class="font-bold">"red"</span><br><span class="text-[10px] text-red-400">Emergency Stop</span>
-          </div>
-          <div class="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-emerald-300">
-            <span class="font-bold">"green"</span><br><span class="text-[10px] text-emerald-400">Drive Forward</span>
-          </div>
-          <div class="p-2.5 rounded-lg bg-blue-950/30 border border-blue-500/20 text-blue-300">
-            <span class="font-bold">"blue"</span><br><span class="text-[10px] text-blue-400">Turn Left</span>
-          </div>
-          <div class="p-2.5 rounded-lg bg-slate-950/50 border border-slate-600/20 text-slate-400">
-            <span class="font-bold">"off"</span><br><span class="text-[10px] text-slate-500">Power Standby</span>
+        <!-- Target Classes Chip Grid -->
+        <div>
+          <span class="text-[10px] text-slate-500 font-mono uppercase block mb-1.5">Active Vocab Classes:</span>
+          <div class="flex flex-wrap gap-1" id="modelLabelsChips">
+            <span class="px-1.5 py-0.5 rounded bg-red-950/40 border border-red-500/30 text-red-300 font-mono text-[10px]">red</span>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-mono text-[10px]">green</span>
+            <span class="px-1.5 py-0.5 rounded bg-sky-950/40 border border-sky-500/30 text-sky-300 font-mono text-[10px]">blue</span>
+            <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">off</span>
+            <span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-500 font-mono text-[10px]">_silence_</span>
+            <span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-500 font-mono text-[10px]">_unknown_</span>
           </div>
         </div>
       </div>
 
-      <!-- Real-Time Speech Event Log -->
-      <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur shadow-xl">
-        <h3 class="text-sm font-semibold tracking-wider uppercase text-slate-400 mb-4 flex items-center justify-between">
-          <span>Live Detection Telemetry (WebSocket)</span>
-          <button id="clearLogBtn" class="text-xs text-slate-500 hover:text-slate-300">Clear</button>
-        </h3>
-        <div id="eventLog" class="space-y-2 max-h-60 overflow-y-auto pr-2 font-mono text-xs">
-          <div class="text-slate-500 italic p-2">Listening to server audio stream...</div>
-        </div>
-      </div>
+      <!-- Tree Section 2: REST Inference Dispatcher -->
+      <div class="p-3 border-b border-[#1c2433]/80 space-y-3">
+        <span class="font-bold text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          Inference Actions
+        </span>
 
-    </div>
-
-    <!-- Right Column: Confidence Visualizer & REST Tester -->
-    <div class="space-y-6">
-
-      <!-- Real-Time Probability Meters -->
-      <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur shadow-xl">
-        <h3 class="text-sm font-semibold tracking-wider uppercase text-slate-400 mb-4">Probability Distribution</h3>
-        <div id="probBarsContainer" class="space-y-3.5">
-          <!-- Populated dynamically via JS -->
-          <div class="text-xs text-slate-500">Loading model probabilities...</div>
-        </div>
-      </div>
-
-      <!-- REST API File Upload Tester -->
-      <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur shadow-xl">
-        <h3 class="text-sm font-semibold tracking-wider uppercase text-slate-400 mb-2">Test REST API (`/classify`)</h3>
-        <p class="text-xs text-slate-400 mb-4">Classify audio using the included sample, your browser mic, or upload a WAV file:</p>
-
-        <!-- Quick 1-Click Test Actions -->
-        <div class="grid grid-cols-2 gap-2 mb-3">
-          <button type="button" id="useSampleBtn" class="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition flex items-center justify-center gap-1.5 shadow">
-            <span>📁 Use Built-in Sample</span>
+        <!-- One-Click Buttons -->
+        <div class="space-y-1.5">
+          <button id="useSampleBtn" class="w-full py-1.5 px-2.5 rounded bg-[#162030] hover:bg-[#1f2d43] border border-[#233149] text-sky-300 text-left flex items-center justify-between text-[11px] font-mono transition shadow-sm">
+            <span class="flex items-center gap-1.5">
+              <span>📁</span>
+              <span>Use Built-in Sample</span>
+            </span>
+            <span class="text-[9px] text-slate-500">.wav</span>
           </button>
-          <button type="button" id="recordBrowserMicBtn" class="py-2 px-3 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 font-medium text-xs border border-emerald-500/30 transition flex items-center justify-center gap-1.5 shadow">
-            <span id="recordMicIcon">🎙️</span> <span id="recordMicText">Record Mic (1s)</span>
+
+          <button id="recordBrowserMicBtn" class="w-full py-1.5 px-2.5 rounded bg-emerald-950/30 hover:bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 text-left flex items-center justify-between text-[11px] font-mono transition shadow-sm">
+            <span class="flex items-center gap-1.5">
+              <span id="recordMicIcon">🎙️</span>
+              <span id="recordMicText">Record Mic (1s)</span>
+            </span>
+            <span class="text-[9px] text-emerald-500 font-bold">LIVE</span>
           </button>
         </div>
 
-        <div class="relative flex py-1 items-center">
-          <div class="flex-grow border-t border-slate-800"></div>
-          <span class="flex-shrink mx-2 text-[10px] uppercase tracking-wider text-slate-500">or upload custom file</span>
-          <div class="flex-grow border-t border-slate-800"></div>
-        </div>
-
-        <form id="uploadForm" class="space-y-3 mt-2">
-          <input type="file" id="audioFileInput" accept=".wav" class="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
-          <button type="submit" id="classifyBtn" class="w-full py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition shadow-lg shadow-blue-600/20">Classify Uploaded File</button>
+        <!-- Custom Upload Form -->
+        <form id="uploadForm" class="space-y-2 pt-1 border-t border-[#1c2433]">
+          <span class="text-[10px] text-slate-500 font-mono block">Custom Audio File:</span>
+          <input type="file" id="audioFileInput" accept=".wav" class="block w-full text-[10px] font-mono text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+          <button type="submit" id="classifyBtn" class="w-full py-1.5 px-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-medium text-[11px] font-mono transition shadow">POST /api/v1/classify</button>
         </form>
+      </div>
 
-        <div id="restResult" class="mt-4 p-3 rounded-lg bg-slate-950/70 border border-slate-800 font-mono text-xs hidden">
-          <!-- REST API response JSON -->
+      <!-- Tree Section 3: Hardware Pipeline Specs -->
+      <div class="p-3 text-[10px] font-mono text-slate-500 space-y-1">
+        <div class="text-slate-400 font-bold uppercase text-[9px]">DSP Chain Spec</div>
+        <div>&bull; Frame Len: 512 (32 ms)</div>
+        <div>&bull; Frame Step: 320 (20 ms)</div>
+        <div>&bull; Window: Periodic Hann</div>
+        <div>&bull; Quant: int8 [-128..127]</div>
+      </div>
+    </aside>
+
+    <!-- Center Workspace Group (Editor + Secondary Side Panel + Bottom Panel) -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-[#131823]">
+
+      <!-- Top Editor Tabs -->
+      <div class="h-8 bg-[#0d121a] border-b border-[#1c2433] flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center h-full">
+          <div class="tab-item active flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>robot_control.scada</span>
+          </div>
+          <div class="tab-item flex items-center gap-2 text-slate-500">
+            <span>softmax_meters.dat</span>
+          </div>
+        </div>
+        <div class="px-3 text-[10px] font-mono text-slate-500 flex items-center gap-3">
+          <span id="lastTriggerTime">Listening for voice stream...</span>
         </div>
       </div>
 
+      <!-- Main Editor Stage (Split Horizontally: SCADA Monitor & Softmax Meters) -->
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 overflow-y-auto industrial-grid">
+
+        <!-- Center 2 Columns: SCADA State Machine Display -->
+        <div class="lg:col-span-2 p-5 flex flex-col justify-between space-y-5 border-r border-[#1c2433]/70">
+
+          <!-- Primary Industrial State Monitor Display -->
+          <div id="stateBanner" class="p-7 rounded-xl border-2 border-[#232e42] bg-[#0e141f]/90 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden shadow-2xl">
+            <!-- Corner Technical Markings -->
+            <div class="absolute top-2 left-2 text-[9px] font-mono text-slate-600">SYS_ID: ROBOTOS_ND02</div>
+            <div class="absolute top-2 right-2 text-[9px] font-mono text-slate-600">INTERLOCK: ACTIVE</div>
+            <div class="absolute bottom-2 left-2 text-[9px] font-mono text-slate-600">SAMPLING: 16.0 kHz</div>
+            <div class="absolute bottom-2 right-2 text-[9px] font-mono text-slate-600">LATENCY: &lt; 35ms</div>
+
+            <div id="stateIcon" class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl font-black mb-3 bg-[#151c2a] text-slate-400 border border-[#243047] shadow-inner transition-transform duration-200">
+              💤
+            </div>
+            
+            <div class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-0.5">CURRENT SYSTEM STATE</div>
+            <h2 id="stateTitle" class="text-3xl font-black tracking-tight text-slate-100 font-mono">STANDBY</h2>
+            <p id="stateDesc" class="text-xs text-slate-400 mt-1.5 max-w-md font-sans">
+              Speak <code class="text-red-400 bg-red-950/40 px-1 py-0.5 rounded border border-red-500/20 font-mono">"red"</code>, 
+              <code class="text-emerald-400 bg-emerald-950/40 px-1 py-0.5 rounded border border-emerald-500/20 font-mono">"green"</code>, 
+              <code class="text-sky-400 bg-sky-950/40 px-1 py-0.5 rounded border border-sky-500/20 font-mono">"blue"</code>, or 
+              <code class="text-slate-300 bg-slate-800 px-1 py-0.5 rounded border border-slate-700 font-mono">"off"</code> into your microphone.
+            </p>
+          </div>
+
+          <!-- Command Safety Matrix (Interactive Cards) -->
+          <div>
+            <div class="text-[10px] font-mono uppercase text-slate-500 tracking-wider mb-2 flex items-center justify-between">
+              <span>Safety Interlock Matrix</span>
+              <span class="text-[9px] text-slate-600">4-State Deterministic FSM</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div class="p-3 rounded-lg bg-red-950/20 border border-red-500/20 hover:border-red-500/40 transition">
+                <div class="flex items-center justify-between text-xs text-red-400 font-mono font-bold mb-1">
+                  <span>"red"</span>
+                  <span class="text-[9px] px-1 py-0.5 rounded bg-red-500/20">ESTOP</span>
+                </div>
+                <div class="text-[11px] font-bold text-slate-200">Emergency Stop</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Instant motor kill switch</div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between text-xs text-emerald-400 font-mono font-bold mb-1">
+                  <span>"green"</span>
+                  <span class="text-[9px] px-1 py-0.5 rounded bg-emerald-500/20">RUN</span>
+                </div>
+                <div class="text-[11px] font-bold text-slate-200">Drive Forward</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Autonomous patrol mode</div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-sky-950/20 border border-sky-500/20 hover:border-sky-500/40 transition">
+                <div class="flex items-center justify-between text-xs text-sky-400 font-mono font-bold mb-1">
+                  <span>"blue"</span>
+                  <span class="text-[9px] px-1 py-0.5 rounded bg-sky-500/20">NAV</span>
+                </div>
+                <div class="text-[11px] font-bold text-slate-200">Turn / Nav</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Manual steering control</div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-700/40 hover:border-slate-600 transition">
+                <div class="flex items-center justify-between text-xs text-slate-400 font-mono font-bold mb-1">
+                  <span>"off"</span>
+                  <span class="text-[9px] px-1 py-0.5 rounded bg-slate-800">SLEEP</span>
+                </div>
+                <div class="text-[11px] font-bold text-slate-200">Power Standby</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Low-power park mode</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Audio Activity Simulated VU Indicator -->
+          <div class="p-3 rounded-lg bg-[#0f141f] border border-[#1e2738] flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 vu-active"></span>
+              <span class="text-[11px] font-mono text-slate-300">Continuous Microphone Stream:</span>
+              <span class="text-[11px] font-mono text-emerald-400 font-bold">16 kHz 16-bit PCM Active</span>
+            </div>
+            <div class="flex items-center gap-1 font-mono text-[10px] text-slate-500">
+              <span>Sliding Hop: 200ms</span>
+              <span>&bull;</span>
+              <span>Window: 1.0s</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right 1 Column: Softmax Probability Distribution & Telemetry -->
+        <div class="p-5 space-y-5 bg-[#0e131c]/60">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Inference Probability Distribution
+              </span>
+              <span class="text-[9px] font-mono text-slate-500">SOFTMAX</span>
+            </div>
+
+            <!-- Dynamic Bars Container -->
+            <div id="probBarsContainer" class="space-y-3 bg-[#111723] p-3.5 rounded-xl border border-[#1e2738]">
+              <!-- Populated dynamically via JS -->
+              <div class="text-xs text-slate-500 font-mono">Loading model meters...</div>
+            </div>
+          </div>
+
+          <!-- REST API Inspector Result Container -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">REST Payload Output</span>
+              <span class="text-[9px] font-mono text-slate-500">HTTP 200</span>
+            </div>
+            <div id="restResult" class="p-3 rounded-lg bg-[#0a0e14] border border-[#1b2332] font-mono text-[10px] text-slate-300 max-h-48 overflow-y-auto hidden">
+              <!-- Result json populated here -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Panel (VS Code Output / Terminal Style) -->
+      <section class="h-48 bg-[#0b0f16] border-t border-[#1c2433] flex flex-col flex-shrink-0">
+        <!-- Panel Tabs Header -->
+        <div class="h-7 bg-[#090c12] border-b border-[#18202c] flex items-center justify-between px-3 flex-shrink-0">
+          <div class="flex items-center h-full space-x-1">
+            <button id="tabBtnWs" class="term-tab active flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>WEBSOCKET TELEMETRY</span>
+            </button>
+            <button id="tabBtnRest" class="term-tab">REST INSPECTOR</button>
+            <button id="tabBtnModel" class="term-tab">MODEL META</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="clearLogBtn" class="text-[10px] font-mono text-slate-500 hover:text-slate-300 transition">CLEAR LOG</button>
+          </div>
+        </div>
+
+        <!-- Terminal Stream Log -->
+        <div id="eventLog" class="flex-1 p-2.5 font-mono text-[11px] overflow-y-auto space-y-1 text-slate-300 bg-[#090d14]">
+          <div class="text-slate-500 italic p-1">[system] Live edge telemetry initialized. Listening to background audio stream...</div>
+        </div>
+      </section>
+
     </div>
 
-  </main>
+  </div>
 
-  <footer class="border-t border-slate-800 py-3 px-6 text-center text-xs text-slate-500">
-    KMUTT ND69 · ND02 Backend & Frontend Track · Week 08 Edge AI as a Service
+  <!-- Bottom VS Code Status Bar -->
+  <footer class="h-6 bg-[#007acc] text-white flex items-center justify-between px-3 text-[11px] font-mono flex-shrink-0 z-50">
+    <div class="flex items-center gap-3">
+      <span class="flex items-center gap-1 hover:bg-blue-600/60 px-1 rounded cursor-pointer">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+        <span>main*</span>
+      </span>
+      <span>&bull;</span>
+      <span class="flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+        <span id="footerWsStatus">WS: Connected (50Hz)</span>
+      </span>
+      <span>&bull;</span>
+      <span>Safety: ARM_OK</span>
+    </div>
+
+    <div class="flex items-center gap-3 text-blue-100">
+      <span>Int8 Model: Active</span>
+      <span>&bull;</span>
+      <span>16 kHz PCM</span>
+      <span>&bull;</span>
+      <span>UTF-8</span>
+      <span>&bull;</span>
+      <span class="font-bold">KMUTT ND69 (ND02)</span>
+    </div>
   </footer>
 
   <script src="/static/app.js"></script>
