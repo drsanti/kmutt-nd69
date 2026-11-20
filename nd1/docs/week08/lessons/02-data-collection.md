@@ -135,7 +135,7 @@ python collect_pc_mic.py --speaker alice --session s01 --labels _unknown_ --take
 
 > [!TIP]
 > **Audio Quality Filters:**
-> - If audio is clipped (peak amplitude ≥ 32,000) or too quiet (speech RMS < −40 dBFS), the take is automatically discarded and retried with an on-screen hint so flawed audio never enters your training set.
+> - If audio is clipped (peak amplitude ≥ 32,000) or too quiet (speech RMS < −40 dBFS for keywords; relaxed to < −52 dBFS for `_unknown_` to accept quiet/whispered speech), the take is automatically discarded and retried with an on-screen hint so flawed audio never enters your training set.
 > - **Recording Duration:** The raw recording window defaults to `--seconds 1.5` before trimming down to the 1.0 s clip. To capture longer words or if extending clip length to 1.5 s (`CLIP_SAMPLES = 24000`), pass `--seconds 2.0`.
 
 You can also slice an existing long WAV recording (for example 2 minutes of room noise for `_silence_`) without a live microphone:

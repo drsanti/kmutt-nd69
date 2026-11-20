@@ -257,7 +257,7 @@ python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmwa
 > - **Sweet Spot (Target):** Peak between **4,000 and 15,000** (−18 to −6 dBFS), speech RMS between **−26 and −18 dBFS**.
 > - **Too Quiet (< −38 dBFS RMS, peak < 2,000):** Microphone is too quiet. Use `--gain 80` or `--gain 85` and speak ~15–30 cm from the board.
 > - **Clipping (Peak 32,767):** Audio is distorted. Lower gain (e.g. `--gain 50` or `40`).
-> - **Automatic Quality Checks:** Takes that clip (peak ≥ 32,000) or are too quiet (speech RMS < −40 dBFS) are automatically discarded and retried so bad clips never enter your dataset.
+> - **Automatic Quality Checks:** Takes that clip (peak ≥ 32,000) or are too quiet (speech RMS < −40 dBFS for keywords; relaxed to < −52 dBFS for `_unknown_` to allow soft speech and whispers) are automatically discarded and retried so bad clips never enter your dataset.
 > - **Record a specific keyword (`--labels`):** By default, both scripts cycle through all 4 words (`red`, `green`, `blue`, `off`). To record or re-record only one keyword, pass `--labels blue` (or multiple: `--labels red blue`). For silence, pass `--labels _silence_ --no-prompt --takes 30`.
 > - Keep `--gain` consistent across `collect.py` and `live_infer_board.py`!
 
