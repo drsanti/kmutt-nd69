@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const activeStreamBadge = document.getElementById("activeStreamBadge");
   const activeStreamDot = document.getElementById("activeStreamDot");
   const activeStreamLabel = document.getElementById("activeStreamLabel");
+  const enableMicBtn = document.getElementById("enableMicBtn");
 
   const stateBanner = document.getElementById("stateBanner");
   const stateIcon = document.getElementById("stateIcon");
@@ -56,13 +57,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let modelMetaData = null;
   let lastRestPayload = null;
 
-  // Web Audio Streaming State
+  // Real Web Audio API Nodes & Analyzer State
   let audioCtx = null;
   let micMediaStream = null;
+  let micSourceNode = null;
+  let analyserNode = null;
   let audioProcessor = null;
-  let isAudioStreaming = false;
-  let isContinuousMode = false;
-  let isPttActive = false;
+  let freqDataArray = null;
+  let timeDataArray = null;
+
+  let isAudioStreaming = false;  // Whether actively transmitting chunks to server
+  let isContinuousMode = false;  // Whether in continuous hands-free streaming
+  let isPttActive = false;       // Whether PTT button / spacebar is held
 
   // 1. Initialize Probability Meters with Industrial Styling & Threshold Marker
   function initProbBars(labels) {
@@ -208,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateThresholdUI(data.threshold);
           }
         } else if (data.event === "live_stream_update") {
-          // CONTINUOUS STREAMING UPDATE: Softmax bars + dBFS meter!
+          // CONTINUOUS STREAMING UPDATE: Softmax bars!
           handleLiveStreamUpdate(data);
         } else if (data.event === "keyword_detected") {
           handleKeywordDetected(data.keyword, data.confidence, data.timestamp, data.source || "mic");
@@ -235,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   connectWebSocket();
 
-  // 4. Real-Time Audio Downsampling & WebSocket Stream Engine
+  // 4. Real-Time Audio Downsampling Utility
   function downsampleToInt16(float32Array, inRate, outRate = 16000) {
     if (inRate === outRate) {
       const pcm16 = new Int16Array(float32Array.length);
@@ -259,8 +265,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return pcm16;
   }
 
-  async function startBrowserAudioStreaming() {
-    if (isAudioStreaming) return;
+  // 5. Initialize Live Web Audio Context & FFT Analyser
+  async function initMicrophoneMonitor() {
+    if (micSourceNode && analyserNode) return true;
     try {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -278,10 +285,19 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       });
 
-      const sourceNode = audioCtx.createMediaStreamSource(micMediaStream);
-      // Process buffer size: 2048 samples (~43ms chunk at 48kHz)
-      audioProcessor = audioCtx.createScriptProcessor(2048, 1, 1);
+      micSourceNode = audioCtx.createMediaStreamSource(micMediaStream);
 
+      // Create Real-Time AnalyserNode for live spectrum & waveform
+      analyserNode = audioCtx.createAnalyser();
+      analyserNode.fftSize = 256;
+      analyserNode.smoothingTimeConstant = 0.70;
+      micSourceNode.connect(analyserNode);
+
+      freqDataArray = new Uint8Array(analyserNode.frequencyBinCount);
+      timeDataArray = new Uint8Array(analyserNode.fftSize);
+
+      // Create ScriptProcessorNode for streaming audio chunks to WebSocket server
+      audioProcessor = audioCtx.createScriptProcessor(2048, 1, 1);
       audioProcessor.onaudioprocess = (e) => {
         if (!isAudioStreaming || !socket || socket.readyState !== WebSocket.OPEN) return;
         const inputData = e.inputBuffer.getChannelData(0);
@@ -290,69 +306,74 @@ document.addEventListener("DOMContentLoaded", () => {
           socket.send(pcm16.buffer);
         }
       };
-
-      sourceNode.connect(audioProcessor);
+      micSourceNode.connect(audioProcessor);
       audioProcessor.connect(audioCtx.destination);
-      isAudioStreaming = true;
-      setVoiceStreamActiveUI(true);
-      addLogEntry("STREAM", "Browser audio stream started. Transmitting 16 kHz PCM to server.");
+
+      if (enableMicBtn) {
+        enableMicBtn.className = "px-2.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 font-mono text-[11px] font-bold cursor-default";
+        enableMicBtn.innerHTML = "✓ Live FFT Mic Connected";
+      }
+      addLogEntry("SYSTEM", "Live Web Audio Analyser initialized. Spectrum & dBFS meter active.");
+      return true;
     } catch (err) {
-      console.error("Failed to start browser microphone:", err);
-      alert("Microphone permission denied or device error: " + err.message);
-      stopBrowserAudioStreaming();
+      console.error("Microphone initialization error:", err);
+      alert("Microphone permission required for spectrum and voice recognition: " + err.message);
+      return false;
     }
   }
 
-  function stopBrowserAudioStreaming() {
-    isAudioStreaming = false;
-    if (audioProcessor) {
-      try { audioProcessor.disconnect(); } catch (e) {}
-      audioProcessor = null;
-    }
-    if (micMediaStream) {
-      micMediaStream.getTracks().forEach((track) => track.stop());
-      micMediaStream = null;
-    }
-    setVoiceStreamActiveUI(false);
+  if (enableMicBtn) {
+    enableMicBtn.addEventListener("click", () => {
+      initMicrophoneMonitor();
+    });
+  }
+  if (audioCanvas) {
+    audioCanvas.addEventListener("click", () => {
+      initMicrophoneMonitor();
+    });
   }
 
+  // 6. Voice Stream Transmit UI Controllers
   function setVoiceStreamActiveUI(active) {
     if (active) {
       if (activeStreamBadge) {
         activeStreamBadge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/50 border border-emerald-500/50 font-mono text-xs text-emerald-300";
         activeStreamDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
-        activeStreamLabel.textContent = "Stream: Active (16 kHz)";
+        activeStreamLabel.textContent = "Stream: Transmitting (16 kHz)";
       }
     } else {
       if (activeStreamBadge) {
         activeStreamBadge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141d2c] border border-[#26374f] font-mono text-xs text-slate-300";
         activeStreamDot.className = "w-2 h-2 rounded-full bg-slate-500";
-        activeStreamLabel.textContent = "Stream: Idle";
+        activeStreamLabel.textContent = "Stream: Idle (Monitoring)";
       }
-      if (liveDbfsText) liveDbfsText.textContent = "-60.0 dBFS";
-      if (liveVuBar) liveVuBar.style.width = "4%";
     }
   }
 
-  // 5. Push-to-Talk (PTT) Event Handlers
-  function activatePtt() {
+  // 7. Push-to-Talk (PTT) Event Handlers
+  async function activatePtt() {
     if (isContinuousMode || isPttActive) return;
+    const ok = await initMicrophoneMonitor();
+    if (!ok) return;
+
     isPttActive = true;
+    isAudioStreaming = true;
     pttButton.className = "relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-2xl transition-all bg-gradient-to-r from-red-600 to-rose-600 border border-red-400 scale-105";
     pttPulseHalo.className = "absolute -inset-1 rounded-xl bg-red-500/50 opacity-100 transition duration-150 blur-md pointer-events-none";
     pttIcon.textContent = "🔴";
     pttText.textContent = "TRANSMITTING (SPEAK)";
-    startBrowserAudioStreaming();
+    setVoiceStreamActiveUI(true);
   }
 
   function deactivatePtt() {
     if (isContinuousMode || !isPttActive) return;
     isPttActive = false;
+    isAudioStreaming = false;
     pttButton.className = "relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-lg transition-all bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 active:scale-95 border border-sky-400/40 cursor-pointer";
     pttPulseHalo.className = "absolute -inset-1 rounded-xl bg-sky-500/30 opacity-0 transition duration-200 blur-sm pointer-events-none";
     pttIcon.textContent = "🎙️";
     pttText.textContent = "HOLD TO TALK";
-    stopBrowserAudioStreaming();
+    setVoiceStreamActiveUI(false);
   }
 
   if (pttButton) {
@@ -379,31 +400,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 6. Continuous Speech Stream Toggle Handler
+  // 8. Continuous Speech Stream Toggle Handler
   if (continuousToggleBtn) {
-    continuousToggleBtn.addEventListener("click", () => {
-      isContinuousMode = !isContinuousMode;
-      if (isContinuousMode) {
+    continuousToggleBtn.addEventListener("click", async () => {
+      if (!isContinuousMode) {
+        const ok = await initMicrophoneMonitor();
+        if (!ok) return;
+
+        isContinuousMode = true;
+        isAudioStreaming = true;
         continuousToggleBtn.className = "flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-emerald-500/50 bg-emerald-950/40 text-emerald-200 cursor-pointer";
         continuousStatusDot.className = "w-3 h-3 rounded-full bg-emerald-400 animate-pulse";
         continuousToggleText.textContent = "Continuous Speech: LIVE";
         if (pttButton) {
           pttButton.classList.add("opacity-50", "pointer-events-none");
         }
-        startBrowserAudioStreaming();
+        setVoiceStreamActiveUI(true);
+        addLogEntry("STREAM", "Continuous speech mode engaged. Listening continuously.");
       } else {
+        isContinuousMode = false;
+        isAudioStreaming = false;
         continuousToggleBtn.className = "flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-[#283852] bg-[#141d2d] text-slate-300 hover:bg-[#1b273d] hover:text-white cursor-pointer";
         continuousStatusDot.className = "w-3 h-3 rounded-full bg-slate-500";
         continuousToggleText.textContent = "Continuous Speech: OFF";
         if (pttButton) {
           pttButton.classList.remove("opacity-50", "pointer-events-none");
         }
-        stopBrowserAudioStreaming();
+        setVoiceStreamActiveUI(false);
       }
     });
   }
 
-  // 7. Live Continuous Streaming Updates from Server
+  // 9. Live Continuous Streaming Updates from Server
   function handleLiveStreamUpdate(data) {
     // 1. Update live meters for all classes continuously
     if (data.probabilities) {
@@ -425,29 +453,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // 2. Update Live RMS dBFS Meter
-    if (data.rms_dbfs !== undefined) {
-      if (liveDbfsText) liveDbfsText.textContent = `${data.rms_dbfs.toFixed(1)} dBFS`;
-      if (audioDbfsMeter) audioDbfsMeter.textContent = `16.0 kHz • ${data.rms_dbfs.toFixed(1)} dBFS`;
-
-      if (liveVuBar) {
-        // Map dBFS from [-60..0] to [5%..100%]
-        const vuPct = Math.max(5, Math.min(100, Math.round(((data.rms_dbfs + 60) / 60) * 100)));
-        liveVuBar.style.width = `${vuPct}%`;
-        liveVuBar.className =
-          vuPct > 80 ? "h-full rounded-full bg-red-500 transition-all duration-75" :
-          vuPct > 55 ? "h-full rounded-full bg-amber-400 transition-all duration-75" :
-          "h-full rounded-full bg-emerald-500 transition-all duration-75";
-      }
-    }
-
-    // 3. Keyword trigger event
+    // 2. Keyword trigger event
     if (data.triggered && data.keyword) {
       handleKeywordDetected(data.keyword, data.confidence, data.timestamp, "live_stream");
     }
   }
 
-  // 8. Handle Keyword Detections & Reactive Industrial State Updates
+  // 10. Handle Keyword Detections & Reactive Industrial State Updates
   function handleKeywordDetected(keyword, confidence, timestamp, source = "mic") {
     const timeStr = new Date().toLocaleTimeString();
     lastTriggerTime.textContent = `Last trigger: ${timeStr} (${confidence >= 0 ? (confidence * 100).toFixed(1) + '%' : ''})`;
@@ -490,7 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addLogEntry(keyword.toUpperCase(), `[${srcTag}] Conf: ${(confidence * 100).toFixed(1)}% | T: ${timestamp}s -> FSM State Triggered`);
   }
 
-  // 9. Append Log Entry to Terminal
+  // 11. Append Log Entry to Terminal
   function addLogEntry(tag, msg) {
     if (eventLog.children.length === 1 && eventLog.children[0].classList.contains("italic")) {
       eventLog.innerHTML = "";
@@ -526,7 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
     eventLog.innerHTML = '<div class="text-slate-500 italic p-1">[system] Telemetry log cleared. Stream listening...</div>';
   });
 
-  // 10. Global Interactive Keyword Simulation Dispatcher
+  // 12. Global Interactive Keyword Simulation Dispatcher
   window.triggerKeywordSim = async function(keyword) {
     try {
       const resp = await fetch("/api/v1/simulate", {
@@ -544,7 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // 11. Terminal Panel Tab Switching
+  // 13. Terminal Panel Tab Switching
   if (tabBtnWs && tabBtnRest && tabBtnThresh && tabBtnCurl) {
     function resetTabs() {
       [tabBtnWs, tabBtnRest, tabBtnThresh, tabBtnCurl].forEach((t) => (t.className = "term-tab"));
@@ -580,7 +592,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 12. REST API Audio Dispatcher
+  // 14. REST API Audio Dispatcher
   async function sendAudioBlobForClassification(blob, filename = "audio.wav") {
     const formData = new FormData();
     formData.append("file", blob, filename);
@@ -619,7 +631,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 12.1 Built-in Sample Audio Button
+  // 14.1 Built-in Sample Audio Button
   if (useSampleBtn) {
     useSampleBtn.addEventListener("click", async () => {
       restResult.classList.remove("hidden");
@@ -635,7 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 12.2 Single Take Mic Recorder (1s)
+  // 14.2 Single Take Mic Recorder (1s)
   function encodeWav(samples, sampleRate) {
     const buffer = new ArrayBuffer(44 + samples.length * 2);
     const view = new DataView(buffer);
@@ -721,7 +733,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 12.3 Custom File Upload Form
+  // 14.3 Custom File Upload Form
   if (uploadForm && audioFileInput) {
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -734,59 +746,119 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 13. Dynamic Oscilloscope Canvas
+  // 15. Real-Time 60 FPS Audio Spectrum & Waveform Oscilloscope
   if (audioCanvas) {
     const ctx = audioCanvas.getContext("2d");
-    let phase = 0;
 
-    function drawVisualizer() {
+    function renderAudioVisualizer() {
+      requestAnimationFrame(renderAudioVisualizer);
+
       const width = audioCanvas.width = audioCanvas.offsetWidth || 500;
-      const height = audioCanvas.height = 52;
+      const height = audioCanvas.height = 56;
 
       ctx.clearRect(0, 0, width, height);
 
-      // Grid
+      // 1. Draw Technical Background Grid
       ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < width; x += 30) {
+      for (let x = 0; x < width; x += 32) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       }
-      for (let y = 0; y < height; y += 15) {
+      for (let y = 0; y < height; y += 14) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
         ctx.stroke();
       }
 
-      // Sine Waveform
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = isAudioStreaming ? "#10b981" : "#38bdf8";
-      ctx.shadowColor = isAudioStreaming ? "#10b981" : "#38bdf8";
-      ctx.shadowBlur = isAudioStreaming ? 12 : 6;
-      ctx.beginPath();
+      // If Analyser is connected, read REAL microphone audio!
+      if (analyserNode && freqDataArray && timeDataArray) {
+        analyserNode.getByteFrequencyData(freqDataArray);
+        analyserNode.getByteTimeDomainData(timeDataArray);
 
-      const centerY = height / 2;
-      const points = 60;
-      const step = width / points;
-      const amplitudeFactor = isAudioStreaming ? 1.6 : 0.8;
+        // Compute Real Instantaneous Energy (RMS -> dBFS)
+        let sumSquares = 0;
+        for (let i = 0; i < timeDataArray.length; i++) {
+          const norm = (timeDataArray[i] - 128) / 128.0;
+          sumSquares += norm * norm;
+        }
+        const rms = Math.sqrt(sumSquares / timeDataArray.length);
+        const dbfs = rms > 1e-4 ? 20 * Math.log10(rms) : -75.0;
+        const clampedDbfs = Math.max(-75, Math.min(0, dbfs));
 
-      for (let i = 0; i <= points; i++) {
-        const x = i * step;
-        const normX = i / points;
-        const amp = Math.sin(normX * Math.PI) * (12 * amplitudeFactor);
-        const y = centerY + Math.sin(normX * 8 + phase) * amp * 0.7 + Math.sin(normX * 16 - phase * 1.5) * (amp * 0.3);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        // Update real-time dBFS readings in header & VU bar
+        if (audioDbfsMeter) {
+          const statusTag = isAudioStreaming ? "• STREAMING" : "• MONITOR";
+          audioDbfsMeter.textContent = `MIC: ${clampedDbfs.toFixed(1)} dBFS ${statusTag}`;
+          audioDbfsMeter.className =
+            clampedDbfs > -20 ? "text-red-400 font-bold" :
+            clampedDbfs > -45 ? "text-amber-400 font-bold" : "text-emerald-400 font-bold";
+        }
+        if (liveDbfsText) {
+          liveDbfsText.textContent = `${clampedDbfs.toFixed(1)} dBFS`;
+        }
+        if (liveVuBar) {
+          const vuPct = Math.max(4, Math.min(100, Math.round(((clampedDbfs + 75) / 75) * 100)));
+          liveVuBar.style.width = `${vuPct}%`;
+          liveVuBar.className =
+            vuPct > 75 ? "h-full rounded-full bg-red-500" :
+            vuPct > 45 ? "h-full rounded-full bg-amber-400" : "h-full rounded-full bg-emerald-500";
+        }
+
+        // 2. Draw Real Frequency Spectrum Bars (48 Bins across audible frequencies)
+        const numBars = 48;
+        const barWidth = Math.floor(width / numBars) - 2;
+        for (let i = 0; i < numBars; i++) {
+          const binIndex = Math.floor(i * (freqDataArray.length / numBars));
+          const val = freqDataArray[binIndex] / 255.0; // 0..1 scale
+          const barHeight = Math.max(3, val * (height - 8));
+          const x = i * (barWidth + 2) + 2;
+          const y = height - barHeight - 2;
+
+          // Color coded: Peak (Red) -> Loud (Amber) -> Active Stream (Green) -> Monitor (Cyan)
+          if (val > 0.72) {
+            ctx.fillStyle = "#ef4444";
+          } else if (val > 0.42) {
+            ctx.fillStyle = "#f59e0b";
+          } else if (isAudioStreaming) {
+            ctx.fillStyle = "#10b981";
+          } else {
+            ctx.fillStyle = "#38bdf8";
+          }
+          ctx.fillRect(x, y, barWidth, barHeight);
+        }
+
+        // 3. Draw Real Time-Domain Waveform Overlay Line
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = isAudioStreaming ? "rgba(16, 185, 129, 0.95)" : "rgba(56, 189, 248, 0.85)";
+        ctx.shadowColor = isAudioStreaming ? "#10b981" : "#38bdf8";
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+
+        const sliceWidth = width / timeDataArray.length;
+        let x = 0;
+        for (let i = 0; i < timeDataArray.length; i++) {
+          const v = timeDataArray[i] / 128.0;
+          const y = (v * height) / 2;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+          x += sliceWidth;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+      } else {
+        // Standby prompt before mic permission granted
+        ctx.fillStyle = "rgba(148, 163, 184, 0.75)";
+        ctx.font = "12px JetBrains Mono, monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("Microphone Standby. Click 'Enable Mic Monitor' or hold 'HOLD TO TALK' to activate live spectrum.", width / 2, height / 2 + 4);
       }
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      phase += isAudioStreaming ? 0.09 : 0.03;
-      requestAnimationFrame(drawVisualizer);
     }
-    requestAnimationFrame(drawVisualizer);
+
+    renderAudioVisualizer();
   }
 });

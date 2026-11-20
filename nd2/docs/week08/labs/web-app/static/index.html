@@ -264,9 +264,14 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-400 vu-active"></span>
                 <span>AUDIO SPECTRUM &amp; ENERGY MONITOR</span>
               </span>
-              <span id="audioDbfsMeter" class="text-emerald-400 font-bold">16.0 kHz &bull; -42 dBFS</span>
+              <div class="flex items-center gap-2.5">
+                <button id="enableMicBtn" class="px-2.5 py-0.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#283952] text-sky-300 font-mono text-[11px] font-semibold cursor-pointer transition">
+                  🎙️ Enable Mic Monitor
+                </button>
+                <span id="audioDbfsMeter" class="text-emerald-400 font-bold">16.0 kHz &bull; STANDBY</span>
+              </div>
             </div>
-            <canvas id="audioVisualizer" height="52" class="w-full rounded-lg"></canvas>
+            <canvas id="audioVisualizer" height="56" class="w-full rounded-lg cursor-pointer" title="Click to activate live microphone"></canvas>
           </div>
 
           <!-- Primary Industrial State Monitor Display -->
