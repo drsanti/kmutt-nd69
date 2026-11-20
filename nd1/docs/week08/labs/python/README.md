@@ -19,7 +19,7 @@
 python3 -m venv .venv && source .venv/bin/activate
 
 # Windows Git Bash:
-python -m venv .venv && source .venv/Scripts/activate
+py -3.11 -m venv .venv && source .venv/Scripts/activate
 
 # Windows PowerShell:
 py -3.11 -m venv .venv
@@ -35,6 +35,10 @@ pip install -r requirements.txt
 `sounddevice` needs PortAudio: it is bundled in the wheel on Windows and macOS; on Debian/Ubuntu run `sudo apt install libportaudio2`.
 
 ## Commands
+
+> [!NOTE]
+> **Git Bash / Windows (`py` command):**
+> If you are using Git Bash on Windows and `python` defaults to Python 3.14 (causing NumPy import failures), run scripts using `py` instead of `python` (e.g. `py test_wire.py`, `py make_synthetic_dataset.py --out synth_dataset`).
 
 Board scripts need the board running the [hardware-interface-workshop](https://github.com/drsanti/hardware-interface-workshop) **prebuilt firmware** (`rb flash-bin`) and the workshop browser tab disconnected.
 

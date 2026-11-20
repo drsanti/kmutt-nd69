@@ -79,7 +79,8 @@ Choose your shell:
 
 - **Windows Git Bash (MINGW64):**
   ```bash
-  python -m venv .venv
+  # Use py -3.11 if python points to Python 3.14
+  py -3.11 -m venv .venv
   source .venv/Scripts/activate
   ```
 
@@ -109,6 +110,14 @@ pip install -r requirements.txt
 ## Lab Path A: Quick Start without Hardware (Synthetic Pipeline, 10 min)
 
 Test the complete training and export pipeline immediately without any microphone or board:
+
+> [!NOTE]
+> **Git Bash / Windows Users (`py` command):**
+> If you are running in **Git Bash** on Windows and `python` fails with a NumPy C-extension import error (or points to Python 3.14+), use `py` instead of `python`:
+> ```bash
+> py make_synthetic_dataset.py --out synth_dataset
+> ```
+> The Windows `py` launcher automatically routes to your installed stable Python 3.11/3.12 environment where packages are installed. You can use `py` for all script commands in this lab.
 
 ```bash
 # 1. Generate synthetic test dataset
