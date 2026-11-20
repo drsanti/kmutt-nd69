@@ -8,7 +8,7 @@
 
 [Week 08 index](README.md) · [Lessons](lessons/README.md)
 
-Ten questions, about 10 minutes. Answers are at the bottom; try first.
+Twelve questions, about 12 minutes. Answers are at the bottom; try first.
 
 1. Put these stages in order: quantize, collect, deploy, train, test.
 2. A dataset has 400 `red` clips and 40 clips for each other label. What will a naive model learn, and name two fixes.
@@ -20,6 +20,8 @@ Ten questions, about 10 minutes. Answers are at the bottom; try first.
 8. A model trained only on laptop-microphone clips scores 95% on PC test clips and 60% on board clips. What is this effect called, and give two ways to reduce it.
 9. In `kws-inference`, why is the capture task's priority higher than the inference task's, and why does it call `xQueueSend` with a timeout of 0?
 10. Secure boot is enabled but flash encryption is not. Can someone copy your model from the board? Can they run their own modified firmware?
+11. `collect.py` receives `MicPcm` frames with `seq` 200, 201, 203. What happened, and what does the script do with that take? Why is `seq` compared modulo 256?
+12. You plug a ws28p into `collect.py`. How does the script know it is the wrong board, and what does `0x3c` mean?
 
 ---
 
@@ -36,5 +38,7 @@ Ten questions, about 10 minutes. Answers are at the bottom; try first.
 8. Domain shift. Mix PC and board clips, augment gain/noise, turn off OS audio processing, and always test on board-recorded clips.
 9. Audio arrives in real time and DMA buffers are small; capture must never be delayed by the heavy FFT/inference work. A zero timeout means that if the consumer falls behind, the block is counted as dropped instead of blocking the capture loop (and losing even more audio).
 10. **Yes**, they can read the flash and copy the model, because nothing hides it. **No**, they cannot run modified firmware, because its signature would fail verification.
+11. One chunk (seq 202, up to 240 samples = 15 ms) was lost on USB. The take would contain a hole, so `collect.py` discards it and records it again (`live_infer_board.py` fills the gap with silence instead, to keep timing). The prebuilt firmware counts `MicPcm.seq` with an 8-bit counter, so after 255 comes 0.
+12. It reads `BoardInfo.caps`: `0x3c` = IMU (0x04) + RTC (0x08) + BATT (0x10) + BTN (0x20) — no MIC bit (0x02). (If `BoardInfo` has not arrived yet, a stream of `Imu` frames also gives it away.) The ES3C28P reports `0x33` = LED + MIC + BATT + BTN.
 
 </details>

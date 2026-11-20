@@ -1,12 +1,12 @@
 # Lesson 04 — Testing, Confusion Matrix, and int8 Quantization
 
-> Week 08 · ES3C28P / ESP32-S3 · 10:25–10:55
+> Week 08 · ES3C28P / ESP32-S3 · 10:20–10:55
 
 [Lesson index](README.md) · [Previous: Lesson 03](03-features-and-model.md) · [Next: Lesson 05](05-firmware-inference.md)
 
 ## Learning objectives
 
-Measure a model honestly on held-out data, read a confusion matrix, quantize the model to int8 with a representative dataset, measure what quantization costs, and try the model live on the PC microphone before flashing.
+Measure a model honestly on held-out data, read a confusion matrix, quantize the model to int8 with a representative dataset, measure what quantization costs, and try the model live — with the board streaming its microphone to your computer, or with the computer microphone — before anything is flashed.
 
 ## Evaluate on the test split
 
@@ -101,14 +101,28 @@ q = clamp(round(x / scale) + zero_point, −128, 127)
 
 The size ratio was 0.72, not 0.25. With only ~5.5 k weights, the FlatBuffer structure, tensor names, and per-channel quantization parameters are a large share of the file. For bigger models the ratio approaches 0.25–0.3.
 
-## Live test on the PC microphone
+## Live test with the board (in class)
+
+The board keeps the workshop firmware and streams its microphone; the model runs on your computer:
+
+```bash
+python live_infer_board.py --port COM5 --model artifacts/model_float.tflite artifacts/model_int8.tflite
+```
+
+```text
+ES3C28P mic ─► workshop firmware ─USB MicPcm 16 kHz─► live_infer_board.py ─► log-mel ─► model ─► "red  0.91  <== DETECTED"
+```
+
+This is the most honest test you can do without new firmware: it uses the **board microphone, the board's filter chain, and the board gain** — exactly what the data path A clips contain. If a USB chunk is lost (`MicPcm.seq` gap), the script inserts the same number of silent samples so the timing stays right, and prints the number of lost chunks at the end. A few in a minute is harmless; many means the computer is overloaded or another program is reading the port.
+
+No board? Use the computer microphone with the same detector code:
 
 ```bash
 python live_infer_pc.py --model artifacts/model_float.tflite artifacts/model_int8.tflite
 python live_infer_pc.py --model artifacts/model_int8.tflite --wav my_sentence.wav      # no microphone needed
 ```
 
-The script uses the same streaming logic as the firmware:
+Both scripts use the same streaming logic as the on-device firmware in Lesson 05:
 
 ```text
 every 250 ms: newest 1.0 s of audio → log-mel → model
@@ -122,15 +136,16 @@ Try:
 1. Say each keyword at normal distance, then from 2 m away.
 2. Talk normally for 30 s without keywords and count false triggers.
 3. Change `--threshold` (0.5, 0.7, 0.9) and `--smooth` (1, 3, 5). Note the trade-off between misses and false triggers.
-4. Copy the best values into `kws_config.h` (`KWS_THRESHOLD`, `KWS_SMOOTH_WINDOW`) for Lesson 05. The firmware hop is 500 ms, so its smoothing window covers more time; adjust accordingly.
+4. Write down the best values. If you continue to Lesson 05, copy them into `kws_config.h` (`KWS_THRESHOLD`, `KWS_SMOOTH_WINDOW`). The firmware hop is 500 ms, so its smoothing window covers more time; adjust accordingly.
 
-Remember: a good live result on the **PC** microphone does not guarantee a good result on the **board**.
+Remember: a good live result on the **PC** microphone does not guarantee a good result with the **board** microphone. `live_infer_board.py` is the test that counts.
 
 ## Lab checklist
 
 - [ ] `report.md` saved, with float32 and int8 accuracy and the drop in percentage points
 - [ ] Board-only accuracy reported (or "no board data")
 - [ ] One sentence on the worst row of the confusion matrix and what data would fix it
+- [ ] Live test done with `live_infer_board.py` (or `live_infer_pc.py` without a board): detections and false triggers noted
 - [ ] Threshold and smoothing chosen from the live test
 
 ## Check your understanding
@@ -138,3 +153,4 @@ Remember: a good live result on the **PC** microphone does not guarantee a good 
 1. In the matrix above, what is the recall of `_unknown_`, and what does a low value mean on the device?
 2. Why must the representative dataset include board clips if the model will run on the board?
 3. Float32 and int8 agree on 100% of test clips, but the board performs badly. Is quantization the cause? What would you check first?
+4. `live_infer_board.py` reports 40 lost chunks in one minute. What does each lost chunk do to the audio the model sees, and what would you check?

@@ -1,12 +1,12 @@
 # Lesson 02 — Data Collection: Board Mic, PC Mic, and Dataset Hygiene
 
-> Week 08 · ES3C28P / ESP32-S3 · 09:20–09:50
+> Week 08 · ES3C28P / ESP32-S3 · 09:15–09:50
 
 [Lesson index](README.md) · [Previous: Lesson 01](01-edge-ai-pipeline.md) · [Next: Lesson 03](03-features-and-model.md)
 
 ## Learning objectives
 
-Record labelled one-second clips from the board microphone and from a computer microphone, organise them in one dataset layout, and avoid the dataset mistakes that make a model look better than it is.
+Read the board's microphone stream from Python using the hardware-interface-workshop wire protocol, record labelled one-second clips from the board and from a computer microphone, organise them in one dataset layout, and avoid the dataset mistakes that make a model look better than it is.
 
 ## The task: four keywords plus two "everything else" classes
 
@@ -18,7 +18,7 @@ Record labelled one-second clips from the board microphone and from a computer m
 
 Without `_silence_` and `_unknown_`, a classifier always picks one of the four keywords — even for a cough. Choose `_unknown_` words that **sound similar** to the keywords; those are the hard negatives that teach the model where the boundary is.
 
-To change the vocabulary, edit `KEYWORDS` in `labs/python/kws_common.py` (and `show_label()` in the firmware).
+To change the vocabulary, edit `KEYWORDS` in `labs/python/kws_common.py` (and `show_label()` in the `kws-inference` firmware if you run the model on the board).
 
 ## One dataset layout for every source
 
@@ -42,32 +42,25 @@ The file name carries the metadata that `train.py` and `evaluate.py` need:
 
 ## Path A — the board microphone (main lab)
 
-The audio chain from [Week 02, Lesson 10](../../week02/lessons/EN/10-audio-chain.md):
+Your ES3C28P still runs the **workshop prebuilt firmware** (`firmware-prebuilt/es3c28p`, flashed with `rb flash-bin`). It already knows how to stream microphone audio over USB — that is what the workshop's ex28 recorder and ex30/ex32 feature and classifier labs use. `collect.py` is a Python version of that same host code.
 
 ```text
-MEMS mic ──► ES8311 ADC + PGA ──I2S──► ESP32-S3 ──USB Serial/JTAG──► collect.py ──► dataset/
-             I2C 0x18 SDA16/SCL15      DIN GPIO6, BCLK 5, WS 7, MCLK 4
+MEMS mic ─► ES8311 ADC ─I2S─► ESP32-S3 (prebuilt firmware)                  ─USB─► collect.py ─► dataset/
+                               40 Hz high-pass ─► 6.5 kHz low-pass ─► soft limiter
+                               ─► AudioLevel (~10/s) and MicPcm chunks (16 kHz int16, ≤240 samples)
 ```
 
-1. Build and flash the logger (ESP-IDF v6.1 terminal, from the project folder):
+1. **Close the browser tab** that runs the workshop demos (Web Serial) and any serial monitor. Only one program can own the port.
+
+2. Check the board and the level:
 
    ```bash
-   cd nd1/docs/week08/labs/firmware/audio-logger
-   idf.py set-target esp32s3
-   idf.py build flash        # add -p COM5 / -p /dev/ttyACM0 if needed
+   cd nd1/docs/week08/labs/python
+   python test_wire.py                     # protocol self-test, no board needed
+   python collect.py --port COM5 --info    # speak while it runs
    ```
 
-   Do **not** keep `idf.py monitor` open: only one program can own the serial port.
-
-2. Check the link and find the microphone slot:
-
-   ```bash
-   cd ../../python
-   python collect.py --port COM5 --ping
-   python collect.py --port COM5 --info      # speak while it runs
-   ```
-
-   The ES8311 sends stereo I2S frames. `--info` prints the level of slot 0 and slot 1; the slot that rises when you speak is the microphone. If it is slot 1, set `MIC_SLOT 1` in `audio_logger_main.c` **and** `KWS_MIC_SLOT 1` in `kws_config.h`.
+   `--info` prints the `BoardInfo` line (model, firmware, capabilities), a live level meter from the board's `AudioLevel` messages, and a 1-second test stream. Speech should peak around −20 to −6 dBFS. If it clips, use `--gain 40`; if it is very quiet, try `--gain 80`.
 
 3. Record:
 
@@ -77,17 +70,35 @@ MEMS mic ──► ES8311 ADC + PGA ──I2S──► ESP32-S3 ──USB Serial
    python collect.py --port COM5 --speaker alice --session s01 --labels _unknown_ --takes 30
    ```
 
-### How the logger works
+   macOS: `--port /dev/cu.usbmodem…`; Linux: `--port /dev/ttyACM0`.
 
-The host sends one byte, `r`. The firmware records **1.5 s** and sends one binary frame:
+### What `collect.py` does on the wire
+
+Every message is one frame (the same format as the workshop's `lib/wire/frame.ts`; Python version in `wire.py`):
 
 ```text
-"KWS1" | uint32 n_samples | uint32 sample_rate | int16 pcm[n_samples] | uint32 checksum
+0x00 | COBS( msg_type u8 | seq u16 LE | len u16 LE | protobuf payload | CRC-16/XMODEM LE ) | 0x00
 ```
 
-`collect.py` keeps the **loudest 1.0 s** (`center_on_energy()`), so you do not need perfect timing. The checksum catches lost bytes or log text that leaked into the stream; the script simply retries that take.
+| Step | Direction | Message |
+|---|---|---|
+| Open the port, wait 2.5 s | — | Opening USB can reset the board; boot log text is skipped (it is outside the 0x00 delimiters or fails the CRC) |
+| Who are you? | board → host | `BoardInfo` (0x28): `hw_model`, `fw_version`, `caps`. Sent at boot and about every 10 s. `caps` must include MIC (0x02) — ES3C28P reports `0x33`. A ws28p (`0x3c`, no mic) is rejected with a clear message |
+| Mic on | host → board | `MicCmd` (0x86) `{enable: true, gain_pct: 60}` → board answers `CmdAck` (0x27) with `rc = 0` |
+| Per take: stream on | host → board | `MicCmd {stream: true, enable: true}` → `CmdAck` |
+| Audio | board → host | `MicPcm` (0x24) `{seq, samples[]}`: 16 kHz signed 16-bit, up to 240 samples (15 ms) per frame |
+| Per take: stream off | host → board | `MicCmd {stream: false}` → `CmdAck` |
 
-The microphone gain (`MIC_GAIN_DB`, 30 dB by default) is part of your data. If you change it, change it in **both** firmware projects and record new data.
+`collect.py` throws away the first 0.1 s after the stream starts (filters settling), gathers **1.5 s**, and keeps the **loudest 1.0 s** (`center_on_energy()`), so you do not need perfect timing.
+
+**Lost data.** USB can drop a frame when the computer is busy. `MicPcm.seq` counts 0, 1, …, 255, 0, … (one step per chunk), so a jump means chunks are missing. A take with a gap would contain a click or a hole, so `collect.py` discards it and records it again. Frames that fail the CRC are dropped the same way.
+
+**Sample rate.** The prebuilt firmware streams at 16 kHz, the rate the model uses. If a future firmware streams at another rate, pass `--board-rate` and the clip is resampled to 16 kHz before it is saved.
+
+> [!TIP]
+> The workshop's **ex28 mic recorder** page downloads a 16 kHz mono 16-bit WAV (up to 30 s). That format is exactly what `collect_pc_mic.py --from-wav` slices, so a long recording made in the browser can become `_silence_` or `_unknown_` clips: `python collect_pc_mic.py --labels _silence_ --from-wav mic-….wav --takes 60`. Rename the device tag honestly if you do this (the audio came from the board, so treat it as board data when you evaluate).
+
+The microphone gain and the firmware's filter chain are part of your data. Keep `--gain` the same for all your sessions, or record new data when you change it.
 
 ## Path B — the computer microphone
 
@@ -110,11 +121,11 @@ python collect_pc_mic.py --speaker alice --session s01 --labels _silence_ --take
 
 | | PC microphone | Board microphone |
 |---|---|---|
-| Speed | Very fast, no flashing, no cable | Slower to set up |
+| Speed | Very fast, no cable | Fast too: no flashing, the workshop firmware streams audio |
 | Who can do it | Everyone | Only students with a board |
-| Signal path | Laptop mic + OS processing (AGC, noise suppression, echo cancel) | LMA2718B381 MEMS mic + ES8311 PGA, no processing |
+| Signal path | Laptop mic + OS processing (AGC, noise suppression, echo cancel) | LMA2718B381 MEMS mic + ES8311 PGA + firmware 40 Hz high-pass, 6.5 kHz low-pass, soft limiter |
 | Frequency response | Tuned for calls | Different curve, different noise floor |
-| Gain | Automatic, often changing | Fixed (`MIC_GAIN_DB`) |
+| Gain | Automatic, often changing | Fixed (`collect.py --gain`, default 60 %) |
 
 A model trained **only** on PC clips learns the PC's sound. On the board, the same word arrives with a different spectrum and level, so accuracy can drop sharply. This is **domain shift**.
 
@@ -126,7 +137,7 @@ What to do:
 4. **Augment.** `train.py` adds random gain (±6 dB), time shift (±100 ms), and background noise, which makes the model less sensitive to the recording device.
 
 > [!NOTE]
-> Without a board you can still do everything up to and including the live PC test (`live_infer_pc.py`). Keep the device tag `pc` honest, so you know later which clips came from where.
+> Without a board you can still do everything up to and including the live PC test (`live_infer_pc.py`). With a board, the live test is `live_infer_board.py` (Lesson 04). Keep the device tag `pc` honest, so you know later which clips came from where.
 
 ## Dataset hygiene
 
@@ -169,3 +180,4 @@ For a classroom model: at least **50 clips per keyword** from at least 3 session
 1. Why does the dataset need `_unknown_`, and which words make the best `_unknown_` clips?
 2. You trained on PC clips and the board misses most keywords. Name two likely causes and two fixes.
 3. Why is a random clip split misleading when one person recorded everything in one session?
+4. What does `collect.py` do when `MicPcm.seq` jumps from 41 to 43, and why is that better than keeping the take?

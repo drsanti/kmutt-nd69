@@ -30,7 +30,7 @@ extern "C" {
 
 typedef struct {
     float gain_db;   /* ES8311 microphone PGA gain. Use the SAME value for data collection and inference. */
-    int mic_slot;    /* 0 = left slot, 1 = right slot of the stereo I2S frame (check with the logger 'i' command) */
+    int mic_slot;    /* 0 = left slot, 1 = right slot, -1 = auto (louder slot per sample, like the workshop firmware) */
 } es3c28p_audio_config_t;
 
 /* Create the shared I2C bus, the I2S RX channel and the ES8311 ADC path, then start capture. */
@@ -39,7 +39,7 @@ esp_err_t es3c28p_audio_init(const es3c28p_audio_config_t *cfg);
 /* Blocking read of n_frames stereo frames (interleaved L,R int16). */
 esp_err_t es3c28p_audio_read_stereo(int16_t *interleaved, size_t n_frames);
 
-/* Blocking read of n mono samples taken from cfg->mic_slot. */
+/* Blocking read of n mono samples taken from cfg->mic_slot (or the louder slot when it is -1). */
 esp_err_t es3c28p_audio_read_mono(int16_t *mono, size_t n);
 
 /* The I2C bus created by es3c28p_audio_init(), for other devices on SDA16/SCL15 (e.g. touch). */

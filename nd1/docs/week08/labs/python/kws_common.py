@@ -106,6 +106,22 @@ def center_on_energy(pcm: np.ndarray, n: int = CLIP_SAMPLES) -> np.ndarray:
     return pcm[start:start + n]
 
 
+def resample(pcm: np.ndarray, rate_in: int, rate_out: int = SAMPLE_RATE) -> np.ndarray:
+    """Resample int16 audio to rate_out (polyphase filter if SciPy is installed, else linear)."""
+    pcm = np.asarray(pcm, dtype=np.int16).reshape(-1)
+    if rate_in == rate_out or len(pcm) == 0:
+        return pcm
+    try:
+        from math import gcd
+        from scipy.signal import resample_poly
+        g = gcd(int(rate_in), int(rate_out))
+        y = resample_poly(pcm.astype(np.float64), rate_out // g, rate_in // g)
+    except ImportError:
+        n_out = int(round(len(pcm) * rate_out / rate_in))
+        y = np.interp(np.arange(n_out) * rate_in / rate_out, np.arange(len(pcm)), pcm.astype(np.float64))
+    return np.clip(np.round(y), -32768, 32767).astype(np.int16)
+
+
 def rms_dbfs(pcm: np.ndarray) -> float:
     x = np.asarray(pcm, dtype=np.float64) / 32768.0
     return float(20 * np.log10(np.sqrt(np.mean(x * x)) + 1e-6))
