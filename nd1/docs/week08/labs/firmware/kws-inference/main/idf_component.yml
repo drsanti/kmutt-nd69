@@ -1,0 +1,4 @@
+dependencies:
+  idf: ">=5.3"
+  espressif/esp-tflite-micro: "~1.4.3"
+  espressif/led_strip: "~3.1.1"
