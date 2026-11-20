@@ -61,6 +61,14 @@ The SDK exposes clean, high-level abstractions:
 3. **Automated Cross-Platform Builds:**
    GitHub Actions CI builds and signs the platform wheels on native macOS and Windows runners using `cibuildwheel`.
 
+### 4. Continuous Synchronization & Student Deployment Rule
+
+Whenever `robotos/sdk/python-kws` is updated:
+1. **Compilation & Build**: Both the library code and student examples are byte-compiled, verified for syntax, and packaged into a precompiled `.whl` wheel.
+2. **Synchronization**: The compiled wheel and the student example scripts (`examples/`) are deployed directly to the student repository (`kmutt-nd69/nd1/docs/week08/labs/dist/` and `kmutt-nd69/nd1/docs/week08/labs/python/examples/`).
+3. **Leak Audit**: The student folder is audited to ensure zero raw source code files (`robotos_kws/`, `collect.py`, `train.py`, `wire.py`, etc.) exist in the student repository.
+4. **Automated Script**: This is executed via `publish_to_students.py`.
+
 ## Consequences
 
 ### Positive
