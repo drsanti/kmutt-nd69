@@ -10,13 +10,29 @@
 
 ## Install
 
+> [!IMPORTANT]
+> **Use Python 3.10 to 3.13.**
+> Check with `python --version`. On Windows with multiple Python versions installed, specify Python 3.11 with `py -3.11 -m venv .venv`. Avoid Python 3.14+ (incompatible with pre-compiled TensorFlow/NumPy C-extensions).
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate            # Windows PowerShell: .venv\Scripts\Activate.ps1
+# Linux / macOS:
+python3 -m venv .venv && source .venv/bin/activate
+
+# Windows Git Bash:
+python -m venv .venv && source .venv/Scripts/activate
+
+# Windows PowerShell:
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# Windows CMD:
+py -3.11 -m venv .venv && .venv\Scripts\activate.bat
+
+# Install lab packages:
 pip install -r requirements.txt
 ```
 
-Python 3.10–3.13. `sounddevice` needs PortAudio: it is bundled on Windows and macOS; on Debian/Ubuntu run `sudo apt install libportaudio2`.
+`sounddevice` needs PortAudio: it is bundled in the wheel on Windows and macOS; on Debian/Ubuntu run `sudo apt install libportaudio2`.
 
 ## Commands
 

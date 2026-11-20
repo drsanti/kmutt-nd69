@@ -8,6 +8,34 @@
 
 [Week 08 index](README.md) · [Week 03 setup](../week03/lessons/README.md)
 
+## Python version & installation errors
+
+### `ModuleNotFoundError: No module named 'numpy._core._multiarray_umath'` or NumPy C-extension failure
+
+- **Cause:** Your terminal's default `python` is **Python 3.14** (an unreleased pre-release with experimental free-threading `cp314t`). Pre-compiled C-extensions for NumPy and TensorFlow are binary-incompatible with Python 3.14.
+- **Fix:** Use **Python 3.10 to 3.13**. Create your virtual environment specifically pointing to Python 3.11 or 3.12:
+  ```powershell
+  # Windows PowerShell:
+  py -3.11 -m venv .venv
+  .\.venv\Scripts\Activate.ps1
+  pip install -r requirements.txt
+  ```
+  In Git Bash (`MINGW64`):
+  ```bash
+  py -3.11 -m venv .venv
+  source .venv/Scripts/activate
+  pip install -r requirements.txt
+  ```
+
+### Windows PowerShell: "running scripts is disabled on this system" (`PSSecurityException`)
+
+- **Cause:** Windows PowerShell default execution policy blocks running downloaded `.ps1` scripts.
+- **Fix:** Enable script execution for your current process:
+  ```powershell
+  Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+  .\.venv\Scripts\Activate.ps1
+  ```
+
 ## PC microphone
 
 ### "PortAudio library not found" / `OSError` when importing `sounddevice`

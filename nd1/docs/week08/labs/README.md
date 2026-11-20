@@ -52,26 +52,141 @@ labs/
 
 Only one program can own the serial port: disconnect the workshop browser tab before running a board script.
 
-## Quick start without hardware (10 minutes)
+## Prerequisites: Python Setup (Python 3.10 – 3.13)
+
+> [!IMPORTANT]
+> **Use Python 3.10 to 3.13.**
+> Do **NOT** use Python 3.14+ (pre-release free-threaded builds break precompiled NumPy C-extensions and TensorFlow). Check your version:
+> ```bash
+> python --version
+> ```
+
+### 1. Create and Activate Virtual Environment
+
+Inside `nd1/docs/week08/labs/python`:
 
 ```bash
 cd nd1/docs/week08/labs/python
-python -m venv .venv && source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
+```
+
+Choose your shell:
+
+- **Linux / macOS:**
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  ```
+
+- **Windows Git Bash (MINGW64):**
+  ```bash
+  python -m venv .venv
+  source .venv/Scripts/activate
+  ```
+
+- **Windows PowerShell:**
+  ```powershell
+  # If you have multiple Python versions installed, specify Python 3.11 or 3.12:
+  py -3.11 -m venv .venv
+  .\.venv\Scripts\Activate.ps1
+  ```
+  *(If PowerShell blocks scripts: run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first).*
+
+- **Windows Command Prompt (cmd.exe):**
+  ```cmd
+  py -3.11 -m venv .venv
+  .venv\Scripts\activate.bat
+  ```
+
+### 2. Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
+*(On Linux/Debian/Ubuntu, if `sounddevice` fails with PortAudio missing: `sudo apt install libportaudio2`).*
+
+---
+
+## Lab Path A: Quick Start without Hardware (Synthetic Pipeline, 10 min)
+
+Test the complete training and export pipeline immediately without any microphone or board:
+
+```bash
+# 1. Generate synthetic test dataset
 python make_synthetic_dataset.py --out synth_dataset
+
+# 2. Train DS-CNN model and export float32 + int8 TFLite
 python train.py --data synth_dataset --out synth_artifacts --epochs 30
+
+# 3. Evaluate accuracy and quantization drop
 python evaluate.py --artifacts synth_artifacts --data synth_dataset
+
+# 4. Verify C feature extraction matches Python bit-for-bit
 python verify_c_features.py --data synth_dataset --max-clips 30
 ```
 
-Then replace the synthetic data with your own recordings (`collect_pc_mic.py` or `collect.py`).
-
-IMU track without hardware:
-
+IMU gesture track without hardware:
 ```bash
 python test_wire.py
 python train_imu.py --synthetic --out imu_artifacts
 ```
+
+---
+
+## Lab Path B: Collect Data & Live Test with PC Microphone
+
+No hardware board required! You can record real voice keywords directly with your computer microphone:
+
+```bash
+# 1. List audio input devices to check your microphone index
+python collect_pc_mic.py --list-devices
+
+# 2. Record 20 takes for each keyword (say each word when prompted):
+# (Optional: pass --device <index> if your desired mic is not default)
+python collect_pc_mic.py --speaker me --session s01 --labels red green blue off --takes 20
+
+# 3. Record background noise (stay quiet):
+python collect_pc_mic.py --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
+
+# 4. Train the model on your real recorded dataset:
+python train.py --data dataset --out artifacts --epochs 40
+
+# 5. Run live keyword detection through your PC microphone:
+python live_infer_pc.py --model artifacts/model_int8.tflite
+```
+
+---
+
+## Lab Path C: Collect Data & Live Test with ES3C28P Board
+
+> [!WARNING]
+> **Serial Port Exclusivity**: Close any open serial monitors, IDE consoles, or workshop browser tabs (`WebSerial`) before running board scripts. Only one program can access the COM port at a time.
+
+```bash
+# 1. Check board connection and microphone audio level (e.g. COM5 or /dev/ttyUSB0):
+python collect.py --port COM5 --info
+
+# 2. Record keyword dataset from board MEMS microphone:
+python collect.py --port COM5 --speaker me --session s01 --takes 20
+
+# 3. Train combined model (PC + board clips):
+python train.py --data dataset --out artifacts --epochs 40
+
+# 4. Run live keyword spotting streamed from the board:
+python live_infer_board.py --port COM5 --model artifacts/model_int8.tflite
+
+# 5. Export C array for flashing to firmware (Lesson 05):
+python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
+```
+
+---
+
+## Troubleshooting & Help
+
+Encountering an issue? See the detailed guide in [troubleshooting.md](../troubleshooting.md):
+- Python 3.14 / NumPy `_multiarray_umath` C-extension error
+- Microphone muted, PortAudio missing, or quiet dBFS warnings
+- Serial port busy / access denied
+- TFLite arena size adjustments for firmware deploy
 
 ## Status
 
