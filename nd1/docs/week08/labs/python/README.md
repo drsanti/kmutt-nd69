@@ -66,7 +66,7 @@ Board scripts need the board running the [hardware-interface-workshop](https://g
 | IMU: train | `python train_imu.py --data imu_dataset --out imu_artifacts` (or `--synthetic`) | `model_float.tflite`, `model_int8.tflite`, `meta.json` |
 | IMU: live | `python live_infer_imu.py --port COM7 --model imu_artifacts/model_int8.tflite` | gestures on screen |
 
-Every script has `--help`. Exit codes of the board scripts: `0` ok, `2` connection/protocol problem, `3` wrong board.
+Every script has `--help`. Both `collect.py` and `collect_pc_mic.py` support `--labels <word...>` to record or re-record specific words (e.g. `--labels blue` or `--labels _silence_ --no-prompt --takes 30`). Exit codes of the board scripts: `0` ok, `2` connection/protocol problem, `3` wrong board.
 
 ## Formats
 

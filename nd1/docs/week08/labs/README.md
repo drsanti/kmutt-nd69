@@ -204,6 +204,9 @@ python collect_pc_mic.py --list-devices
 # (Optional: pass --device <index> if your desired mic is not default)
 python collect_pc_mic.py --speaker me --session s01 --labels red green blue off --takes 20
 
+# Tip: To record only a specific keyword (e.g. just "blue" or "red"):
+# python collect_pc_mic.py --speaker me --session s01 --labels blue --takes 20
+
 # 3. Record background noise (stay quiet):
 python collect_pc_mic.py --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
 
@@ -232,6 +235,9 @@ python collect.py --port COM5 --info --gain 80
 python collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20
 # Windows Git Bash: py collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20
 
+# Tip: To collect only a single keyword (e.g. "blue") or re-record one word:
+# python collect.py --port COM5 --speaker me --session s01 --labels blue --gain 80 --takes 20
+
 # 3. Train combined model (PC + board clips):
 python train.py --data dataset --out artifacts --epochs 40
 
@@ -247,6 +253,7 @@ python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmwa
 > - **Sweet Spot (Target):** Peak between **4,000 and 15,000** (−18 to −6 dBFS), speech RMS between **−26 and −18 dBFS**.
 > - **Too Quiet (< −38 dBFS RMS, peak < 2,000):** Microphone is too quiet. Use `--gain 80` or `--gain 85` and speak ~15–30 cm from the board.
 > - **Clipping (Peak 32,767):** Audio is distorted. Lower gain (e.g. `--gain 50` or `40`).
+> - **Record a specific keyword (`--labels`):** By default, both scripts cycle through all 4 words (`red`, `green`, `blue`, `off`). To record or re-record only one keyword, pass `--labels blue` (or multiple: `--labels red blue`). For silence, pass `--labels _silence_ --no-prompt --takes 30`.
 > - Keep `--gain` consistent across `collect.py` and `live_infer_board.py`!
 
 ---
