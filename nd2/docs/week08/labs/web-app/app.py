@@ -39,10 +39,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Active model path (looks for artifacts/model_int8.tflite locally or in nd1 labs)
+# Active model path (looks for artifacts locally or in nd1 labs)
 MODEL_PATHS = [
     Path("artifacts/model_int8.tflite"),
-    Path("../../../nd1/docs/week08/labs/python/artifacts/model_int8.tflite"),
+    Path(__file__).resolve().parent / "artifacts" / "model_int8.tflite",
+    Path(__file__).resolve().parent.parent.parent.parent / "nd1" / "docs" / "week08" / "labs" / "python" / "artifacts" / "model_int8.tflite",
+    Path("../../../../nd1/docs/week08/labs/python/artifacts/model_int8.tflite"),
 ]
 active_model_path = next((p for p in MODEL_PATHS if p.exists()), None)
 
