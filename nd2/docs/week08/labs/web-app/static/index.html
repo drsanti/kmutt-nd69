@@ -7,35 +7,37 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body class="h-full flex flex-col bg-[#0c1017] text-slate-200 select-none overflow-hidden">
+<body class="h-full flex flex-col bg-[#0a0d14] text-slate-100 select-none overflow-hidden">
 
   <!-- VS Code Title Bar -->
-  <header class="h-9 bg-[#0b0e14] border-b border-[#1b2230] flex items-center justify-between px-3 text-xs flex-shrink-0 z-50">
-    <div class="flex items-center gap-2.5">
-      <div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 font-bold tracking-wider text-[11px]">
-        <span>⚡ ROBOTOS</span>
-        <span class="text-[9px] px-1 rounded bg-blue-500/20 text-blue-300">SCADA</span>
+  <header class="h-11 bg-[#0b0e15] border-b border-[#1e2636] flex items-center justify-between px-4 text-sm flex-shrink-0 z-50">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-2.5 py-1 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 font-bold tracking-wider text-xs">
+        <span class="text-sm">⚡ ROBOTOS</span>
+        <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono">SCADA</span>
       </div>
-      <span class="text-slate-600">/</span>
-      <span class="text-slate-400 font-mono text-[11px]">kmutt-nd69 &bull; nd02-web &bull; Edge AI Studio</span>
+      <span class="text-slate-600 font-bold">/</span>
+      <span class="text-slate-300 font-mono text-xs hidden sm:inline">kmutt-nd69 &bull; nd02-web &bull; Edge AI Studio</span>
     </div>
 
     <!-- Center Document Breadcrumb -->
-    <div class="hidden md:flex items-center gap-1.5 text-slate-400 font-mono text-[11px] bg-[#121722] px-3 py-1 rounded border border-[#1b2333]">
+    <div class="hidden md:flex items-center gap-2 text-slate-400 font-mono text-xs bg-[#131924] px-4 py-1.5 rounded-md border border-[#202b3d]">
       <span class="text-slate-500">workspace</span>
       <span class="text-slate-600">&rsaquo;</span>
       <span class="text-slate-400">nd2</span>
       <span class="text-slate-600">&rsaquo;</span>
-      <span class="text-sky-400 font-semibold">robot_voice_controller.scada</span>
+      <span class="text-sky-400 font-bold">robot_voice_controller.scada</span>
     </div>
 
     <!-- Right Controls -->
-    <div class="flex items-center gap-2">
-      <span id="wsStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-mono font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+    <div class="flex items-center gap-2.5">
+      <span id="wsStatusBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/25">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         Connecting...
       </span>
-      <a href="/docs" target="_blank" class="px-2.5 py-0.5 rounded bg-[#18202e] hover:bg-[#222c3f] text-slate-300 text-[11px] font-mono border border-slate-700/60 transition">API Docs &rarr;</a>
+      <a href="/docs" target="_blank" class="px-3 py-1 rounded bg-[#182232] hover:bg-[#233148] text-slate-200 text-xs font-mono font-medium border border-slate-700/70 transition shadow-sm">
+        API Docs &rarr;
+      </a>
     </div>
   </header>
 
@@ -43,136 +45,136 @@
   <div class="flex-1 flex overflow-hidden">
 
     <!-- Activity Bar (Far Left Dock) -->
-    <aside class="w-12 bg-[#0a0d13] border-r border-[#19202c] flex flex-col items-center justify-between py-2 flex-shrink-0 z-40">
-      <div class="flex flex-col items-center w-full space-y-1">
+    <aside class="w-14 bg-[#090c12] border-r border-[#1a2230] flex flex-col items-center justify-between py-3 flex-shrink-0 z-40">
+      <div class="flex flex-col items-center w-full space-y-1.5">
         <button id="actNavExplorer" class="activity-icon active" title="Explorer / Model Artifacts">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
         </button>
         <button id="actNavScada" class="activity-icon" title="Industrial Telemetry">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
         </button>
         <button id="actNavApi" class="activity-icon" title="REST API Tester">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         </button>
       </div>
 
-      <div class="flex flex-col items-center w-full space-y-2 text-slate-600">
-        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="System Operational"></div>
-        <div class="text-[9px] font-mono font-bold text-slate-500">ND02</div>
+      <div class="flex flex-col items-center w-full space-y-2 text-slate-500">
+        <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-sm" title="System Operational"></div>
+        <div class="text-[11px] font-mono font-bold text-slate-400">ND02</div>
       </div>
     </aside>
 
     <!-- Primary Sidebar -->
-    <aside id="primarySidebar" class="w-64 bg-[#0f141d] border-r border-[#1c2433] flex flex-col flex-shrink-0 text-xs overflow-y-auto">
+    <aside id="primarySidebar" class="w-72 sm:w-80 bg-[#101520] border-r border-[#1e2738] flex flex-col flex-shrink-0 text-sm overflow-y-auto">
       <!-- Sidebar Header -->
-      <div class="px-3 py-2 border-b border-[#1c2433] flex items-center justify-between font-mono font-bold text-[11px] text-slate-400 tracking-wider">
-        <span>EXPLORER</span>
-        <span class="text-[10px] text-slate-500">EDGE AI</span>
+      <div class="px-4 py-2.5 border-b border-[#1e2738] flex items-center justify-between font-mono font-bold text-xs text-slate-300 tracking-wider">
+        <span>EXPLORER: EDGE AI</span>
+        <span class="text-xs text-sky-400">ACTIVE</span>
       </div>
 
       <!-- Tree Section 1: Model Specifications -->
-      <div class="p-3 border-b border-[#1c2433]/80 space-y-2.5">
+      <div class="p-4 border-b border-[#1e2738]/90 space-y-3">
         <div class="flex items-center justify-between">
-          <span class="font-bold text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          <span class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             Model Profile
           </span>
-          <span id="modelStatusPill" class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">READY</span>
+          <span id="modelStatusPill" class="text-xs px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-bold">READY</span>
         </div>
 
-        <div class="bg-[#141b27] rounded-lg p-2.5 border border-[#1e2738] space-y-1.5 font-mono text-[11px]">
+        <div class="bg-[#141b28] rounded-lg p-3 border border-[#222c3f] space-y-2 font-mono text-xs">
           <div class="flex justify-between text-slate-400">
-            <span>Arch:</span>
-            <span class="text-slate-200">DS-CNN int8</span>
+            <span>Architecture:</span>
+            <span class="text-slate-100 font-bold">DS-CNN int8</span>
           </div>
           <div class="flex justify-between text-slate-400">
-            <span>Sample Rate:</span>
-            <span class="text-slate-200">16,000 Hz</span>
+            <span>Sampling Rate:</span>
+            <span class="text-slate-100 font-bold">16,000 Hz</span>
           </div>
           <div class="flex justify-between text-slate-400">
             <span>Input Matrix:</span>
-            <span class="text-slate-200">49 &times; 40 Mel</span>
+            <span class="text-slate-100 font-bold">49 &times; 40 Mel</span>
           </div>
           <div class="flex justify-between text-slate-400">
-            <span>Threshold:</span>
-            <span class="text-amber-400">0.80 (80%)</span>
+            <span>Confidence Threshold:</span>
+            <span class="text-amber-400 font-bold">0.80 (80%)</span>
           </div>
         </div>
 
         <!-- Target Classes Chip Grid -->
         <div>
-          <span class="text-[10px] text-slate-500 font-mono uppercase block mb-1.5">Active Vocab Classes:</span>
-          <div class="flex flex-wrap gap-1" id="modelLabelsChips">
-            <span class="px-1.5 py-0.5 rounded bg-red-950/40 border border-red-500/30 text-red-300 font-mono text-[10px]">red</span>
-            <span class="px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-mono text-[10px]">green</span>
-            <span class="px-1.5 py-0.5 rounded bg-sky-950/40 border border-sky-500/30 text-sky-300 font-mono text-[10px]">blue</span>
-            <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">off</span>
-            <span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-500 font-mono text-[10px]">_silence_</span>
-            <span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-500 font-mono text-[10px]">_unknown_</span>
+          <span class="text-xs text-slate-400 font-mono uppercase font-bold block mb-2">Active Vocab Classes:</span>
+          <div class="flex flex-wrap gap-1.5" id="modelLabelsChips">
+            <span class="px-2 py-1 rounded bg-red-950/50 border border-red-500/40 text-red-300 font-mono text-xs font-bold">red</span>
+            <span class="px-2 py-1 rounded bg-emerald-950/50 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-bold">green</span>
+            <span class="px-2 py-1 rounded bg-sky-950/50 border border-sky-500/40 text-sky-300 font-mono text-xs font-bold">blue</span>
+            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-600 text-slate-200 font-mono text-xs font-bold">off</span>
+            <span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-400 font-mono text-xs">_silence_</span>
+            <span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-400 font-mono text-xs">_unknown_</span>
           </div>
         </div>
       </div>
 
       <!-- Tree Section 2: REST Inference Dispatcher -->
-      <div class="p-3 border-b border-[#1c2433]/80 space-y-3">
-        <span class="font-bold text-[10px] uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          Inference Actions
+      <div class="p-4 border-b border-[#1e2738]/90 space-y-3.5">
+        <span class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-2">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          REST API Test Actions
         </span>
 
         <!-- One-Click Buttons -->
-        <div class="space-y-1.5">
-          <button id="useSampleBtn" class="w-full py-1.5 px-2.5 rounded bg-[#162030] hover:bg-[#1f2d43] border border-[#233149] text-sky-300 text-left flex items-center justify-between text-[11px] font-mono transition shadow-sm">
-            <span class="flex items-center gap-1.5">
-              <span>📁</span>
+        <div class="space-y-2">
+          <button id="useSampleBtn" class="w-full py-2.5 px-3.5 rounded-lg bg-[#182335] hover:bg-[#22314a] border border-[#273752] text-sky-200 text-left flex items-center justify-between text-xs font-mono font-semibold transition shadow">
+            <span class="flex items-center gap-2">
+              <span class="text-base">📁</span>
               <span>Use Built-in Sample</span>
             </span>
-            <span class="text-[9px] text-slate-500">.wav</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono">sample.wav</span>
           </button>
 
-          <button id="recordBrowserMicBtn" class="w-full py-1.5 px-2.5 rounded bg-emerald-950/30 hover:bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 text-left flex items-center justify-between text-[11px] font-mono transition shadow-sm">
-            <span class="flex items-center gap-1.5">
-              <span id="recordMicIcon">🎙️</span>
+          <button id="recordBrowserMicBtn" class="w-full py-2.5 px-3.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/40 text-emerald-200 text-left flex items-center justify-between text-xs font-mono font-semibold transition shadow">
+            <span class="flex items-center gap-2">
+              <span id="recordMicIcon" class="text-base">🎙️</span>
               <span id="recordMicText">Record Mic (1s)</span>
             </span>
-            <span class="text-[9px] text-emerald-500 font-bold">LIVE</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">LIVE MIC</span>
           </button>
         </div>
 
         <!-- Custom Upload Form -->
-        <form id="uploadForm" class="space-y-2 pt-1 border-t border-[#1c2433]">
-          <span class="text-[10px] text-slate-500 font-mono block">Custom Audio File:</span>
-          <input type="file" id="audioFileInput" accept=".wav" class="block w-full text-[10px] font-mono text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
-          <button type="submit" id="classifyBtn" class="w-full py-1.5 px-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-medium text-[11px] font-mono transition shadow">POST /api/v1/classify</button>
+        <form id="uploadForm" class="space-y-2.5 pt-2 border-t border-[#1e2738]">
+          <span class="text-xs text-slate-400 font-mono font-semibold block">Upload Custom Audio File:</span>
+          <input type="file" id="audioFileInput" accept=".wav" class="block w-full text-xs font-mono text-slate-300 file:mr-2.5 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+          <button type="submit" id="classifyBtn" class="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs font-mono transition shadow-md">POST /api/v1/classify</button>
         </form>
       </div>
 
       <!-- Tree Section 3: Hardware Pipeline Specs -->
-      <div class="p-3 text-[10px] font-mono text-slate-500 space-y-1">
-        <div class="text-slate-400 font-bold uppercase text-[9px]">DSP Chain Spec</div>
-        <div>&bull; Frame Len: 512 (32 ms)</div>
-        <div>&bull; Frame Step: 320 (20 ms)</div>
-        <div>&bull; Window: Periodic Hann</div>
-        <div>&bull; Quant: int8 [-128..127]</div>
+      <div class="p-4 text-xs font-mono text-slate-400 space-y-1.5">
+        <div class="text-slate-300 font-bold uppercase text-[11px] tracking-wider mb-1">DSP Pipeline Spec</div>
+        <div>&bull; Frame Length: <span class="text-slate-200">512 samples (32 ms)</span></div>
+        <div>&bull; Frame Step: <span class="text-slate-200">320 samples (20 ms)</span></div>
+        <div>&bull; Window Type: <span class="text-slate-200">Periodic Hann</span></div>
+        <div>&bull; Quantization: <span class="text-emerald-400">int8 [-128..127]</span></div>
       </div>
     </aside>
 
     <!-- Center Workspace Group (Editor + Secondary Side Panel + Bottom Panel) -->
-    <div class="flex-1 flex flex-col overflow-hidden bg-[#131823]">
+    <div class="flex-1 flex flex-col overflow-hidden bg-[#141a27]">
 
       <!-- Top Editor Tabs -->
-      <div class="h-8 bg-[#0d121a] border-b border-[#1c2433] flex items-center justify-between flex-shrink-0">
+      <div class="h-9 bg-[#0d121c] border-b border-[#1e2738] flex items-center justify-between flex-shrink-0">
         <div class="flex items-center h-full">
           <div class="tab-item active flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>robot_control.scada</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-xs">robot_control.scada</span>
           </div>
-          <div class="tab-item flex items-center gap-2 text-slate-500">
-            <span>softmax_meters.dat</span>
+          <div class="tab-item flex items-center gap-2 text-slate-400">
+            <span class="text-xs">softmax_meters.dat</span>
           </div>
         </div>
-        <div class="px-3 text-[10px] font-mono text-slate-500 flex items-center gap-3">
-          <span id="lastTriggerTime">Listening for voice stream...</span>
+        <div class="px-4 text-xs font-mono text-slate-400 flex items-center gap-3">
+          <span id="lastTriggerTime" class="font-semibold text-slate-300">Listening for voice stream...</span>
         </div>
       </div>
 
@@ -180,116 +182,115 @@
       <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 overflow-y-auto industrial-grid">
 
         <!-- Center 2 Columns: SCADA State Machine Display -->
-        <div class="lg:col-span-2 p-5 flex flex-col justify-between space-y-5 border-r border-[#1c2433]/70">
+        <div class="lg:col-span-2 p-6 flex flex-col justify-between space-y-6 border-r border-[#1e2738]/80">
 
           <!-- Primary Industrial State Monitor Display -->
-          <div id="stateBanner" class="p-7 rounded-xl border-2 border-[#232e42] bg-[#0e141f]/90 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden shadow-2xl">
+          <div id="stateBanner" class="p-8 sm:p-10 rounded-2xl border-2 border-[#26334a] bg-[#0e1422]/95 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden shadow-2xl">
             <!-- Corner Technical Markings -->
-            <div class="absolute top-2 left-2 text-[9px] font-mono text-slate-600">SYS_ID: ROBOTOS_ND02</div>
-            <div class="absolute top-2 right-2 text-[9px] font-mono text-slate-600">INTERLOCK: ACTIVE</div>
-            <div class="absolute bottom-2 left-2 text-[9px] font-mono text-slate-600">SAMPLING: 16.0 kHz</div>
-            <div class="absolute bottom-2 right-2 text-[9px] font-mono text-slate-600">LATENCY: &lt; 35ms</div>
+            <div class="absolute top-3 left-3 text-xs font-mono text-slate-500 font-bold">SYS_ID: ROBOTOS_ND02</div>
+            <div class="absolute top-3 right-3 text-xs font-mono text-slate-500 font-bold">INTERLOCK: ACTIVE</div>
+            <div class="absolute bottom-3 left-3 text-xs font-mono text-slate-500 font-bold">SAMPLING: 16.0 kHz</div>
+            <div class="absolute bottom-3 right-3 text-xs font-mono text-slate-500 font-bold">LATENCY: &lt; 35ms</div>
 
-            <div id="stateIcon" class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl font-black mb-3 bg-[#151c2a] text-slate-400 border border-[#243047] shadow-inner transition-transform duration-200">
+            <div id="stateIcon" class="w-24 h-24 rounded-2xl flex items-center justify-center text-5xl font-black mb-4 bg-[#182132] text-slate-300 border border-[#2b3952] shadow-inner transition-transform duration-200">
               💤
             </div>
             
-            <div class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-0.5">CURRENT SYSTEM STATE</div>
-            <h2 id="stateTitle" class="text-3xl font-black tracking-tight text-slate-100 font-mono">STANDBY</h2>
-            <p id="stateDesc" class="text-xs text-slate-400 mt-1.5 max-w-md font-sans">
-              Speak <code class="text-red-400 bg-red-950/40 px-1 py-0.5 rounded border border-red-500/20 font-mono">"red"</code>, 
-              <code class="text-emerald-400 bg-emerald-950/40 px-1 py-0.5 rounded border border-emerald-500/20 font-mono">"green"</code>, 
-              <code class="text-sky-400 bg-sky-950/40 px-1 py-0.5 rounded border border-sky-500/20 font-mono">"blue"</code>, or 
-              <code class="text-slate-300 bg-slate-800 px-1 py-0.5 rounded border border-slate-700 font-mono">"off"</code> into your microphone.
+            <div class="text-xs font-mono uppercase tracking-widest text-slate-400 font-bold mb-1">CURRENT ROBOT STATE</div>
+            <h2 id="stateTitle" class="text-4xl sm:text-5xl font-black tracking-tight text-white font-mono">STANDBY</h2>
+            <p id="stateDesc" class="text-sm sm:text-base text-slate-300 mt-2 max-w-lg font-sans leading-relaxed">
+              Speak <code class="text-red-400 bg-red-950/60 px-1.5 py-0.5 rounded border border-red-500/30 font-mono font-bold">"red"</code>, 
+              <code class="text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30 font-mono font-bold">"green"</code>, 
+              <code class="text-sky-400 bg-sky-950/60 px-1.5 py-0.5 rounded border border-sky-500/30 font-mono font-bold">"blue"</code>, or 
+              <code class="text-slate-200 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-mono font-bold">"off"</code> into your microphone.
             </p>
           </div>
 
           <!-- Command Safety Matrix (Interactive Cards) -->
           <div>
-            <div class="text-[10px] font-mono uppercase text-slate-500 tracking-wider mb-2 flex items-center justify-between">
+            <div class="text-xs font-mono uppercase text-slate-300 font-bold tracking-wider mb-2.5 flex items-center justify-between">
               <span>Safety Interlock Matrix</span>
-              <span class="text-[9px] text-slate-600">4-State Deterministic FSM</span>
+              <span class="text-xs text-slate-400 font-mono">4-State Deterministic FSM</span>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <div class="p-3 rounded-lg bg-red-950/20 border border-red-500/20 hover:border-red-500/40 transition">
-                <div class="flex items-center justify-between text-xs text-red-400 font-mono font-bold mb-1">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-xl bg-red-950/25 border border-red-500/25 hover:border-red-500/50 transition">
+                <div class="flex items-center justify-between text-sm text-red-400 font-mono font-bold mb-1">
                   <span>"red"</span>
-                  <span class="text-[9px] px-1 py-0.5 rounded bg-red-500/20">ESTOP</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 font-bold">ESTOP</span>
                 </div>
-                <div class="text-[11px] font-bold text-slate-200">Emergency Stop</div>
-                <div class="text-[10px] text-slate-500 mt-0.5">Instant motor kill switch</div>
+                <div class="text-xs sm:text-sm font-bold text-slate-100">Emergency Stop</div>
+                <div class="text-xs text-slate-400 mt-0.5">Motor kill switch</div>
               </div>
 
-              <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 hover:border-emerald-500/40 transition">
-                <div class="flex items-center justify-between text-xs text-emerald-400 font-mono font-bold mb-1">
+              <div class="p-3.5 rounded-xl bg-emerald-950/25 border border-emerald-500/25 hover:border-emerald-500/50 transition">
+                <div class="flex items-center justify-between text-sm text-emerald-400 font-mono font-bold mb-1">
                   <span>"green"</span>
-                  <span class="text-[9px] px-1 py-0.5 rounded bg-emerald-500/20">RUN</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 font-bold">RUN</span>
                 </div>
-                <div class="text-[11px] font-bold text-slate-200">Drive Forward</div>
-                <div class="text-[10px] text-slate-500 mt-0.5">Autonomous patrol mode</div>
+                <div class="text-xs sm:text-sm font-bold text-slate-100">Drive Forward</div>
+                <div class="text-xs text-slate-400 mt-0.5">Autonomous patrol</div>
               </div>
 
-              <div class="p-3 rounded-lg bg-sky-950/20 border border-sky-500/20 hover:border-sky-500/40 transition">
-                <div class="flex items-center justify-between text-xs text-sky-400 font-mono font-bold mb-1">
+              <div class="p-3.5 rounded-xl bg-sky-950/25 border border-sky-500/25 hover:border-sky-500/50 transition">
+                <div class="flex items-center justify-between text-sm text-sky-400 font-mono font-bold mb-1">
                   <span>"blue"</span>
-                  <span class="text-[9px] px-1 py-0.5 rounded bg-sky-500/20">NAV</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 font-bold">NAV</span>
                 </div>
-                <div class="text-[11px] font-bold text-slate-200">Turn / Nav</div>
-                <div class="text-[10px] text-slate-500 mt-0.5">Manual steering control</div>
+                <div class="text-xs sm:text-sm font-bold text-slate-100">Turn / Nav</div>
+                <div class="text-xs text-slate-400 mt-0.5">Manual steering</div>
               </div>
 
-              <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-700/40 hover:border-slate-600 transition">
-                <div class="flex items-center justify-between text-xs text-slate-400 font-mono font-bold mb-1">
+              <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 transition">
+                <div class="flex items-center justify-between text-sm text-slate-300 font-mono font-bold mb-1">
                   <span>"off"</span>
-                  <span class="text-[9px] px-1 py-0.5 rounded bg-slate-800">SLEEP</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 font-bold">SLEEP</span>
                 </div>
-                <div class="text-[11px] font-bold text-slate-200">Power Standby</div>
-                <div class="text-[10px] text-slate-500 mt-0.5">Low-power park mode</div>
+                <div class="text-xs sm:text-sm font-bold text-slate-100">Power Standby</div>
+                <div class="text-xs text-slate-400 mt-0.5">Low-power park</div>
               </div>
             </div>
           </div>
 
-          <!-- Live Audio Activity Simulated VU Indicator -->
-          <div class="p-3 rounded-lg bg-[#0f141f] border border-[#1e2738] flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 vu-active"></span>
-              <span class="text-[11px] font-mono text-slate-300">Continuous Microphone Stream:</span>
-              <span class="text-[11px] font-mono text-emerald-400 font-bold">16 kHz 16-bit PCM Active</span>
+          <!-- Live Audio Activity Status Banner -->
+          <div class="p-4 rounded-xl bg-[#0f1522] border border-[#212b3d] flex flex-wrap items-center justify-between gap-3 shadow">
+            <div class="flex items-center gap-3">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 vu-active shadow-sm shadow-emerald-400/50"></span>
+              <span class="text-sm font-mono text-slate-200 font-medium">Continuous Audio Stream:</span>
+              <span class="text-sm font-mono text-emerald-400 font-bold">16 kHz 16-bit PCM Active</span>
             </div>
-            <div class="flex items-center gap-1 font-mono text-[10px] text-slate-500">
-              <span>Sliding Hop: 200ms</span>
-              <span>&bull;</span>
-              <span>Window: 1.0s</span>
+            <div class="flex items-center gap-2 font-mono text-xs text-slate-400">
+              <span class="bg-[#172030] px-2 py-0.5 rounded border border-slate-700">Hop: 200 ms</span>
+              <span class="bg-[#172030] px-2 py-0.5 rounded border border-slate-700">Window: 1.0 s</span>
             </div>
           </div>
 
         </div>
 
         <!-- Right 1 Column: Softmax Probability Distribution & Telemetry -->
-        <div class="p-5 space-y-5 bg-[#0e131c]/60">
+        <div class="p-6 space-y-6 bg-[#0e141f]/75">
           <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                Inference Probability Distribution
+            <div class="flex items-center justify-between mb-3.5">
+              <span class="text-xs font-mono uppercase tracking-wider text-slate-200 font-bold flex items-center gap-2">
+                <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Probability Distribution
               </span>
-              <span class="text-[9px] font-mono text-slate-500">SOFTMAX</span>
+              <span class="text-xs font-mono font-bold text-sky-400">SOFTMAX</span>
             </div>
 
             <!-- Dynamic Bars Container -->
-            <div id="probBarsContainer" class="space-y-3 bg-[#111723] p-3.5 rounded-xl border border-[#1e2738]">
+            <div id="probBarsContainer" class="space-y-4 bg-[#121926] p-4 rounded-xl border border-[#212c3f] shadow-inner">
               <!-- Populated dynamically via JS -->
-              <div class="text-xs text-slate-500 font-mono">Loading model meters...</div>
+              <div class="text-xs text-slate-400 font-mono">Loading model meters...</div>
             </div>
           </div>
 
           <!-- REST API Inspector Result Container -->
-          <div class="space-y-2">
+          <div class="space-y-2.5">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">REST Payload Output</span>
-              <span class="text-[9px] font-mono text-slate-500">HTTP 200</span>
+              <span class="text-xs font-mono uppercase tracking-wider text-slate-300 font-bold">REST Payload Output</span>
+              <span class="text-xs font-mono font-bold text-emerald-400">HTTP 200</span>
             </div>
-            <div id="restResult" class="p-3 rounded-lg bg-[#0a0e14] border border-[#1b2332] font-mono text-[10px] text-slate-300 max-h-48 overflow-y-auto hidden">
+            <div id="restResult" class="p-3.5 rounded-lg bg-[#0a0f16] border border-[#1d2738] font-mono text-xs text-slate-200 max-h-56 overflow-y-auto hidden leading-relaxed">
               <!-- Result json populated here -->
             </div>
           </div>
@@ -298,25 +299,25 @@
       </div>
 
       <!-- Bottom Panel (VS Code Output / Terminal Style) -->
-      <section class="h-48 bg-[#0b0f16] border-t border-[#1c2433] flex flex-col flex-shrink-0">
+      <section class="h-52 bg-[#0c1018] border-t border-[#1e2738] flex flex-col flex-shrink-0">
         <!-- Panel Tabs Header -->
-        <div class="h-7 bg-[#090c12] border-b border-[#18202c] flex items-center justify-between px-3 flex-shrink-0">
-          <div class="flex items-center h-full space-x-1">
-            <button id="tabBtnWs" class="term-tab active flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <div class="h-8 bg-[#090d14] border-b border-[#1b2333] flex items-center justify-between px-4 flex-shrink-0">
+          <div class="flex items-center h-full space-x-2">
+            <button id="tabBtnWs" class="term-tab active flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span>WEBSOCKET TELEMETRY</span>
             </button>
             <button id="tabBtnRest" class="term-tab">REST INSPECTOR</button>
             <button id="tabBtnModel" class="term-tab">MODEL META</button>
           </div>
-          <div class="flex items-center gap-2">
-            <button id="clearLogBtn" class="text-[10px] font-mono text-slate-500 hover:text-slate-300 transition">CLEAR LOG</button>
+          <div class="flex items-center gap-3">
+            <button id="clearLogBtn" class="text-xs font-mono font-bold text-slate-400 hover:text-slate-200 transition">CLEAR LOG</button>
           </div>
         </div>
 
         <!-- Terminal Stream Log -->
-        <div id="eventLog" class="flex-1 p-2.5 font-mono text-[11px] overflow-y-auto space-y-1 text-slate-300 bg-[#090d14]">
-          <div class="text-slate-500 italic p-1">[system] Live edge telemetry initialized. Listening to background audio stream...</div>
+        <div id="eventLog" class="flex-1 p-3 font-mono text-xs overflow-y-auto space-y-1.5 text-slate-200 bg-[#090e16] leading-relaxed">
+          <div class="text-slate-400 italic p-1">[system] Live edge telemetry initialized. Listening to background audio stream...</div>
         </div>
       </section>
 
@@ -325,29 +326,29 @@
   </div>
 
   <!-- Bottom VS Code Status Bar -->
-  <footer class="h-6 bg-[#007acc] text-white flex items-center justify-between px-3 text-[11px] font-mono flex-shrink-0 z-50">
-    <div class="flex items-center gap-3">
-      <span class="flex items-center gap-1 hover:bg-blue-600/60 px-1 rounded cursor-pointer">
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+  <footer class="h-7 bg-[#007acc] text-white flex items-center justify-between px-4 text-xs font-mono flex-shrink-0 z-50">
+    <div class="flex items-center gap-3 font-medium">
+      <span class="flex items-center gap-1.5 hover:bg-blue-600/70 px-1.5 py-0.5 rounded cursor-pointer">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
         <span>main*</span>
       </span>
       <span>&bull;</span>
-      <span class="flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
-        <span id="footerWsStatus">WS: Connected (50Hz)</span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+        <span id="footerWsStatus">WS: Connected (16kHz)</span>
       </span>
       <span>&bull;</span>
       <span>Safety: ARM_OK</span>
     </div>
 
-    <div class="flex items-center gap-3 text-blue-100">
+    <div class="flex items-center gap-3 text-blue-100 font-medium">
       <span>Int8 Model: Active</span>
       <span>&bull;</span>
       <span>16 kHz PCM</span>
       <span>&bull;</span>
       <span>UTF-8</span>
       <span>&bull;</span>
-      <span class="font-bold">KMUTT ND69 (ND02)</span>
+      <span class="font-bold text-white">KMUTT ND69 (ND02)</span>
     </div>
   </footer>
 

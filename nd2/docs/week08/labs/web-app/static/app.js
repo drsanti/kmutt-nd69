@@ -44,13 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
         label === "off" ? "text-slate-300" : "text-slate-500";
 
       const row = document.createElement("div");
-      row.className = "space-y-1 font-mono";
+      row.className = "space-y-1.5 font-mono";
       row.innerHTML = `
-        <div class="flex justify-between text-[11px] items-center">
+        <div class="flex justify-between text-xs items-center">
           <span class="font-bold tracking-wider ${badgeColor}">${label}</span>
-          <span id="prob-val-${label}" class="text-slate-400 font-bold">0.0%</span>
+          <span id="prob-val-${label}" class="text-slate-300 font-bold">0.0%</span>
         </div>
-        <div class="w-full bg-[#0a0e14] rounded h-2 overflow-hidden border border-[#212b3d] p-[1px]">
+        <div class="w-full bg-[#0a0e16] rounded-md h-3 overflow-hidden border border-[#232e42] p-[1px]">
           <div id="prob-bar-${label}" class="h-full rounded-sm ${colorClass} transition-all duration-200" style="width: 0%"></div>
         </div>
       `;
