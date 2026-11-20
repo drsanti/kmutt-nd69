@@ -203,10 +203,35 @@ robotos-kws live-imu --port COM7 --model imu_artifacts/model_int8.tflite
 ```
 Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
 
+> [!TIP]
+> **Offline Live Inference (No Board):**
+> You can test sliding-window inference using pre-recorded or synthesized gesture CSV files:
+> ```bash
+> robotos-kws live-imu --replay samples/shake.csv --model imu_artifacts/model_int8.tflite
+> ```
+
 ### 7.2 Robotic Finite State Machine Interlock
 Run the included robot controller script:
+
+**With Physical ws28p Board:**
 ```bash
 python robot_fsm.py --port COM7 --model imu_artifacts/model_int8.tflite
+```
+
+**Offline / Replay Mode (Without Board):**
+You can replay individual gesture files to test specific state machine transitions:
+```bash
+# Test 'circle' -> triggers ACTIVE_PATROL
+python robot_fsm.py --replay samples/circle.csv --model imu_artifacts/model_int8.tflite
+
+# Test 'shake' -> triggers EMERGENCY_STOP
+python robot_fsm.py --replay samples/shake.csv --model imu_artifacts/model_int8.tflite
+
+# Test 'lift' -> triggers TRANSPORT_MODE
+python robot_fsm.py --replay samples/lift.csv --model imu_artifacts/model_int8.tflite
+
+# Full FSM sequence simulation (works even without trained model)
+python robot_fsm.py --replay sample_gesture.csv
 ```
 
 ### State Machine Behavior:
