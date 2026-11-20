@@ -225,6 +225,9 @@ print("New model trained with labels:", meta["labels"])
 app.state.detector = rk.Detector("artifacts/model_int8.tflite")
 ```
 
+> [!NOTE]
+> `rk.Trainer` automatically discovers audio datasets in the workspace (including ND1's collected dataset). If running standalone without prior recordings, it automatically generates a synthetic multi-speaker audio dataset so that training, int8 quantization, and evaluation report generation (`artifacts/report.md`) always run cleanly out-of-the-box!
+
 Run the retraining script:
 ```bash
 python examples/04_programmatic_train.py
