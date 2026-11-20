@@ -26,33 +26,62 @@ In this lab, you complete the end-to-end Edge AI development lifecycle using the
 
 ## 1. Environment Setup & CLI Installation
 
-### Virtual Environment (Python 3.10 – 3.13)
+### 1.1 Open Terminal & Navigate to Directory
 
 ```bash
 cd nd1/docs/week08/labs/python
 ```
 
+### 1.2 Create & Activate Virtual Environment
+
+Choose the section matching your shell:
+
+- **Windows (Git Bash):**
+  ```bash
+  py -3.11 -m venv .venv      # or: python -m venv .venv
+  source .venv/Scripts/activate
+  ```
 - **Windows (PowerShell):**
   ```powershell
-  py -3.11 -m venv .venv
+  py -3.11 -m venv .venv      # or: python -m venv .venv
+  # If script execution is disabled on your PC, run this once:
+  # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
   .\.venv\Scripts\Activate.ps1
   ```
-- **Linux / macOS:**
+- **Windows (Command Prompt cmd.exe):**
+  ```cmd
+  py -3.11 -m venv .venv      # or: python -m venv .venv
+  .venv\Scripts\activate.bat
+  ```
+- **Linux / macOS (bash/zsh):**
   ```bash
   python3 -m venv .venv
   source .venv/bin/activate
   ```
 
-### Install Precompiled Wheel and Dependencies
+*(When activated, your terminal prompt will show `(.venv)`).*
+
+### 1.3 Install Precompiled Wheel and Dependencies
 
 ```bash
 pip install -r requirements.txt
 pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
 ```
 
-Verify that the CLI is installed and operational:
+> [!TIP]
+> **Universal Fallback (if `pip` says `command not found` in any shell):**  
+> You can always run `pip` through Python directly:
+> ```bash
+> python -m pip install -r requirements.txt
+> python -m pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
+> ```
+
+### 1.4 Verify CLI
+
 ```bash
 robotos-kws --help
+```
+*(Or use `python -m robotos_kws --help`)*
 ```
 
 ---

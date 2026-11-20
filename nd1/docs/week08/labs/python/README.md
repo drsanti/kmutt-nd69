@@ -23,17 +23,18 @@ python3 -m venv .venv && source .venv/bin/activate
 py -3.11 -m venv .venv && source .venv/Scripts/activate
 
 # Windows PowerShell:
+# (If script execution is disabled: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass)
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
-# Windows CMD:
+# Windows CMD (Command Prompt):
 py -3.11 -m venv .venv && .venv\Scripts\activate.bat
 
-# Install lab packages:
+# Install lab packages and CLI wheel:
 pip install -r requirements.txt
-
-# Install prebuilt robotos_kws CLI & SDK wheel:
 pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
+
+# (Universal fallback if 'pip' is not recognized: use 'python -m pip')
 ```
 
 Once installed, you can use the unified **`robotos-kws` CLI** or write code with **`import robotos_kws`**!

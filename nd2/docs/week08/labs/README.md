@@ -27,10 +27,29 @@ In this lab, you learn how to bridge Edge AI models into modern web and backend 
 
 ```bash
 cd nd2/docs/week08/labs/web-app
-py -3.11 -m venv .venv           # Windows
-.\.venv\Scripts\Activate.ps1
 ```
-*(On Linux/macOS: `python3 -m venv .venv && source .venv/bin/activate`)*
+
+- **Windows (Git Bash):**
+  ```bash
+  py -3.11 -m venv .venv      # or: python -m venv .venv
+  source .venv/Scripts/activate
+  ```
+- **Windows (PowerShell):**
+  ```powershell
+  py -3.11 -m venv .venv      # or: python -m venv .venv
+  # If script execution is disabled: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+  .\.venv\Scripts\Activate.ps1
+  ```
+- **Windows (Command Prompt cmd.exe):**
+  ```cmd
+  py -3.11 -m venv .venv      # or: python -m venv .venv
+  .venv\Scripts\activate.bat
+  ```
+- **Linux / macOS:**
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  ```
 
 ### 1.2 Install Requirements & `robotos_kws` Wheel
 
@@ -38,6 +57,9 @@ py -3.11 -m venv .venv           # Windows
 pip install -r requirements.txt
 pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
 ```
+
+> [!TIP]
+> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl`.
 
 Verify that the SDK imports cleanly:
 ```bash
