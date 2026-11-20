@@ -1,0 +1,10 @@
+# ND02 Week 08 Requirements
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+python-multipart>=0.0.9
+pydantic>=2.6.0
+numpy>=1.26
+sounddevice>=0.4.6
+pyserial>=3.5
+scipy>=1.10
+tensorflow>=2.16
