@@ -23,20 +23,20 @@
 ---
 
 > [!NOTE]
-> ### 🔬 Week 08 Labs (Edge AI)
+> ### 🔬 Week 08 Labs (Machine Learning)
 > เอกสารและคู่มือปฏิบัติการ Edge AI ประจำสัปดาห์ที่ 8 สำหรับทั้ง 3 สายการเรียนรู้
-> - 🟢 **ND01 (Embedded & Hardware):** [คู่มือปฏิบัติการ Lab ND01 (Firmware & C-Harness)](nd1/docs/week08/labs/README.md)
-> - 🔵 **ND02 (Application Developers):** [คู่มือปฏิบัติการ Lab ND02 (Web Audio & FastAPI)](nd2/docs/week08/labs/README.md)
-> - 🟣 **ND03 (Automation & Robotics):** [คู่มือปฏิบัติการ Lab ND03 (50 Hz IMU & Robot FSM)](nd3/docs/week08/labs/README.md)
+> - 🟢 **ND01 Labs:** [คู่มือปฏิบัติการ Lab ND01](nd1/docs/week08/labs/README.md)
+> - 🔵 **ND02 Labs:** [คู่มือปฏิบัติการ Lab ND02](nd2/docs/week08/labs/README.md)
+> - 🟣 **ND03 Labs:** [คู่มือปฏิบัติการ Lab ND03](nd3/docs/week08/labs/README.md)
 
 ---
 
 > [!NOTE]
 > ### 📢 Self-Learning & Mini-Project #1 (Week 06)
 > สัปดาห์แห่งการเรียนรู้ด้วยตนเองและจัดทำมินิโปรเจกต์สรุปเนื้อหาตลอด 5 สัปดาห์ พร้อมฝึกปฏิบัติการใช้งาน Git & GitHub
-> - 🟢 **ND01 (Embedded & Hardware):** [รายละเอียด Week 06](nd1/docs/week06/README.md) · [📝 ส่งงาน ND01 (Google Form)](https://forms.gle/hGqHgoEBDFinh2BfA)
-> - 🔵 **ND02 (Application Developers):** [รายละเอียด Week 06](nd2/docs/week06/README.md) · [📝 ส่งงาน ND02 (Google Form)](https://forms.gle/in4mUsBT5MvBwmXt6)
-> - 🟣 **ND03 (Automation & Robotics):** [รายละเอียด Week 06](nd3/docs/week06/README.md) · [📝 ส่งงาน ND03 (Google Form)](https://forms.gle/pDp1SkyJ14mVRvfK7)
+> - 🟢 **ND01 Mini-Project 1:** [รายละเอียด Week 06](nd1/docs/week06/README.md) · [📝 ส่งงาน ND01 (Google Form)](https://forms.gle/hGqHgoEBDFinh2BfA)
+> - 🔵 **ND02 Mini-Project 1:** [รายละเอียด Week 06](nd2/docs/week06/README.md) · [📝 ส่งงาน ND02 (Google Form)](https://forms.gle/in4mUsBT5MvBwmXt6)
+> - 🟣 **ND03 Mini-Project 1:** [รายละเอียด Week 06](nd3/docs/week06/README.md) · [📝 ส่งงาน ND03 (Google Form)](https://forms.gle/pDp1SkyJ14mVRvfK7)
 >
 > 📖 คู่มือศึกษาประกอบ: [GitHub Hands-On: A Practical Guide for Beginners](https://github.com/drsanti/github-hands-on)
 
