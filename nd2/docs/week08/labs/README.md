@@ -51,6 +51,16 @@ cd nd2/docs/week08/labs/web-app
   source .venv/bin/activate
   ```
 
+*(When activated, your terminal prompt will show `(.venv)`).*
+
+> [!TIP]
+> **Prefer typing `py` instead of `python` on Windows?**  
+> Virtual environments create `python.exe` by default. If you prefer typing `py` in Git Bash or PowerShell, copy it once:
+> - **Git Bash:** `cp .venv/Scripts/python.exe .venv/Scripts/py.exe`
+> - **PowerShell:** `Copy-Item .\.venv\Scripts\python.exe .\.venv\Scripts\py.exe`
+> - **CMD:** `copy .venv\Scripts\python.exe .venv\Scripts\py.exe`  
+> Now both `python` and `py` will work interchangeably in your terminal!
+
 > [!TIP]
 > **Already set up ND1? Reuse your existing `.venv`!**
 > If you already configured the virtual environment in `nd1`, you do not need to download or install TensorFlow again (~1.5 GB). You can simply activate the existing ND1 environment:

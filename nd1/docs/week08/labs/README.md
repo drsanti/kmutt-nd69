@@ -61,6 +61,14 @@ Choose the section matching your shell:
 
 *(When activated, your terminal prompt will show `(.venv)`).*
 
+> [!TIP]
+> **Prefer typing `py` instead of `python` on Windows?**  
+> Virtual environments create `python.exe` by default. If you prefer typing `py` in Git Bash or PowerShell, copy it once:
+> - **Git Bash:** `cp .venv/Scripts/python.exe .venv/Scripts/py.exe`
+> - **PowerShell:** `Copy-Item .\.venv\Scripts\python.exe .\.venv\Scripts\py.exe`
+> - **CMD:** `copy .venv\Scripts\python.exe .venv\Scripts\py.exe`  
+> Now both `python` and `py` will work interchangeably in your terminal!
+
 ### 1.3 Install Precompiled Wheel and Dependencies
 
 ```bash

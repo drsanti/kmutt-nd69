@@ -54,6 +54,16 @@ cd nd3/docs/week08/labs/robotics
   source .venv/bin/activate
   ```
 
+*(When activated, your terminal prompt will show `(.venv)`).*
+
+> [!TIP]
+> **Prefer typing `py` instead of `python` on Windows?**  
+> Virtual environments create `python.exe` by default. If you prefer typing `py` in Git Bash or PowerShell, copy it once:
+> - **Git Bash:** `cp .venv/Scripts/python.exe .venv/Scripts/py.exe`
+> - **PowerShell:** `Copy-Item .\.venv\Scripts\python.exe .\.venv\Scripts\py.exe`
+> - **CMD:** `copy .venv\Scripts\python.exe .venv\Scripts\py.exe`  
+> Now both `python` and `py` will work interchangeably in your terminal!
+
 > [!TIP]
 > **Already set up ND1 or ND2? Reuse your existing `.venv`!**
 > If you already configured the virtual environment in `nd1` (or `nd2`), you do not need to download or install dependencies again (~1.5 GB). You can simply activate the existing environment:
