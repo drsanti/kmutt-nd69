@@ -168,7 +168,18 @@ py examples/03_classify_audio_file.py sample_audio.wav
 
 In this exercise, you wrap the model inside a high-performance REST API.
 
-Run the provided FastAPI server:
+> [!TIP]
+> ### 🖥️ Recommended Workflow: Two Terminal Windows (or Split Pane)
+> Starting from Lab 2.2, we recommend using **two terminal windows or split panes** (in VS Code, press `Ctrl + \` or click the split icon):
+>
+> | Terminal | Role | Active Command | Purpose |
+> |---|---|---|---|
+> | **Terminal 1** | **Backend Server** | `python app.py` | Runs the long-running FastAPI microservice and WebSocket server in the foreground. Keep it open to observe live HTTP traffic, WebSocket connections, and inference times. |
+> | **Terminal 2** | **Client & Automation** | `curl ...`<br>`python examples/04_programmatic_train.py` | Used as your client terminal to test REST endpoints via `curl`, run test scripts, or execute the Lab 2.5 retraining pipeline without stopping the server. |
+>
+> *(Note: If you test exclusively through the browser UI at `http://127.0.0.1:8000` and Swagger `/docs`, you only need Terminal 1. However, Terminal 2 is essential when testing with cURL or running Lab 2.5 while the server is active).*
+
+Run the provided FastAPI server in **Terminal 1**:
 ```bash
 python app.py
 # Or with py:
@@ -200,7 +211,7 @@ The server starts at `http://127.0.0.1:8000`.
 You do **not** need to manually record audio for this track. You can test it in multiple ways:
 1. **Via Web Dashboard (Easiest)**: Visit [http://127.0.0.1:8000](http://127.0.0.1:8000) and click **"📁 Use Built-in Sample"** or **"🎙️ Record Mic (1s)"**.
 2. **Via Swagger Docs**: Visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs), expand `POST /api/v1/classify`, click *Try it out*, and upload `sample_audio.wav`.
-3. **Via cURL (Terminal)**:
+3. **Via cURL (in Terminal 2)**:
    ```bash
    curl -X POST "http://127.0.0.1:8000/api/v1/classify" -F "file=@sample_audio.wav"
    ```
@@ -271,7 +282,7 @@ app.state.detector = rk.Detector("artifacts/model_int8.tflite")
 > [!NOTE]
 > `rk.Trainer` automatically discovers audio datasets in the workspace (including ND1's collected dataset). If running standalone without prior recordings, it automatically generates a synthetic multi-speaker audio dataset so that training, int8 quantization, and evaluation report generation (`artifacts/report.md`) always run cleanly out-of-the-box!
 
-Run the retraining script:
+Run the retraining script in **Terminal 2** (while your FastAPI server continues running in Terminal 1):
 ```bash
 python examples/04_programmatic_train.py
 # Or with py:
