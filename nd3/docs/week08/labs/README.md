@@ -1,0 +1,190 @@
+# Week 08 Labs: IMU Motion Telemetry & Robotic State Interlocks
+
+![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
+![track](https://img.shields.io/badge/track-ND03-6d28d9?style=flat-square)
+![week](https://img.shields.io/badge/week-08-334155?style=flat-square)
+![lang](https://img.shields.io/badge/lang-EN-2563eb?style=flat-square)
+![kind](https://img.shields.io/badge/kind-labs-2e8b57?style=flat-square)
+
+**Focus for Group 3 (ND3 — Automation & Robotics):**
+In this lab, you work with physical hardware: the **ws28p ESP32-S3 board** streaming 50 Hz 6-axis IMU sensor data. You will use the unified **`robotos-kws` CLI** to inspect hardware telemetry, record labelled robotic motion/gesture windows, train a temporal 1D-CNN, quantize to int8, and integrate real-time sliding-window predictions into a robotic Finite State Machine (FSM).
+
+---
+
+## Table of Contents
+
+- [1. Environment Setup](#1-environment-setup)
+- [2. Hardware Connection & Prebuilt Firmware](#2-hardware-connection--prebuilt-firmware)
+- [3. Lab 3.1: Hardware Telemetry & IMU Stream Inspection](#3-lab-31-hardware-telemetry--imu-stream-inspection)
+- [4. Lab 3.2: Multi-Class Motion Dataset Collection](#4-lab-32-multi-class-motion-dataset-collection)
+- [5. Lab 3.3: 6-DOF Signal Windowing & 1D-CNN Training](#5-lab-33-6-dof-signal-windowing--1d-cnn-training)
+- [6. Lab 3.4: Benchmarking & Model Quantization](#6-lab-34-benchmarking--model-quantization)
+- [7. Lab 3.5: Real-Time Hardware Recognition & Robot FSM](#7-lab-35-real-time-hardware-recognition--robot-fsm)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## 1. Environment Setup
+
+### 1.1 Virtual Environment
+
+```bash
+cd nd3/docs/week08/labs/robotics
+py -3.11 -m venv .venv           # Windows
+.\.venv\Scripts\Activate.ps1
+```
+*(On Linux/macOS: `python3 -m venv .venv && source .venv/bin/activate`)*
+
+### 1.2 Install Requirements & Wheel
+
+```bash
+pip install -r requirements.txt
+pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
+```
+
+Verify that the CLI is ready:
+```bash
+robotos-kws --help
+```
+You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed under Available Subcommands.
+
+---
+
+## 2. Hardware Connection & Prebuilt Firmware
+
+1. Connect your **ws28p** board (Waveshare ESP32-S3-Touch-LCD-2.8) to your computer with a USB-C data cable.
+2. Identify your serial port:
+   - Windows: `COMx` (e.g. `COM7`, check in Device Manager)
+   - Linux: `/dev/ttyACM0` or `/dev/ttyUSB0`
+   - macOS: `/dev/cu.usbmodem*`
+3. If not already flashed with the workshop firmware:
+   ```bash
+   # Flash prebuilt ws28p firmware (from hardware-interface-workshop):
+   python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
+   ```
+
+> [!WARNING]
+> **Serial Port Exclusivity**: Close any open serial monitors (Arduino IDE, VSCode Serial Monitor, WebSerial tabs) before running board commands. Only one application can access the COM port at a time.
+
+---
+
+## 3. Lab 3.1: Hardware Telemetry & IMU Stream Inspection
+
+Test the board connection and verify the 50 Hz IMU telemetry stream:
+
+```bash
+robotos-kws check-imu --port COM7
+```
+*(Replace `COM7` with your actual serial port).*
+
+### Expected Output:
+- Reads `BoardInfo`: Caps `0x3c` (IMU + RTC + BATT).
+- Confirms streaming rate: **~50 Hz** (one frame every 20 ms).
+- Acceleration magnitude: $|\vec{a}| \approx 9.8\text{ m/s}^2$ when stationary.
+- Gyro noise: $< 0.05\text{ rad/s}$ drift when still.
+
+---
+
+## 4. Lab 3.2: Multi-Class Motion Dataset Collection
+
+Collect labelled motion windows from the physical board:
+
+```bash
+robotos-kws collect-imu --port COM7 --person student_a --session s01 --takes 20
+```
+
+### The 4 Gestures to Record:
+| Gesture | Physical Motion | Robotic Meaning |
+| :--- | :--- | :--- |
+| **`idle`** | Hold still in hand, rest on desk, natural slight drift | Robot stationary / normal vibration |
+| **`shake`** | Fast, vigorous left-right oscillation | Collision / rough terrain / vibration fault |
+| **`circle`** | Draw 1-2 smooth circles in the air | Turn-in-place / 360° scan routine |
+| **`lift`** | Lift board vertically up ~20 cm and put down | Robot picked up off ground / payload lift |
+
+### Data Recording Protocol:
+1. The terminal prompts: `Press Enter for <gesture> take N/20...`
+2. Press Enter $\to$ Countdown $1.0\text{ s}$ $\to$ **GO!**
+3. Perform the gesture within the $2.0\text{ s}$ window.
+4. Gaps check: If USB packet loss drops more than 3 samples, the CLI automatically discards the take and prompts for a clean retry.
+
+The recorded CSV files are saved in `imu_dataset/<gesture>/`.
+
+---
+
+## 5. Lab 3.3: 6-DOF Signal Windowing & 1D-CNN Training
+
+Train a 1D Convolutional Neural Network on the recorded 6-channel IMU windows:
+
+```bash
+robotos-kws train-imu --data imu_dataset --out imu_artifacts --epochs 60
+```
+
+> [!TIP]
+> **Need to test offline without physical board?**
+> You can train on synthetically generated multi-person IMU data:
+> ```bash
+> robotos-kws train-imu --synthetic --out imu_artifacts --epochs 60
+> ```
+
+### Training Pipeline Concepts:
+- **Resampling**: Interpolates irregular timestamp samples onto an exact 20 ms uniform grid ($100\text{ timesteps} \times 6\text{ channels}$).
+- **Normalization**: Scales acceleration by $1g$ ($9.80665\text{ m/s}^2$) and gyro by $4.0\text{ rad/s}$.
+- **Data Augmentation**: Applies random rotation in hand, time shifts ($\pm 200\text{ ms}$), magnitude scaling ($\pm 20\%$), and Gaussian noise.
+- **Person-Disjoint Split**: Whole persons are held out for validation, proving the model generalizes to unseen users.
+
+---
+
+## 6. Lab 3.4: Benchmarking & Model Quantization
+
+Review the generated training artifacts in `imu_artifacts/`:
+- `model.keras`: Full float32 Keras model.
+- `model_float.tflite`: Float32 TFLite model (~10 KiB).
+- `model_int8.tflite`: Int8 quantized model (~3.2 KiB).
+- `meta.json`: Quantization loss, accuracy metrics, and confusion matrix.
+
+Notice that the int8 model is only **~3.2 KiB**, small enough to run on any microcontroller with virtually zero quantization loss!
+
+---
+
+## 7. Lab 3.5: Real-Time Hardware Recognition & Robot FSM
+
+Now run real-time hardware inference connected to a robotic state machine.
+
+### 7.1 Direct CLI Live Inference
+Run real-time sliding-window inference on the live USB stream:
+```bash
+robotos-kws live-imu --port COM7 --model imu_artifacts/model_int8.tflite
+```
+Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
+
+### 7.2 Robotic Finite State Machine Interlock
+Run the included robot controller script:
+```bash
+python robot_fsm.py --port COM7 --model imu_artifacts/model_int8.tflite
+```
+
+### State Machine Behavior:
+```mermaid
+stateDiagram-v2
+    [*] --> STANDBY
+    STANDBY --> ACTIVE_PATROL: circle (Start Routine)
+    ACTIVE_PATROL --> EMERGENCY_STOP: shake (Collision Detected!)
+    ACTIVE_PATROL --> TRANSPORT_MODE: lift (Robot Picked Up)
+    TRANSPORT_MODE --> STANDBY: Placed back on floor
+    EMERGENCY_STOP --> STANDBY: Reset command / Clear
+```
+
+- When you **`shake`** the board $\to$ The controller immediately enters `EMERGENCY_STOP`, cutting virtual motor power.
+- When you **`lift`** the board $\to$ Enters `TRANSPORT_MODE`, disengaging wheel encoders.
+- When you draw a **`circle`** $\to$ Initiates `ACTIVE_PATROL` trajectory.
+
+---
+
+## Troubleshooting
+
+- **Access Denied / Permission Error on Serial Port:**
+  Close all other applications using the COM port (VSCode Serial Monitor, Arduino IDE, Chrome WebSerial tabs).
+- **Board Not Streaming IMU Frames:**
+  Confirm the board is flashed with `ws28p` firmware (caps `0x3c`). If the board was flashed with `es3c28p` (mic firmware, caps `0x33`), the CLI will reject it with a clear error message.
+- **Too Many Lost Samples Warning:**
+  Ensure you are using a good quality USB-C data cable connected directly to your computer (avoid unpowered USB hubs).
