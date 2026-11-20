@@ -13,9 +13,11 @@ import io
 import os
 import tempfile
 import threading
+from collections import deque
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import numpy as np
 import uvicorn
 from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +25,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import kws_common as kc
 import robotos_kws as rk
 
 app = FastAPI(
@@ -217,15 +220,82 @@ async def classify_audio(file: UploadFile = File(...)):
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     connected_clients.append(websocket)
+
+    # Per-client sliding window ring buffer for live browser mic streaming
+    client_ring = np.zeros(kc.CLIP_SAMPLES, dtype=np.int16)
+    client_history = deque(maxlen=3)
+    client_since_detection = kc.SAMPLE_RATE  # allow immediate detection
+    samples_seen = 0
+
     try:
         await websocket.send_json({
             "event": "connected",
             "message": "Connected to real-time KWS stream.",
             "labels": detector.labels if detector else [],
+            "threshold": detector.threshold if detector else 0.80,
         })
         while True:
-            # Keep socket alive
-            await websocket.receive_text()
+            msg = await websocket.receive()
+            if "bytes" in msg and msg["bytes"]:
+                raw_bytes = msg["bytes"]
+                chunk = np.frombuffer(raw_bytes, dtype="<i2")
+                if len(chunk) == 0:
+                    continue
+
+                # Slide ring buffer (16000 samples = 1 second)
+                if len(chunk) >= kc.CLIP_SAMPLES:
+                    client_ring = chunk[-kc.CLIP_SAMPLES:].copy()
+                else:
+                    client_ring = np.concatenate([client_ring[len(chunk):], chunk])
+
+                samples_seen += len(chunk)
+                client_since_detection += len(chunk)
+
+                if detector:
+                    # Feature extraction & inference
+                    feats = kc.log_mel(client_ring)
+                    probs = kc.run_tflite(detector.interpreter, feats)
+                    client_history.append(probs)
+                    avg_probs = np.mean(client_history, axis=0)
+
+                    top_idx = int(np.argmax(avg_probs))
+                    top_label = detector.labels[top_idx]
+                    top_score = float(avg_probs[top_idx])
+                    rms_db = float(kc.rms_dbfs(chunk))
+
+                    probs_dict = {lb: float(avg_probs[i]) for i, lb in enumerate(detector.labels)}
+
+                    # Trigger state transition if above threshold and keyword
+                    triggered = False
+                    if (top_label in detector.keywords and 
+                        top_score >= detector.threshold and 
+                        client_since_detection >= detector.refractory_samples):
+                        client_since_detection = 0
+                        triggered = True
+
+                    resp = {
+                        "event": "live_stream_update",
+                        "probabilities": probs_dict,
+                        "top_class": top_label,
+                        "confidence": round(top_score, 3),
+                        "rms_dbfs": round(rms_db, 1),
+                        "triggered": triggered,
+                        "keyword": top_label if triggered else None,
+                        "timestamp": round(samples_seen / kc.SAMPLE_RATE, 2),
+                    }
+                    await websocket.send_json(resp)
+                    if triggered:
+                        # Also broadcast to any other monitoring dashboards
+                        await broadcast_event({
+                            "event": "keyword_detected",
+                            "keyword": top_label,
+                            "confidence": round(top_score, 3),
+                            "timestamp": round(samples_seen / kc.SAMPLE_RATE, 2),
+                            "source": "browser_stream",
+                        })
+            elif "text" in msg and msg["text"]:
+                # Keep alive or text command
+                pass
     except WebSocketDisconnect:
         if websocket in connected_clients:
             connected_clients.remove(websocket)

@@ -212,7 +212,47 @@
       <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 overflow-y-auto industrial-grid">
 
         <!-- Center 2 Columns: SCADA State Machine Display -->
-        <div class="lg:col-span-2 p-6 flex flex-col justify-between space-y-6 border-r border-[#1e2738]/80">
+        <div class="lg:col-span-2 p-6 flex flex-col justify-between space-y-5 border-r border-[#1e2738]/80">
+
+          <!-- VOICE CONTROLLER DOCK: Push-to-Talk (Hold) & Continuous Speech Stream -->
+          <div class="p-4 rounded-2xl bg-[#0f1624] border border-[#233148] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <!-- Left: Interaction Controls (PTT Button + Continuous Mode Toggle) -->
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <!-- Big Industrial PTT Button -->
+              <button id="pttButton" class="relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-lg transition-all duration-150 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 active:scale-95 border border-sky-400/40 cursor-pointer">
+                <span id="pttPulseHalo" class="absolute -inset-1 rounded-xl bg-sky-500/30 opacity-0 transition duration-200 blur-sm pointer-events-none"></span>
+                <span id="pttIcon" class="text-lg">🎙️</span>
+                <span id="pttText">HOLD TO TALK</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-black/40 text-sky-200 border border-white/10 hidden md:inline font-mono">Spacebar</span>
+              </button>
+
+              <!-- Continuous Stream Toggle Switch -->
+              <button id="continuousToggleBtn" class="flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-[#283852] bg-[#141d2d] text-slate-300 hover:bg-[#1b273d] hover:text-white cursor-pointer">
+                <span id="continuousStatusDot" class="w-3 h-3 rounded-full bg-slate-500 transition-all"></span>
+                <span id="continuousToggleText">Continuous Speech: OFF</span>
+              </button>
+            </div>
+
+            <!-- Right: Real-Time Audio Telemetry & dBFS Level Meter -->
+            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+              <!-- Mini Live Audio VU Bar -->
+              <div class="space-y-1">
+                <div class="flex justify-between text-[11px] font-mono text-slate-400">
+                  <span>MIC INPUT LEVEL</span>
+                  <span id="liveDbfsText" class="text-emerald-400 font-bold">-48.0 dBFS</span>
+                </div>
+                <div class="w-36 h-2.5 bg-[#090d14] rounded-full overflow-hidden border border-[#222d42] p-[1px]">
+                  <div id="liveVuBar" class="h-full rounded-full bg-emerald-500 transition-all duration-75" style="width: 5%"></div>
+                </div>
+              </div>
+
+              <!-- Active Stream State Badge -->
+              <div id="activeStreamBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141d2c] border border-[#26374f] font-mono text-xs text-slate-300">
+                <span id="activeStreamDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+                <span id="activeStreamLabel">Stream: Idle</span>
+              </div>
+            </div>
+          </div>
 
           <!-- Audio Waveform Visualizer & Level Canvas -->
           <div class="p-3.5 rounded-xl bg-[#0d131f] border border-[#212c40] space-y-2 shadow-md">

@@ -1,7 +1,7 @@
 // RobotOS Edge AI Studio - Industrial SCADA Dashboard Frontend
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Elements
+  // DOM Elements
   const wsStatusBadge = document.getElementById("wsStatusBadge");
   const footerWsStatus = document.getElementById("footerWsStatus");
   const headerThresholdBadge = document.getElementById("headerThresholdBadge");
@@ -10,6 +10,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const presetRelaxed = document.getElementById("presetRelaxed");
   const presetBalanced = document.getElementById("presetBalanced");
   const presetStrict = document.getElementById("presetStrict");
+
+  // Voice Interaction Controller Elements
+  const pttButton = document.getElementById("pttButton");
+  const pttPulseHalo = document.getElementById("pttPulseHalo");
+  const pttIcon = document.getElementById("pttIcon");
+  const pttText = document.getElementById("pttText");
+  const continuousToggleBtn = document.getElementById("continuousToggleBtn");
+  const continuousStatusDot = document.getElementById("continuousStatusDot");
+  const continuousToggleText = document.getElementById("continuousToggleText");
+  const liveDbfsText = document.getElementById("liveDbfsText");
+  const liveVuBar = document.getElementById("liveVuBar");
+  const activeStreamBadge = document.getElementById("activeStreamBadge");
+  const activeStreamDot = document.getElementById("activeStreamDot");
+  const activeStreamLabel = document.getElementById("activeStreamLabel");
 
   const stateBanner = document.getElementById("stateBanner");
   const stateIcon = document.getElementById("stateIcon");
@@ -41,6 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let modelMetaData = null;
   let lastRestPayload = null;
 
+  // Web Audio Streaming State
+  let audioCtx = null;
+  let micMediaStream = null;
+  let audioProcessor = null;
+  let isAudioStreaming = false;
+  let isContinuousMode = false;
+  let isPttActive = false;
+
   // 1. Initialize Probability Meters with Industrial Styling & Threshold Marker
   function initProbBars(labels) {
     probBarsContainer.innerHTML = "";
@@ -69,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="w-full bg-[#0a0e16] rounded-md h-3.5 relative overflow-hidden border border-[#232e42] p-[1px]">
           <!-- Dynamic Softmax Bar -->
-          <div id="prob-bar-${label}" class="h-full rounded-sm ${colorClass} transition-all duration-200" style="width: 0%"></div>
+          <div id="prob-bar-${label}" class="h-full rounded-sm ${colorClass} transition-all duration-150" style="width: 0%"></div>
           <!-- Threshold Marker Vertical Line -->
           <div class="threshold-marker" id="threshMarker-${label}" style="left: ${threshPct}%" title="Threshold: ${threshPct}%"></div>
         </div>
@@ -153,24 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. Fetch Model Metadata via REST API
-  fetch("/api/v1/model/info")
-    .then((res) => res.json())
-    .then((data) => {
-      if (data) {
-        if (data.labels) {
-          knownLabels = data.labels;
-        }
-        if (data.threshold) {
-          updateThresholdUI(data.threshold);
-        }
-        modelMetaData = data;
-        initProbBars(knownLabels);
-      }
-    })
-    .catch((err) => console.log("Model info not ready yet:", err));
-
-  // 4. Connect to WebSocket Stream
+  // 3. Connect to WebSocket Stream
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const wsUrl = `${protocol}//${window.location.host}/ws/kws`;
   let socket = null;
@@ -181,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.onopen = () => {
       wsStatusBadge.className =
         "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25";
-      wsStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> LIVE MIC (16kHz)';
+      wsStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> LIVE WS (16kHz)';
       if (footerWsStatus) footerWsStatus.textContent = "WS: Connected (16kHz)";
       addLogEntry("SYSTEM", "WebSocket channel opened. Real-time edge stream active.");
     };
@@ -194,6 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
             knownLabels = data.labels;
             initProbBars(knownLabels);
           }
+          if (data.threshold) {
+            updateThresholdUI(data.threshold);
+          }
+        } else if (data.event === "live_stream_update") {
+          // CONTINUOUS STREAMING UPDATE: Softmax bars + dBFS meter!
+          handleLiveStreamUpdate(data);
         } else if (data.event === "keyword_detected") {
           handleKeywordDetected(data.keyword, data.confidence, data.timestamp, data.source || "mic");
         } else if (data.event === "threshold_updated") {
@@ -219,7 +230,219 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   connectWebSocket();
 
-  // 5. Handle Keyword Detections & Reactive Industrial State Updates
+  // 4. Real-Time Audio Downsampling & WebSocket Stream Engine
+  function downsampleToInt16(float32Array, inRate, outRate = 16000) {
+    if (inRate === outRate) {
+      const pcm16 = new Int16Array(float32Array.length);
+      for (let i = 0; i < float32Array.length; i++) {
+        const s = Math.max(-1, Math.min(1, float32Array[i]));
+        pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+      }
+      return pcm16;
+    }
+    const ratio = inRate / outRate;
+    const newLen = Math.round(float32Array.length / ratio);
+    const pcm16 = new Int16Array(newLen);
+    for (let i = 0; i < newLen; i++) {
+      const orig = i * ratio;
+      const i1 = Math.floor(orig);
+      const i2 = Math.min(i1 + 1, float32Array.length - 1);
+      const frac = orig - i1;
+      const s = Math.max(-1, Math.min(1, float32Array[i1] * (1 - frac) + float32Array[i2] * frac));
+      pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+    return pcm16;
+  }
+
+  async function startBrowserAudioStreaming() {
+    if (isAudioStreaming) return;
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+      }
+
+      micMediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+
+      const sourceNode = audioCtx.createMediaStreamSource(micMediaStream);
+      // Process buffer size: 2048 samples (~43ms chunk at 48kHz)
+      audioProcessor = audioCtx.createScriptProcessor(2048, 1, 1);
+
+      audioProcessor.onaudioprocess = (e) => {
+        if (!isAudioStreaming || !socket || socket.readyState !== WebSocket.OPEN) return;
+        const inputData = e.inputBuffer.getChannelData(0);
+        const pcm16 = downsampleToInt16(inputData, audioCtx.sampleRate, 16000);
+        if (pcm16 && pcm16.length > 0) {
+          socket.send(pcm16.buffer);
+        }
+      };
+
+      sourceNode.connect(audioProcessor);
+      audioProcessor.connect(audioCtx.destination);
+      isAudioStreaming = true;
+      setVoiceStreamActiveUI(true);
+      addLogEntry("STREAM", "Browser audio stream started. Transmitting 16 kHz PCM to server.");
+    } catch (err) {
+      console.error("Failed to start browser microphone:", err);
+      alert("Microphone permission denied or device error: " + err.message);
+      stopBrowserAudioStreaming();
+    }
+  }
+
+  function stopBrowserAudioStreaming() {
+    isAudioStreaming = false;
+    if (audioProcessor) {
+      try { audioProcessor.disconnect(); } catch (e) {}
+      audioProcessor = null;
+    }
+    if (micMediaStream) {
+      micMediaStream.getTracks().forEach((track) => track.stop());
+      micMediaStream = null;
+    }
+    setVoiceStreamActiveUI(false);
+  }
+
+  function setVoiceStreamActiveUI(active) {
+    if (active) {
+      if (activeStreamBadge) {
+        activeStreamBadge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/50 border border-emerald-500/50 font-mono text-xs text-emerald-300";
+        activeStreamDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+        activeStreamLabel.textContent = "Stream: Active (16 kHz)";
+      }
+    } else {
+      if (activeStreamBadge) {
+        activeStreamBadge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141d2c] border border-[#26374f] font-mono text-xs text-slate-300";
+        activeStreamDot.className = "w-2 h-2 rounded-full bg-slate-500";
+        activeStreamLabel.textContent = "Stream: Idle";
+      }
+      if (liveDbfsText) liveDbfsText.textContent = "-60.0 dBFS";
+      if (liveVuBar) liveVuBar.style.width = "4%";
+    }
+  }
+
+  // 5. Push-to-Talk (PTT) Event Handlers
+  function activatePtt() {
+    if (isContinuousMode || isPttActive) return;
+    isPttActive = true;
+    pttButton.className = "relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-2xl transition-all bg-gradient-to-r from-red-600 to-rose-600 border border-red-400 scale-105";
+    pttPulseHalo.className = "absolute -inset-1 rounded-xl bg-red-500/50 opacity-100 transition duration-150 blur-md pointer-events-none";
+    pttIcon.textContent = "🔴";
+    pttText.textContent = "TRANSMITTING (SPEAK)";
+    startBrowserAudioStreaming();
+  }
+
+  function deactivatePtt() {
+    if (isContinuousMode || !isPttActive) return;
+    isPttActive = false;
+    pttButton.className = "relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-lg transition-all bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 active:scale-95 border border-sky-400/40 cursor-pointer";
+    pttPulseHalo.className = "absolute -inset-1 rounded-xl bg-sky-500/30 opacity-0 transition duration-200 blur-sm pointer-events-none";
+    pttIcon.textContent = "🎙️";
+    pttText.textContent = "HOLD TO TALK";
+    stopBrowserAudioStreaming();
+  }
+
+  if (pttButton) {
+    // Mouse / Touch hold
+    pttButton.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      activatePtt();
+    });
+    window.addEventListener("pointerup", () => deactivatePtt());
+    window.addEventListener("pointercancel", () => deactivatePtt());
+
+    // Keyboard Spacebar Push-To-Talk
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && e.target === document.body && !isPttActive && !isContinuousMode) {
+        e.preventDefault();
+        activatePtt();
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "Space" && isPttActive && !isContinuousMode) {
+        e.preventDefault();
+        deactivatePtt();
+      }
+    });
+  }
+
+  // 6. Continuous Speech Stream Toggle Handler
+  if (continuousToggleBtn) {
+    continuousToggleBtn.addEventListener("click", () => {
+      isContinuousMode = !isContinuousMode;
+      if (isContinuousMode) {
+        continuousToggleBtn.className = "flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-emerald-500/50 bg-emerald-950/40 text-emerald-200 cursor-pointer";
+        continuousStatusDot.className = "w-3 h-3 rounded-full bg-emerald-400 animate-pulse";
+        continuousToggleText.textContent = "Continuous Speech: LIVE";
+        if (pttButton) {
+          pttButton.classList.add("opacity-50", "pointer-events-none");
+        }
+        startBrowserAudioStreaming();
+      } else {
+        continuousToggleBtn.className = "flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-[#283852] bg-[#141d2d] text-slate-300 hover:bg-[#1b273d] hover:text-white cursor-pointer";
+        continuousStatusDot.className = "w-3 h-3 rounded-full bg-slate-500";
+        continuousToggleText.textContent = "Continuous Speech: OFF";
+        if (pttButton) {
+          pttButton.classList.remove("opacity-50", "pointer-events-none");
+        }
+        stopBrowserAudioStreaming();
+      }
+    });
+  }
+
+  // 7. Live Continuous Streaming Updates from Server
+  function handleLiveStreamUpdate(data) {
+    // 1. Update live meters for all classes continuously
+    if (data.probabilities) {
+      Object.entries(data.probabilities).forEach(([lb, p]) => {
+        const bar = document.getElementById(`prob-bar-${lb}`);
+        const val = document.getElementById(`prob-val-${lb}`);
+        if (bar && val) {
+          const pct = Math.round(p * 100);
+          bar.style.width = `${pct}%`;
+          val.textContent = `${pct}%`;
+
+          // Threshold crossing glow
+          if (p >= currentThreshold && lb !== "_silence_" && lb !== "_unknown_") {
+            bar.classList.add("ring-2", "ring-white", "brightness-125");
+          } else {
+            bar.classList.remove("ring-2", "ring-white", "brightness-125");
+          }
+        }
+      });
+    }
+
+    // 2. Update Live RMS dBFS Meter
+    if (data.rms_dbfs !== undefined) {
+      if (liveDbfsText) liveDbfsText.textContent = `${data.rms_dbfs.toFixed(1)} dBFS`;
+      if (audioDbfsMeter) audioDbfsMeter.textContent = `16.0 kHz • ${data.rms_dbfs.toFixed(1)} dBFS`;
+
+      if (liveVuBar) {
+        // Map dBFS from [-60..0] to [5%..100%]
+        const vuPct = Math.max(5, Math.min(100, Math.round(((data.rms_dbfs + 60) / 60) * 100)));
+        liveVuBar.style.width = `${vuPct}%`;
+        liveVuBar.className =
+          vuPct > 80 ? "h-full rounded-full bg-red-500 transition-all duration-75" :
+          vuPct > 55 ? "h-full rounded-full bg-amber-400 transition-all duration-75" :
+          "h-full rounded-full bg-emerald-500 transition-all duration-75";
+      }
+    }
+
+    // 3. Keyword trigger event
+    if (data.triggered && data.keyword) {
+      handleKeywordDetected(data.keyword, data.confidence, data.timestamp, "live_stream");
+    }
+  }
+
+  // 8. Handle Keyword Detections & Reactive Industrial State Updates
   function handleKeywordDetected(keyword, confidence, timestamp, source = "mic") {
     const timeStr = new Date().toLocaleTimeString();
     lastTriggerTime.textContent = `Last trigger: ${timeStr} (${confidence >= 0 ? (confidence * 100).toFixed(1) + '%' : ''})`;
@@ -258,27 +481,11 @@ document.addEventListener("DOMContentLoaded", () => {
       stateDesc.textContent = "Low-power park mode entered. Sensors idling at 1.0 Hz telemetry heartbeat.";
     }
 
-    // Update Softmax Meters
-    knownLabels.forEach((lb) => {
-      const bar = document.getElementById(`prob-bar-${lb}`);
-      const val = document.getElementById(`prob-val-${lb}`);
-      if (bar && val) {
-        if (lb.toLowerCase() === kw) {
-          const pct = Math.round(confidence * 100);
-          bar.style.width = `${pct}%`;
-          val.textContent = `${pct}%`;
-        } else {
-          bar.style.width = "2%";
-          val.textContent = "< 2%";
-        }
-      }
-    });
-
-    const srcTag = source === "simulated" ? "SIM" : "MIC";
+    const srcTag = source === "simulated" ? "SIM" : source === "live_stream" ? "LIVE" : "MIC";
     addLogEntry(keyword.toUpperCase(), `[${srcTag}] Conf: ${(confidence * 100).toFixed(1)}% | T: ${timestamp}s -> FSM State Triggered`);
   }
 
-  // 6. Append Log Entry to Terminal
+  // 9. Append Log Entry to Terminal
   function addLogEntry(tag, msg) {
     if (eventLog.children.length === 1 && eventLog.children[0].classList.contains("italic")) {
       eventLog.innerHTML = "";
@@ -291,6 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tag === "GREEN" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold" :
       tag === "BLUE" ? "bg-sky-500/20 text-sky-400 border border-sky-500/30 font-bold" :
       tag === "OFF" ? "bg-slate-700/30 text-slate-300 border border-slate-600/30 font-bold" :
+      tag === "STREAM" ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold" :
       tag === "REST" ? "bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold" :
       tag === "THRESH" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold" :
       "bg-slate-800 text-slate-400 border border-slate-700 font-bold";
@@ -313,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
     eventLog.innerHTML = '<div class="text-slate-500 italic p-1">[system] Telemetry log cleared. Stream listening...</div>';
   });
 
-  // 7. Global Interactive Keyword Simulation Dispatcher
+  // 10. Global Interactive Keyword Simulation Dispatcher
   window.triggerKeywordSim = async function(keyword) {
     try {
       const resp = await fetch("/api/v1/simulate", {
@@ -327,12 +535,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (err) {
       console.error("Simulation error:", err);
-      // Fallback local UI trigger
       handleKeywordDetected(keyword, 0.95, 0.0, "simulated");
     }
   };
 
-  // 8. Terminal Panel Tab Switching
+  // 11. Terminal Panel Tab Switching
   if (tabBtnWs && tabBtnRest && tabBtnThresh && tabBtnCurl) {
     function resetTabs() {
       [tabBtnWs, tabBtnRest, tabBtnThresh, tabBtnCurl].forEach((t) => (t.className = "term-tab"));
@@ -368,7 +575,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 9. REST API Shared Audio Dispatcher
+  // 12. REST API Audio Dispatcher
   async function sendAudioBlobForClassification(blob, filename = "audio.wav") {
     const formData = new FormData();
     formData.append("file", blob, filename);
@@ -407,7 +614,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 9.1 Use Built-in Sample Audio Button
+  // 12.1 Built-in Sample Audio Button
   if (useSampleBtn) {
     useSampleBtn.addEventListener("click", async () => {
       restResult.classList.remove("hidden");
@@ -423,7 +630,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 9.2 Browser Microphone Audio Recorder & WAV Encoder (Web Audio API)
+  // 12.2 Single Take Mic Recorder (1s)
   function encodeWav(samples, sampleRate) {
     const buffer = new ArrayBuffer(44 + samples.length * 2);
     const view = new DataView(buffer);
@@ -462,43 +669,41 @@ document.addEventListener("DOMContentLoaded", () => {
         recordMicText.textContent = "Listening... (1s)";
         recordBrowserMicBtn.classList.add("bg-red-950/60", "border-red-500/60");
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(stream);
-        const processor = audioCtx.createScriptProcessor(4096, 1, 1);
-        const recordedSamples = [];
-        const targetDurationSec = 1.0;
-        const totalSamplesNeeded = Math.floor(audioCtx.sampleRate * targetDurationSec);
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = ctx.createMediaStreamSource(stream);
+        const proc = ctx.createScriptProcessor(4096, 1, 1);
+        const recorded = [];
+        const needed = Math.floor(ctx.sampleRate * 1.0);
 
-        processor.onaudioprocess = (e) => {
-          const inputData = e.inputBuffer.getChannelData(0);
-          for (let i = 0; i < inputData.length; i++) {
-            recordedSamples.push(inputData[i]);
-            if (recordedSamples.length >= totalSamplesNeeded) break;
+        proc.onaudioprocess = (e) => {
+          const input = e.inputBuffer.getChannelData(0);
+          for (let i = 0; i < input.length; i++) {
+            recorded.push(input[i]);
+            if (recorded.length >= needed) break;
           }
         };
 
-        source.connect(processor);
-        processor.connect(audioCtx.destination);
+        source.connect(proc);
+        proc.connect(ctx.destination);
 
         setTimeout(async () => {
-          processor.disconnect();
+          proc.disconnect();
           source.disconnect();
-          stream.getTracks().forEach((track) => track.stop());
+          stream.getTracks().forEach((t) => t.stop());
 
           recordMicIcon.textContent = "🎙️";
           recordMicText.textContent = "Record Browser Mic (1s)";
           recordBrowserMicBtn.classList.remove("bg-red-950/60", "border-red-500/60");
 
-          // Downsample to 16 kHz
-          const rawFloat32 = new Float32Array(recordedSamples);
-          const ratio = 16000 / audioCtx.sampleRate;
+          const rawFloat32 = new Float32Array(recorded);
+          const ratio = 16000 / ctx.sampleRate;
           const newLength = Math.round(rawFloat32.length * ratio);
           const resampled = new Float32Array(newLength);
           for (let i = 0; i < newLength; i++) {
-            const origIndex = i / ratio;
-            const i1 = Math.floor(origIndex);
+            const orig = i / ratio;
+            const i1 = Math.floor(orig);
             const i2 = Math.min(i1 + 1, rawFloat32.length - 1);
-            const frac = origIndex - i1;
+            const frac = orig - i1;
             resampled[i] = rawFloat32[i1] * (1 - frac) + rawFloat32[i2] * frac;
           }
 
@@ -506,12 +711,12 @@ document.addEventListener("DOMContentLoaded", () => {
           await sendAudioBlobForClassification(wavBlob, "browser_mic.wav");
         }, 1100);
       } catch (err) {
-        alert("Microphone permission denied or device not found: " + err.message);
+        alert("Microphone permission denied: " + err.message);
       }
     });
   }
 
-  // 9.3 Custom File Upload Form
+  // 12.3 Custom File Upload Form
   if (uploadForm && audioFileInput) {
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -524,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 10. Live Oscilloscope Audio Waveform Animation
+  // 13. Dynamic Oscilloscope Canvas
   if (audioCanvas) {
     const ctx = audioCanvas.getContext("2d");
     let phase = 0;
@@ -535,7 +740,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Draw subtle grid lines
+      // Grid
       ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
       ctx.lineWidth = 1;
       for (let x = 0; x < width; x += 30) {
@@ -551,21 +756,22 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.stroke();
       }
 
-      // Draw active sine-pulse waveform
+      // Sine Waveform
       ctx.lineWidth = 2;
-      ctx.strokeStyle = "#38bdf8";
-      ctx.shadowColor = "#38bdf8";
-      ctx.shadowBlur = 8;
+      ctx.strokeStyle = isAudioStreaming ? "#10b981" : "#38bdf8";
+      ctx.shadowColor = isAudioStreaming ? "#10b981" : "#38bdf8";
+      ctx.shadowBlur = isAudioStreaming ? 12 : 6;
       ctx.beginPath();
 
       const centerY = height / 2;
       const points = 60;
       const step = width / points;
+      const amplitudeFactor = isAudioStreaming ? 1.6 : 0.8;
 
       for (let i = 0; i <= points; i++) {
         const x = i * step;
         const normX = i / points;
-        const amp = Math.sin(normX * Math.PI) * 14;
+        const amp = Math.sin(normX * Math.PI) * (12 * amplitudeFactor);
         const y = centerY + Math.sin(normX * 8 + phase) * amp * 0.7 + Math.sin(normX * 16 - phase * 1.5) * (amp * 0.3);
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
@@ -573,7 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      phase += 0.04;
+      phase += isAudioStreaming ? 0.09 : 0.03;
       requestAnimationFrame(drawVisualizer);
     }
     requestAnimationFrame(drawVisualizer);
