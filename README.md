@@ -9,21 +9,29 @@
 
 ---
 
-> [!NOTE]
+> [!IMPORTANT]
 > ### 📢 ยืนยันเข้าร่วม On-site ครั้งที่ 2 | KMUTT ND69
 > สำหรับผู้ที่ยืนยันจะมา On-site ครั้งที่ 2 กรุณาเลือกเฉพาะ Module ที่ลงทะเบียนไว้และจะเข้าร่วมจริง
-> - 🟢 **ND69-1 (ND01 — Embedded & Hardware):** วันเสาร์ที่ 12 ธ.ค. 2026 | 09:00–12:15 น. · [🔬 คู่มือปฏิบัติการ Lab](nd1/docs/week08/labs/README.md)
-> - 🔵 **ND69-2 (ND02 — Application Developers):** วันเสาร์ที่ 12 ธ.ค. 2026 | 13:00–16:15 น. · [🔬 คู่มือปฏิบัติการ Lab](nd2/docs/week08/labs/README.md)
-> - 🟣 **ND69-3 (ND03 — Automation & Robotics):** วันอาทิตย์ที่ 13 ธ.ค. 2026 | 09:00–12:15 น. · [🔬 คู่มือปฏิบัติการ Lab](nd3/docs/week08/labs/README.md)
+> - 🟢 **ND69-1 (ND01 — Embedded & Hardware):** วันเสาร์ที่ 12 ธ.ค. 2026 | 09:00–12:15 น.
+> - 🔵 **ND69-2 (ND02 — Application Developers):** วันเสาร์ที่ 12 ธ.ค. 2026 | 13:00–16:15 น.
+> - 🟣 **ND69-3 (ND03 — Automation & Robotics):** วันอาทิตย์ที่ 13 ธ.ค. 2026 | 09:00–12:15 น.
 >
 > 📍 **สถานที่:** อาคารเรียนรวม 4 (CB4 / S12) ชั้น 7 มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี (บางมด) — [🗺️ Google Maps](https://www.google.com/maps/dir//10140+126+Phuttha+Bucha+Rd,+Bang+Mot,+Thung+Khru,+Bangkok+10140/data=!4m6!4m5!1m1!4e2!1m2!1m1!1s0x30e2a3d6dafa8c75:0x96e2ce9e0645dae1?entry=s&ved=1t:269504&ictx=111) (มีทีม TA รอต้อนรับและนำไปยังห้องอบรม)  
 > ⏳ **กำหนดการ:** ปิดรับและปิดแก้ไขข้อมูล **วันจันทร์ที่ 7 ธันวาคม 2026 เวลา 23:59 น.** (เวลาไทย)  
-> 📝 **แบบฟอร์มลงทะเบียน:** [ยืนยันเข้าร่วม On-site ครั้งที่ 2 (Google Form)](https://forms.gle/xDbBq7BiJg9rANkJ8)  
-> 🔬 **คู่มือปฏิบัติการ On-site Lab (Week 08 Edge AI):** [ND01 Lab (Embedded)](nd1/docs/week08/labs/README.md) · [ND02 Lab (Web App)](nd2/docs/week08/labs/README.md) · [ND03 Lab (Robotics)](nd3/docs/week08/labs/README.md)
+> 📝 **แบบฟอร์มลงทะเบียน:** [ยืนยันเข้าร่วม On-site ครั้งที่ 2 (Google Form)](https://forms.gle/xDbBq7BiJg9rANkJ8)
 
 ---
 
-> [!IMPORTANT]
+> [!NOTE]
+> ### 🔬 Week 08 Labs (Edge AI)
+> เอกสารและคู่มือปฏิบัติการ Edge AI ประจำสัปดาห์ที่ 8 สำหรับทั้ง 3 สายการเรียนรู้
+> - 🟢 **ND01 (Embedded & Hardware):** [คู่มือปฏิบัติการ Lab ND01 (Firmware & C-Harness)](nd1/docs/week08/labs/README.md)
+> - 🔵 **ND02 (Application Developers):** [คู่มือปฏิบัติการ Lab ND02 (Web Audio & FastAPI)](nd2/docs/week08/labs/README.md)
+> - 🟣 **ND03 (Automation & Robotics):** [คู่มือปฏิบัติการ Lab ND03 (50 Hz IMU & Robot FSM)](nd3/docs/week08/labs/README.md)
+
+---
+
+> [!NOTE]
 > ### 📢 Self-Learning & Mini-Project #1 (Week 06)
 > สัปดาห์แห่งการเรียนรู้ด้วยตนเองและจัดทำมินิโปรเจกต์สรุปเนื้อหาตลอด 5 สัปดาห์ พร้อมฝึกปฏิบัติการใช้งาน Git & GitHub
 > - 🟢 **ND01 (Embedded & Hardware):** [รายละเอียด Week 06](nd1/docs/week06/README.md) · [📝 ส่งงาน ND01 (Google Form)](https://forms.gle/hGqHgoEBDFinh2BfA)
