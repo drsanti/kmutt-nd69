@@ -34,6 +34,12 @@ dataset/
 file name = <session>_<speaker>_<device>_<index>.wav     (16 kHz, mono, 16-bit, exactly 1.0 s)
 ```
 
+> [!NOTE]
+> **Clip Length & Quality Checks:**
+> - Every saved clip is trimmed to exactly **1.0 s** (`CLIP_SAMPLES = 16000` in `kws_common.py`), centered on speech energy from a 1.5 s raw record window (`--seconds 1.5`).
+> - Takes that are too quiet (speech RMS < −40 dBFS) or clip (peak ≥ 32,000) are automatically discarded and retried.
+> - To use **1.5 s clips** instead: set `CLIP_SAMPLES = 24000` in `kws_common.py` and record with `--seconds 2.0`.
+
 The file name carries the metadata that `train.py` and `evaluate.py` need:
 
 - **session** (`s01`, `s02`, …): a new room, day, or setup starts a new session
@@ -102,16 +108,37 @@ The microphone gain and the firmware's filter chain are part of your data. Keep 
 
 ## Path B — the computer microphone
 
+No board is required to start collecting training data! You can record directly using your PC or laptop microphone:
+
 ```bash
+# 1. List input devices to identify your microphone index
 python collect_pc_mic.py --list-devices
+# Windows Git Bash: py -3.11 collect_pc_mic.py --list-devices
+
+# 2. Record 20 takes for all 4 keywords (red, green, blue, off):
 python collect_pc_mic.py --speaker alice --session s01 --takes 20
+
+# 3. Record only a single keyword (e.g. only "blue" or "red"):
+python collect_pc_mic.py --speaker alice --session s01 --labels blue --takes 20
+
+# 4. Use a specific microphone device from --list-devices (e.g. device 1):
+python collect_pc_mic.py --speaker alice --session s01 --device 1 --labels blue --takes 20
+
+# 5. Record background room noise (stay quiet, Enter key prompt disabled):
 python collect_pc_mic.py --speaker alice --session s01 --labels _silence_ --takes 30 --no-prompt
+
+# 6. Record out-of-vocabulary words for unknown negative class:
 python collect_pc_mic.py --speaker alice --session s01 --labels _unknown_ --takes 30
 ```
 
-`collect_pc_mic.py` records 1.5 s at 16 kHz mono with `sounddevice`, keeps the loudest 1.0 s with the **same** function as `collect.py`, and saves `<session>_<speaker>_pc_<index>.wav` in the same folders. It warns when a clip is clipped or very quiet.
+`collect_pc_mic.py` records audio at 16 kHz mono with `sounddevice` (default raw buffer `--seconds 1.5`), centers on the loudest speech energy to extract the exact 1.0 s clip, and saves `<session>_<speaker>_pc_<index>.wav` in the corresponding label folder.
 
-You can also slice a long recording (for example 2 minutes of room noise for `_silence_`) without a live microphone:
+> [!TIP]
+> **Audio Quality Filters:**
+> - If audio is clipped (peak amplitude ≥ 32,000) or too quiet (speech RMS < −40 dBFS), the take is automatically discarded and retried with an on-screen hint so flawed audio never enters your training set.
+> - **Recording Duration:** The raw recording window defaults to `--seconds 1.5` before trimming down to the 1.0 s clip. To capture longer words or if extending clip length to 1.5 s (`CLIP_SAMPLES = 24000`), pass `--seconds 2.0`.
+
+You can also slice an existing long WAV recording (for example 2 minutes of room noise for `_silence_`) without a live microphone:
 
 ```bash
 python collect_pc_mic.py --speaker alice --session s01 --labels _silence_ --takes 60 --from-wav room_noise.wav

@@ -66,11 +66,11 @@ Board scripts need the board running the [hardware-interface-workshop](https://g
 | IMU: train | `python train_imu.py --data imu_dataset --out imu_artifacts` (or `--synthetic`) | `model_float.tflite`, `model_int8.tflite`, `meta.json` |
 | IMU: live | `python live_infer_imu.py --port COM7 --model imu_artifacts/model_int8.tflite` | gestures on screen |
 
-Every script has `--help`. Both `collect.py` and `collect_pc_mic.py` support `--labels <word...>` to record or re-record specific words (e.g. `--labels blue` or `--labels _silence_ --no-prompt --takes 30`). Exit codes of the board scripts: `0` ok, `2` connection/protocol problem, `3` wrong board.
+Every script has `--help`. Both `collect.py` and `collect_pc_mic.py` support `--labels <word...>` to record or re-record specific words (e.g. `--labels blue` or `--labels _silence_ --no-prompt --takes 30`), and `--seconds <sec>` to adjust the raw recording window (default 1.5 s). `collect_pc_mic.py` supports `--device <index>` to select your desired microphone from `--list-devices`. Exit codes of the board scripts: `0` ok, `2` connection/protocol problem, `3` wrong board.
 
 ## Formats
 
-- **Keyword clips:** 16 kHz, mono, 16-bit PCM WAV, exactly 16,000 samples. File name `<session>_<speaker>_<device>_<index>.wav`, with `device` = `board`, `pc`, or `synth`.
+- **Keyword clips:** 16 kHz, mono, 16-bit PCM WAV, exactly 16,000 samples (1.0 s, defined by `CLIP_SAMPLES` in `kws_common.py`; to use 1.5 s, change to 24,000 samples and record with `--seconds 2.0`). File name `<session>_<speaker>_<device>_<index>.wav`, with `device` = `board`, `pc`, or `synth`. Automatic quality filters discard and retry any take that clips (peak ≥ 32,000) or is too quiet (speech RMS < −40 dBFS).
 - **IMU windows:** CSV with `t_s, ax, ay, az, gx, gy, gz` (m/s², rad/s), 100 rows at 50 Hz. File name `<session>_<person>_ws28p_<index>.csv`.
 
 ## Board protocol in one paragraph (`wire.py`)

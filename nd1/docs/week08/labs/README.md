@@ -199,13 +199,17 @@ No hardware board required! You can record real voice keywords directly with you
 ```bash
 # 1. List audio input devices to check your microphone index
 python collect_pc_mic.py --list-devices
+# Windows Git Bash: py -3.11 collect_pc_mic.py --list-devices
 
 # 2. Record 20 takes for each keyword (say each word when prompted):
-# (Optional: pass --device <index> if your desired mic is not default)
+# (Pass --device <index> if your desired mic is not default; e.g. --device 1)
 python collect_pc_mic.py --speaker me --session s01 --labels red green blue off --takes 20
 
 # Tip: To record only a specific keyword (e.g. just "blue" or "red"):
-# python collect_pc_mic.py --speaker me --session s01 --labels blue --takes 20
+python collect_pc_mic.py --speaker me --session s01 --labels blue --takes 20
+
+# Tip: To use a wider 2.0 s recording window before trimming:
+# python collect_pc_mic.py --speaker me --session s01 --labels blue --seconds 2.0 --takes 20
 
 # 3. Record background noise (stay quiet):
 python collect_pc_mic.py --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
@@ -253,8 +257,18 @@ python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmwa
 > - **Sweet Spot (Target):** Peak between **4,000 and 15,000** (−18 to −6 dBFS), speech RMS between **−26 and −18 dBFS**.
 > - **Too Quiet (< −38 dBFS RMS, peak < 2,000):** Microphone is too quiet. Use `--gain 80` or `--gain 85` and speak ~15–30 cm from the board.
 > - **Clipping (Peak 32,767):** Audio is distorted. Lower gain (e.g. `--gain 50` or `40`).
+> - **Automatic Quality Checks:** Takes that clip (peak ≥ 32,000) or are too quiet (speech RMS < −40 dBFS) are automatically discarded and retried so bad clips never enter your dataset.
 > - **Record a specific keyword (`--labels`):** By default, both scripts cycle through all 4 words (`red`, `green`, `blue`, `off`). To record or re-record only one keyword, pass `--labels blue` (or multiple: `--labels red blue`). For silence, pass `--labels _silence_ --no-prompt --takes 30`.
 > - Keep `--gain` consistent across `collect.py` and `live_infer_board.py`!
+
+> [!NOTE]
+> **Clip Length vs. Record Window (`CLIP_SAMPLES` vs `--seconds`):**
+> - **Default Saved Clip:** Exactly **1.0 second** (16,000 samples @ 16 kHz), defined by `CLIP_SAMPLES = 16000` in `kws_common.py`.
+> - **Raw Record Window (`--seconds`):** The script records a 1.5 s raw buffer (default `--seconds 1.5`), then centers on the loudest speech energy to extract the exact 1.0 s clip.
+> - **How to change clip length to 1.5 seconds (24,000 samples):**
+>   1. In `kws_common.py`: set `CLIP_SAMPLES = 24000` (automatically resizes CNN input frames from 49 to 74).
+>   2. In `collect.py` and `collect_pc_mic.py`: add `--seconds 2.0` so there is enough raw audio to center a 1.5 s word.
+>   3. If building ESP32-S3 firmware: in `firmware/kws-inference/main/kws_features.h`, set `#define KWS_CLIP_SAMPLES 24000`.
 
 ---
 
