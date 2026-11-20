@@ -105,6 +105,8 @@ for label, p in probs.items():
 Run the example with the included test audio clip (or any `.wav` file):
 ```bash
 python examples/03_classify_audio_file.py sample_audio.wav
+# Or with py:
+py examples/03_classify_audio_file.py sample_audio.wav
 ```
 
 ---
@@ -116,6 +118,8 @@ In this exercise, you wrap the model inside a high-performance REST API.
 Run the provided FastAPI server:
 ```bash
 python app.py
+# Or with py:
+py app.py
 ```
 
 The server starts at `http://127.0.0.1:8000`.
@@ -201,5 +205,7 @@ app.state.detector = rk.Detector("artifacts/model_int8.tflite")
 Run the retraining script:
 ```bash
 python examples/04_programmatic_train.py
+# Or with py:
+py examples/04_programmatic_train.py
 ```
 Observe how the entire training, quantization, and evaluation report generation runs without shell commands.
