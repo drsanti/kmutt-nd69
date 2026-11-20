@@ -8,11 +8,27 @@
 
 In this lab, you learn how to bridge Edge AI models into modern web and backend applications. You will use the **`robotos_kws` Python SDK** to classify audio streams, build a FastAPI REST microservice, create a real-time WebSocket speech broadcaster, and build a reactive web dashboard.
 
+> [!IMPORTANT]
+> ### ⚠️ Prerequisite: Complete Track 1 (ND1) First
+> This lab (Track 2: Backend & Frontend) builds directly on top of the Edge AI model and audio dataset developed in **Track 1 (ND1: Embedded Systems & IoT)**.
+>
+> **Students in ND2 must complete the ND1 lab first:**
+> 👉 **[Track 1 (ND1: Embedded Systems & IoT Lab Guide)](../../../../nd1/docs/week08/labs/README.md)**
+>
+> In Track 1, you will:
+> 1. Collect your voice recordings with `robotos-kws collect-pc` (or `collect-board`) into `dataset/`.
+> 2. Train the DS-CNN acoustic neural network with `robotos-kws train` to produce `artifacts/model_int8.tflite`.
+> 3. Verify feature extraction and acoustic DSP.
+>
+> Once Track 1 is completed, return here to build the web services and dashboard around your trained model.
+
 ---
 
 ## Table of Contents
 
 - [1. Environment Setup](#1-environment-setup)
+  - [1.1 Virtual Environment](#11-virtual-environment)
+  - [1.2 Import Dataset and Model from ND1](#12-import-dataset-and-model-from-nd1)
 - [2. Lab 2.1: Python SDK Fundamentals & Audio Classification](#2-lab-21-python-sdk-fundamentals--audio-classification)
 - [3. Lab 2.2: Building an Audio Inference Microservice (FastAPI)](#3-lab-22-building-an-audio-inference-microservice-fastapi)
 - [4. Lab 2.3: Real-Time Event Streaming over WebSockets](#4-lab-23-real-time-event-streaming-over-websockets)
@@ -87,6 +103,33 @@ python -c "import robotos_kws as rk; print('robotos_kws version:', rk.__version_
 > [!NOTE]
 > **Windows Note (`python` vs `py`):**  
 > On Windows, `py` is the global system launcher and will run the global Python rather than your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always run **`python`**, which points directly to `.venv/Scripts/python.exe`. (Alternatively, run `./.venv/Scripts/python -c ...`).
+
+### 1.2 Import Dataset and Model from ND1
+
+Once you have completed Track 1 (ND1), copy your collected audio `dataset/` and trained `artifacts/` from ND1 into your `web-app/` workspace:
+
+- **Windows (Git Bash):**
+  ```bash
+  cp -r ../../../../../nd1/docs/week08/labs/python/dataset ./
+  cp -r ../../../../../nd1/docs/week08/labs/python/artifacts ./
+  ```
+- **Windows (PowerShell):**
+  ```powershell
+  Copy-Item -Recurse -Force ..\..\..\..\..\nd1\docs\week08\labs\python\dataset .\
+  Copy-Item -Recurse -Force ..\..\..\..\..\nd1\docs\week08\labs\python\artifacts .\
+  ```
+- **Windows (Command Prompt cmd.exe):**
+  ```cmd
+  xcopy /E /I ..\..\..\..\..\nd1\docs\week08\labs\python\dataset dataset
+  xcopy /E /I ..\..\..\..\..\nd1\docs\week08\labs\python\artifacts artifacts
+  ```
+- **Linux / macOS:**
+  ```bash
+  cp -r ../../../../../nd1/docs/week08/labs/python/dataset ./
+  cp -r ../../../../../nd1/docs/week08/labs/python/artifacts ./
+  ```
+
+*(Note: Even if you do not copy the files manually, `robotos_kws` will automatically discover the ND1 dataset in your repository tree if ND1 was completed).*
 
 ---
 
