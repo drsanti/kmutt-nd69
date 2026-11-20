@@ -175,3 +175,67 @@ code, pre, .font-mono {
 .vu-active {
   animation: vuPulse 1.2s infinite ease-in-out;
 }
+
+/* Industrial Custom Range Slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #182232;
+  border-radius: 3px;
+  outline: none;
+  border: 1px solid #28374d;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #38bdf8;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  border: 2px solid #0f172a;
+  transition: all 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #7dd3fc;
+  transform: scale(1.15);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.9);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #38bdf8;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  border: 2px solid #0f172a;
+}
+
+/* Threshold Marker on Probability Meters */
+.threshold-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #f59e0b;
+  box-shadow: 0 0 6px #f59e0b;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Audio Visualizer Canvas */
+#audioVisualizer {
+  background: radial-gradient(circle at center, #101622 0%, #090c13 100%);
+  border: 1px solid #1e293b;
+}
+
+/* Tactile Click Effect */
+button:active {
+  transform: translateY(1px);
+}

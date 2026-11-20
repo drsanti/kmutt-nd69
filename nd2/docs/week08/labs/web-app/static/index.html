@@ -29,12 +29,19 @@
       <span class="text-sky-400 font-bold">robot_voice_controller.scada</span>
     </div>
 
-    <!-- Right Controls -->
+    <!-- Right Controls: Threshold Pill + WS Status + API Docs -->
     <div class="flex items-center gap-2.5">
+      <!-- Interactive Threshold Indicator -->
+      <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-[#141b27] border border-[#26354d] text-slate-300" title="Active Confidence Threshold">
+        <span class="text-amber-400 font-bold">⚡ Thresh:</span>
+        <span id="headerThresholdBadge" class="text-amber-300 font-bold">80%</span>
+      </div>
+
       <span id="wsStatusBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/25">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         Connecting...
       </span>
+
       <a href="/docs" target="_blank" class="px-3 py-1 rounded bg-[#182232] hover:bg-[#233148] text-slate-200 text-xs font-mono font-medium border border-slate-700/70 transition shadow-sm">
         API Docs &rarr;
       </a>
@@ -47,7 +54,7 @@
     <!-- Activity Bar (Far Left Dock) -->
     <aside class="w-14 bg-[#090c12] border-r border-[#1a2230] flex flex-col items-center justify-between py-3 flex-shrink-0 z-40">
       <div class="flex flex-col items-center w-full space-y-1.5">
-        <button id="actNavExplorer" class="activity-icon active" title="Explorer / Model Artifacts">
+        <button id="actNavExplorer" class="activity-icon active" title="Explorer / Model Controls">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
         </button>
         <button id="actNavScada" class="activity-icon" title="Industrial Telemetry">
@@ -72,12 +79,12 @@
         <span class="text-xs text-sky-400">ACTIVE</span>
       </div>
 
-      <!-- Tree Section 1: Model Specifications -->
-      <div class="p-4 border-b border-[#1e2738]/90 space-y-3">
+      <!-- Tree Section 1: Model Specifications & Dynamic Sensitivity Slider -->
+      <div class="p-4 border-b border-[#1e2738]/90 space-y-3.5">
         <div class="flex items-center justify-between">
           <span class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-2">
             <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            Model Profile
+            Model &amp; Sensitivity
           </span>
           <span id="modelStatusPill" class="text-xs px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-bold">READY</span>
         </div>
@@ -85,19 +92,42 @@
         <div class="bg-[#141b28] rounded-lg p-3 border border-[#222c3f] space-y-2 font-mono text-xs">
           <div class="flex justify-between text-slate-400">
             <span>Architecture:</span>
-            <span class="text-slate-100 font-bold">DS-CNN int8</span>
+            <span class="text-slate-100 font-bold">DS-CNN int8 (18.8 KiB)</span>
           </div>
           <div class="flex justify-between text-slate-400">
-            <span>Sampling Rate:</span>
-            <span class="text-slate-100 font-bold">16,000 Hz</span>
+            <span>Sampling:</span>
+            <span class="text-slate-100 font-bold">16,000 Hz Mono</span>
           </div>
           <div class="flex justify-between text-slate-400">
             <span>Input Matrix:</span>
-            <span class="text-slate-100 font-bold">49 &times; 40 Mel</span>
+            <span class="text-slate-100 font-bold">49 &times; 40 Log-Mel</span>
           </div>
-          <div class="flex justify-between text-slate-400">
-            <span>Confidence Threshold:</span>
-            <span class="text-amber-400 font-bold">0.80 (80%)</span>
+        </div>
+
+        <!-- Dynamic Sensitivity Threshold Control -->
+        <div class="p-3 bg-[#131b29] rounded-xl border border-[#233149] space-y-2.5">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-300 font-bold flex items-center gap-1.5">
+              <span>🎯</span>
+              <span>Confidence Threshold</span>
+            </span>
+            <span id="threshDisplay" class="text-amber-400 font-bold text-sm">0.80 (80%)</span>
+          </div>
+
+          <!-- Slider Range Input -->
+          <input type="range" id="thresholdSlider" min="0.50" max="0.98" step="0.01" value="0.80" class="w-full">
+
+          <!-- Preset Sensitivity Buttons -->
+          <div class="flex items-center gap-1.5 pt-1">
+            <button id="presetRelaxed" class="flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
+              Relaxed 60%
+            </button>
+            <button id="presetBalanced" class="flex-1 py-1 px-1.5 rounded bg-sky-950/50 hover:bg-sky-900/60 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center transition">
+              Balanced 80%
+            </button>
+            <button id="presetStrict" class="flex-1 py-1 px-1.5 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center transition">
+              Strict 95%
+            </button>
           </div>
         </div>
 
@@ -115,14 +145,14 @@
         </div>
       </div>
 
-      <!-- Tree Section 2: REST Inference Dispatcher -->
+      <!-- Tree Section 2: REST Inference & Audio Tester -->
       <div class="p-4 border-b border-[#1e2738]/90 space-y-3.5">
         <span class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-2">
           <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          REST API Test Actions
+          Audio Input &amp; REST Tester
         </span>
 
-        <!-- One-Click Buttons -->
+        <!-- One-Click Audio Actions -->
         <div class="space-y-2">
           <button id="useSampleBtn" class="w-full py-2.5 px-3.5 rounded-lg bg-[#182335] hover:bg-[#22314a] border border-[#273752] text-sky-200 text-left flex items-center justify-between text-xs font-mono font-semibold transition shadow">
             <span class="flex items-center gap-2">
@@ -135,7 +165,7 @@
           <button id="recordBrowserMicBtn" class="w-full py-2.5 px-3.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/40 text-emerald-200 text-left flex items-center justify-between text-xs font-mono font-semibold transition shadow">
             <span class="flex items-center gap-2">
               <span id="recordMicIcon" class="text-base">🎙️</span>
-              <span id="recordMicText">Record Mic (1s)</span>
+              <span id="recordMicText">Record Browser Mic (1s)</span>
             </span>
             <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">LIVE MIC</span>
           </button>
@@ -163,7 +193,7 @@
     <div class="flex-1 flex flex-col overflow-hidden bg-[#141a27]">
 
       <!-- Top Editor Tabs -->
-      <div class="h-9 bg-[#0d121c] border-b border-[#1e2738] flex items-center justify-between flex-shrink-0">
+      <div class="h-9 bg-[#0d121c] border-b border-[#1e2636] flex items-center justify-between flex-shrink-0">
         <div class="flex items-center h-full">
           <div class="tab-item active flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
@@ -183,6 +213,18 @@
 
         <!-- Center 2 Columns: SCADA State Machine Display -->
         <div class="lg:col-span-2 p-6 flex flex-col justify-between space-y-6 border-r border-[#1e2738]/80">
+
+          <!-- Audio Waveform Visualizer & Level Canvas -->
+          <div class="p-3.5 rounded-xl bg-[#0d131f] border border-[#212c40] space-y-2 shadow-md">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-300 font-bold flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 vu-active"></span>
+                <span>AUDIO SPECTRUM &amp; ENERGY MONITOR</span>
+              </span>
+              <span id="audioDbfsMeter" class="text-emerald-400 font-bold">16.0 kHz &bull; -42 dBFS</span>
+            </div>
+            <canvas id="audioVisualizer" height="52" class="w-full rounded-lg"></canvas>
+          </div>
 
           <!-- Primary Industrial State Monitor Display -->
           <div id="stateBanner" class="p-8 sm:p-10 rounded-2xl border-2 border-[#26334a] bg-[#0e1422]/95 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden shadow-2xl">
@@ -206,61 +248,72 @@
             </p>
           </div>
 
-          <!-- Command Safety Matrix (Interactive Cards) -->
+          <!-- Command Safety Matrix (Interactive Cards with 1-Click Simulation Triggers) -->
           <div>
             <div class="text-xs font-mono uppercase text-slate-300 font-bold tracking-wider mb-2.5 flex items-center justify-between">
               <span>Safety Interlock Matrix</span>
-              <span class="text-xs text-slate-400 font-mono">4-State Deterministic FSM</span>
+              <span class="text-xs text-slate-400 font-mono">Interactive FSM Simulator</span>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div class="p-3.5 rounded-xl bg-red-950/25 border border-red-500/25 hover:border-red-500/50 transition">
-                <div class="flex items-center justify-between text-sm text-red-400 font-mono font-bold mb-1">
-                  <span>"red"</span>
-                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 font-bold">ESTOP</span>
+              <!-- RED CARD -->
+              <div class="p-3.5 rounded-xl bg-red-950/25 border border-red-500/25 hover:border-red-500/50 transition flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-sm text-red-400 font-mono font-bold mb-1">
+                    <span>"red"</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 font-bold">ESTOP</span>
+                  </div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-100">Emergency Stop</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Motor kill switch</div>
                 </div>
-                <div class="text-xs sm:text-sm font-bold text-slate-100">Emergency Stop</div>
-                <div class="text-xs text-slate-400 mt-0.5">Motor kill switch</div>
+                <button onclick="triggerKeywordSim('red')" class="mt-3 w-full py-1.5 px-2 rounded-lg bg-red-600/30 hover:bg-red-600/60 text-red-200 font-mono text-xs font-bold border border-red-500/40 transition">
+                  ⚡ Test "red"
+                </button>
               </div>
 
-              <div class="p-3.5 rounded-xl bg-emerald-950/25 border border-emerald-500/25 hover:border-emerald-500/50 transition">
-                <div class="flex items-center justify-between text-sm text-emerald-400 font-mono font-bold mb-1">
-                  <span>"green"</span>
-                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 font-bold">RUN</span>
+              <!-- GREEN CARD -->
+              <div class="p-3.5 rounded-xl bg-emerald-950/25 border border-emerald-500/25 hover:border-emerald-500/50 transition flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-sm text-emerald-400 font-mono font-bold mb-1">
+                    <span>"green"</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 font-bold">RUN</span>
+                  </div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-100">Drive Forward</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Autonomous patrol</div>
                 </div>
-                <div class="text-xs sm:text-sm font-bold text-slate-100">Drive Forward</div>
-                <div class="text-xs text-slate-400 mt-0.5">Autonomous patrol</div>
+                <button onclick="triggerKeywordSim('green')" class="mt-3 w-full py-1.5 px-2 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/60 text-emerald-200 font-mono text-xs font-bold border border-emerald-500/40 transition">
+                  ⚡ Test "green"
+                </button>
               </div>
 
-              <div class="p-3.5 rounded-xl bg-sky-950/25 border border-sky-500/25 hover:border-sky-500/50 transition">
-                <div class="flex items-center justify-between text-sm text-sky-400 font-mono font-bold mb-1">
-                  <span>"blue"</span>
-                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 font-bold">NAV</span>
+              <!-- BLUE CARD -->
+              <div class="p-3.5 rounded-xl bg-sky-950/25 border border-sky-500/25 hover:border-sky-500/50 transition flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-sm text-sky-400 font-mono font-bold mb-1">
+                    <span>"blue"</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 font-bold">NAV</span>
+                  </div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-100">Turn / Nav</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Manual steering</div>
                 </div>
-                <div class="text-xs sm:text-sm font-bold text-slate-100">Turn / Nav</div>
-                <div class="text-xs text-slate-400 mt-0.5">Manual steering</div>
+                <button onclick="triggerKeywordSim('blue')" class="mt-3 w-full py-1.5 px-2 rounded-lg bg-sky-600/30 hover:bg-sky-600/60 text-sky-200 font-mono text-xs font-bold border border-sky-500/40 transition">
+                  ⚡ Test "blue"
+                </button>
               </div>
 
-              <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 transition">
-                <div class="flex items-center justify-between text-sm text-slate-300 font-mono font-bold mb-1">
-                  <span>"off"</span>
-                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 font-bold">SLEEP</span>
+              <!-- OFF CARD -->
+              <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 transition flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-sm text-slate-300 font-mono font-bold mb-1">
+                    <span>"off"</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 font-bold">SLEEP</span>
+                  </div>
+                  <div class="text-xs sm:text-sm font-bold text-slate-100">Power Standby</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Low-power park</div>
                 </div>
-                <div class="text-xs sm:text-sm font-bold text-slate-100">Power Standby</div>
-                <div class="text-xs text-slate-400 mt-0.5">Low-power park</div>
+                <button onclick="triggerKeywordSim('off')" class="mt-3 w-full py-1.5 px-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-200 font-mono text-xs font-bold border border-slate-600 transition">
+                  ⚡ Test "off"
+                </button>
               </div>
-            </div>
-          </div>
-
-          <!-- Live Audio Activity Status Banner -->
-          <div class="p-4 rounded-xl bg-[#0f1522] border border-[#212b3d] flex flex-wrap items-center justify-between gap-3 shadow">
-            <div class="flex items-center gap-3">
-              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 vu-active shadow-sm shadow-emerald-400/50"></span>
-              <span class="text-sm font-mono text-slate-200 font-medium">Continuous Audio Stream:</span>
-              <span class="text-sm font-mono text-emerald-400 font-bold">16 kHz 16-bit PCM Active</span>
-            </div>
-            <div class="flex items-center gap-2 font-mono text-xs text-slate-400">
-              <span class="bg-[#172030] px-2 py-0.5 rounded border border-slate-700">Hop: 200 ms</span>
-              <span class="bg-[#172030] px-2 py-0.5 rounded border border-slate-700">Window: 1.0 s</span>
             </div>
           </div>
 
@@ -274,12 +327,12 @@
                 <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 Probability Distribution
               </span>
-              <span class="text-xs font-mono font-bold text-sky-400">SOFTMAX</span>
+              <span class="text-xs font-mono font-bold text-sky-400">SOFTMAX &bull; THRESHOLD LINE</span>
             </div>
 
             <!-- Dynamic Bars Container -->
             <div id="probBarsContainer" class="space-y-4 bg-[#121926] p-4 rounded-xl border border-[#212c3f] shadow-inner">
-              <!-- Populated dynamically via JS -->
+              <!-- Populated dynamically via JS with threshold indicator line -->
               <div class="text-xs text-slate-400 font-mono">Loading model meters...</div>
             </div>
           </div>
@@ -308,7 +361,8 @@
               <span>WEBSOCKET TELEMETRY</span>
             </button>
             <button id="tabBtnRest" class="term-tab">REST INSPECTOR</button>
-            <button id="tabBtnModel" class="term-tab">MODEL META</button>
+            <button id="tabBtnThresh" class="term-tab">THRESHOLD AUDIT</button>
+            <button id="tabBtnCurl" class="term-tab">CURL API GUIDE</button>
           </div>
           <div class="flex items-center gap-3">
             <button id="clearLogBtn" class="text-xs font-mono font-bold text-slate-400 hover:text-slate-200 transition">CLEAR LOG</button>

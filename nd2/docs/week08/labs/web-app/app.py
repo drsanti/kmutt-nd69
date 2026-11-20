@@ -72,6 +72,15 @@ class ClassificationResponse(BaseModel):
     probabilities: Dict[str, float]
 
 
+class ThresholdUpdateRequest(BaseModel):
+    threshold: float
+
+
+class SimulateRequest(BaseModel):
+    keyword: str
+    confidence: float = 0.95
+
+
 # Connected WebSocket clients
 connected_clients: List[WebSocket] = []
 loop: Optional[asyncio.AbstractEventLoop] = None
@@ -127,6 +136,42 @@ def get_model_info():
         threshold=detector.threshold,
         status="ready",
     )
+
+
+@app.post("/api/v1/model/threshold")
+async def update_threshold(req: ThresholdUpdateRequest):
+    """Dynamically set the detection confidence threshold."""
+    if not detector:
+        raise HTTPException(status_code=503, detail="Detector model not loaded.")
+    if not (0.1 <= req.threshold <= 1.0):
+        raise HTTPException(status_code=400, detail="Threshold must be between 0.1 and 1.0")
+    detector.threshold = round(float(req.threshold), 3)
+    payload = {
+        "event": "threshold_updated",
+        "threshold": detector.threshold,
+    }
+    if loop and connected_clients:
+        await broadcast_event(payload)
+    return {"status": "ok", "threshold": detector.threshold}
+
+
+@app.post("/api/v1/simulate")
+async def simulate_keyword(req: SimulateRequest):
+    """Simulate a keyword trigger to test SCADA interlocks without mic hardware."""
+    kw = req.keyword.lower().strip()
+    valid_kws = ["red", "green", "blue", "off", "_silence_", "_unknown_"]
+    if kw not in valid_kws:
+        raise HTTPException(status_code=400, detail=f"Invalid keyword. Must be one of: {valid_kws}")
+    payload = {
+        "event": "keyword_detected",
+        "keyword": kw,
+        "confidence": round(float(req.confidence), 3),
+        "timestamp": 0.0,
+        "source": "simulated",
+    }
+    if loop and connected_clients:
+        await broadcast_event(payload)
+    return {"status": "ok", "payload": payload}
 
 
 @app.get("/api/v1/sample-audio")
