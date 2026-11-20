@@ -74,6 +74,10 @@ Verify that the SDK imports cleanly:
 python -c "import robotos_kws as rk; print('robotos_kws version:', rk.__version__)"
 ```
 
+> [!NOTE]
+> **Windows Note (`python` vs `py`):**  
+> On Windows, `py` is the global system launcher and will run the global Python rather than your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always run **`python`**, which points directly to `.venv/Scripts/python.exe`. (Alternatively, run `./.venv/Scripts/python -c ...`).
+
 ---
 
 ## 2. Lab 2.1: Python SDK Fundamentals & Audio Classification

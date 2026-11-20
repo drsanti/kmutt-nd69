@@ -76,6 +76,12 @@ Verify that the CLI is ready:
 ```bash
 robotos-kws --help
 ```
+*(Or use `python -m robotos_kws --help`)*
+
+> [!NOTE]
+> **Windows Note (`python` vs `py`):**  
+> On Windows, `py` launches the global system Python and ignores your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always use **`python`**, which points to `.venv/Scripts/python.exe`.
+
 You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed under Available Subcommands.
 
 ---

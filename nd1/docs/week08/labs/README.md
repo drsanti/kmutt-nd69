@@ -82,11 +82,15 @@ pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
 robotos-kws --help
 ```
 
-Or use
+Or use:
 
 ```bash
 python -m robotos_kws --help
 ```
+
+> [!NOTE]
+> **Windows Note (`python` vs `py`):**  
+> On Windows, `py` launches the global system Python and ignores your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always use **`python`**, which points to `.venv/Scripts/python.exe`.
 
 ---
 
