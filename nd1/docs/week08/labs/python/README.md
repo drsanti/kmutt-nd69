@@ -31,11 +31,63 @@ py -3.11 -m venv .venv && .venv\Scripts\activate.bat
 
 # Install lab packages:
 pip install -r requirements.txt
+
+# Install prebuilt robotos_kws CLI & SDK wheel:
+pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
 ```
 
-`sounddevice` needs PortAudio: it is bundled in the wheel on Windows and macOS; on Debian/Ubuntu run `sudo apt install libportaudio2`.
+Once installed, you can use the unified **`robotos-kws` CLI** or write code with **`import robotos_kws`**!
 
-## Commands
+---
+
+## Unified CLI (`robotos-kws`)
+
+The `robotos-kws` CLI consolidates all lab operations into simple subcommands:
+
+```bash
+# 1. Inspect PC audio devices & test board connection
+robotos-kws devices
+robotos-kws check-board --port COM5 --gain 80
+
+# 2. Collect keyword dataset
+robotos-kws collect-pc --speaker me --session s01 --labels red green blue off --takes 20
+robotos-kws collect-pc --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
+robotos-kws collect-pc --speaker me --session s01 --labels _unknown_ --takes 20
+
+# 3. Train DS-CNN neural network & quantize to int8
+robotos-kws train --data dataset --out artifacts --epochs 40 --augment 4
+
+# 4. Evaluate on test split & generate confusion matrix
+robotos-kws evaluate --artifacts artifacts --data dataset
+
+# 5. Live real-time keyword spotting
+robotos-kws live-pc --model artifacts/model_int8.tflite --threshold 0.85
+robotos-kws live-board --port COM5 --gain 80 --model artifacts/model_int8.tflite
+
+# 6. Export C array header for ESP-IDF microcontroller firmware
+robotos-kws export --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
+```
+
+---
+
+## Python SDK Examples (`examples/`)
+
+Students can use the `robotos_kws` SDK to integrate keyword spotting directly into robot controllers and automation scripts:
+
+- **`examples/01_live_voice_control.py`**: Real-time microphone event loop (`detector.stream_pc()`) triggering robot motor behaviors.
+- **`examples/02_board_voice_control.py`**: Live voice recognition streamed directly over USB from the ES3C28P microcontroller (`detector.stream_board()`).
+- **`examples/03_classify_audio_file.py`**: Single-clip classification and softmax probability breakdown (`detector.predict()` and `detector.predict_proba()`).
+- **`examples/04_programmatic_train.py`**: Programmatic model training and evaluation (`trainer.train()`, `trainer.evaluate()`).
+
+Run any example with:
+```bash
+python examples/01_live_voice_control.py
+python examples/03_classify_audio_file.py dataset/blue/s01_me_pc_0000.wav
+```
+
+---
+
+## Script Reference (Under the Hood)
 
 > [!NOTE]
 > **Which command to use? (`python`, `python3`, `py`, or `py3`)**
