@@ -51,17 +51,22 @@ labs/
 | On-device keyword spotting (Lesson 05) | `kws-inference` | `idf.py flash` (in `firmware/kws-inference`); afterwards reflash prebuilt |
 
 > [!TIP]
-> **How to flash prebuilt firmware using `esptool` (no ESP-IDF required):**
+> **How to download and flash prebuilt firmware using `esptool` (no ESP-IDF required):**
+>
+> Download or clone the prebuilt firmware from [`https://github.com/drsanti/hardware-interface-workshop`](https://github.com/drsanti/hardware-interface-workshop):
 > ```bash
-> # 1. Install esptool:
+> # 1. Clone repository (or download ZIP from GitHub):
+> git clone https://github.com/drsanti/hardware-interface-workshop.git
+> 
+> # 2. Install esptool:
 > pip install esptool
 > 
-> # 2. Change to the prebuilt board folder:
+> # 3. Change to the prebuilt board folder:
 > cd hardware-interface-workshop/firmware-prebuilt/es3c28p   # (or ws28p for IMU)
 > 
-> # 3. Flash the board (replace <PORT> with COMx on Windows or /dev/ttyACM0 on Linux):
+> # 4. Flash the board (replace <PORT> with COMx on Windows or /dev/ttyACM0 on Linux):
 > python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
-> # On Windows with py: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
+> # Windows Git Bash / CMD: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
 > ```
 
 Only one program can own the serial port: disconnect the workshop browser tab before running a board script.
