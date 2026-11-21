@@ -134,6 +134,9 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
    ```
    *(Download `flash_args` and binaries from [`hardware-interface-workshop/firmware-prebuilt/ws28p`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p))*.
 
+   > [!TIP]
+   > For detailed instructions on how to install and use `esptool` (including port selection and flashing commands), see the [Firmware Prebuilt Guide](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md).
+
 > [!WARNING]
 > **Serial Port Exclusivity**: Close any open serial monitors (Arduino IDE, VSCode Serial Monitor, WebSerial tabs) before running board commands. Only one application can access the COM port at a time.
 
