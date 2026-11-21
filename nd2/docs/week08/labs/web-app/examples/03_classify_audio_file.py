@@ -28,9 +28,21 @@ def main():
         print("        Provide a wav file: python examples/03_classify_audio_file.py <path_to.wav>")
         return 1
 
+    web_app_dir = Path(__file__).resolve().parents[1]
+    repo_root = web_app_dir.parents[4]
+    model_candidates = [
+        web_app_dir / "artifacts" / "model_int8.tflite",
+        repo_root / "nd1" / "docs" / "week08" / "labs" / "python" / "artifacts" / "model_int8.tflite",
+    ]
+    model_path = next((path for path in model_candidates if path.is_file()), None)
+    if model_path is None:
+        print("[error] Model file not found: artifacts/model_int8.tflite")
+        print("        Copy the trained model from ND1 or run examples/04_programmatic_train.py")
+        return 1
+
     print(f"Analyzing: {wav_path}")
 
-    detector = rk.Detector("artifacts/model_int8.tflite")
+    detector = rk.Detector(str(model_path))
 
     # 1. Top predicted class
     top_label, confidence = detector.predict(wav_path)

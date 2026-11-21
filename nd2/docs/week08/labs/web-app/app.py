@@ -42,12 +42,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app_dir = Path(__file__).resolve().parent
+repo_root = app_dir.parents[4]
+
 # Active model path (looks for artifacts locally or in nd1 labs)
 MODEL_PATHS = [
-    Path("artifacts/model_int8.tflite"),
-    Path(__file__).resolve().parent / "artifacts" / "model_int8.tflite",
-    Path(__file__).resolve().parent.parent.parent.parent / "nd1" / "docs" / "week08" / "labs" / "python" / "artifacts" / "model_int8.tflite",
-    Path("../../../../nd1/docs/week08/labs/python/artifacts/model_int8.tflite"),
+    app_dir / "artifacts" / "model_int8.tflite",
+    repo_root / "nd1" / "docs" / "week08" / "labs" / "python" / "artifacts" / "model_int8.tflite",
 ]
 active_model_path = next((p for p in MODEL_PATHS if p.exists()), None)
 
@@ -236,6 +237,9 @@ async def websocket_endpoint(websocket: WebSocket):
         })
         while True:
             msg = await websocket.receive()
+            if msg["type"] == "websocket.disconnect":
+                break
+
             if "bytes" in msg and msg["bytes"]:
                 raw_bytes = msg["bytes"]
                 chunk = np.frombuffer(raw_bytes, dtype="<i2")
@@ -297,6 +301,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 # Keep alive or text command
                 pass
     except WebSocketDisconnect:
+        pass
+    finally:
         if websocket in connected_clients:
             connected_clients.remove(websocket)
 

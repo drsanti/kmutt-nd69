@@ -177,6 +177,8 @@ python examples/03_classify_audio_file.py sample_audio.wav
 py examples/03_classify_audio_file.py sample_audio.wav
 ```
 
+The example checks `web-app/artifacts/` first, then uses the trained ND1 model directly if it is available in the repository.
+
 ---
 
 ## 3. Lab 2.2: Building an Audio Inference Microservice (FastAPI)
