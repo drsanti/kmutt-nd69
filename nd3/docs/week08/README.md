@@ -52,7 +52,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
   # Flash prebuilt firmware with esptool (no compilation required):
   python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
   ```
-  *(Prebuilt binaries located in `hardware-interface-workshop/firmware-prebuilt/ws28p`)*.
+  *(Prebuilt binaries available at [`drsanti/hardware-interface-workshop/firmware-prebuilt/ws28p`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p))*.
 
 ---
 

@@ -129,9 +129,10 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
    - macOS: `/dev/cu.usbmodem*`
 3. If not already flashed with the workshop firmware:
    ```bash
-   # Flash prebuilt ws28p firmware (from hardware-interface-workshop):
+   # Flash prebuilt ws28p firmware (download from https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p):
    python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
    ```
+   *(Download `flash_args` and binaries from [`hardware-interface-workshop/firmware-prebuilt/ws28p`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p))*.
 
 > [!WARNING]
 > **Serial Port Exclusivity**: Close any open serial monitors (Arduino IDE, VSCode Serial Monitor, WebSerial tabs) before running board commands. Only one application can access the COM port at a time.
