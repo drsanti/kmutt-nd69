@@ -100,11 +100,11 @@ cd nd3/docs/week08/labs/robotics
 
 ```bash
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl
+pip install ../dist/robotos_kws-0.1.1-py3-none-any.whl
 ```
 
 > [!TIP]
-> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.0-py3-none-any.whl`.
+> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.1-py3-none-any.whl`.
 
 Verify that the CLI is ready:
 ```bash
