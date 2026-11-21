@@ -1,5 +1,6 @@
 # Working files — not for publishing
 **/AGENTS.md
+!/AGENTS.md
 **/slide-prompt-style.md
 **/*outline*.md
 **/.prompts/
