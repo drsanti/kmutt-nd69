@@ -9,6 +9,15 @@
 **Focus for Group 3 (ND3 — Automation & Robotics):**
 In this lab, you work with physical hardware: the **ws28p ESP32-S3 board** streaming 50 Hz 6-axis IMU sensor data. You will use the unified **`robotos-kws` CLI** to inspect hardware telemetry, record labelled robotic motion/gesture windows, train a temporal 1D-CNN, quantize to int8, and integrate real-time sliding-window predictions into a robotic Finite State Machine (FSM).
 
+> [!NOTE]
+> ### 💡 Why is the CLI named `robotos-kws`?
+> **KWS** stands for **Keyword Spotting** (traditionally used for audio wake-words like *"Hey Siri"* or command words in ND1/ND2).  
+> In this curriculum, `robotos-kws` is the **unified Edge AI toolkit** across all three tracks:
+> - **ND1 & ND2 (Audio Tracks):** Acoustic Keyword Spotting on 16 kHz microphone streams (`red`, `blue`, etc.)
+> - **ND3 (Robotics Track):** **Motion Gesture Spotting** on 50 Hz 6-DOF IMU streams (`shake`, `circle`, `lift`, `idle`)
+>
+> Both domains share the exact same Edge AI architecture: continuous high-frequency sensor streams, sliding-window buffers, temporal neural networks (CNNs), int8 post-training quantization, and low-latency inference on the ESP32-S3.
+
 ---
 
 ## Table of Contents

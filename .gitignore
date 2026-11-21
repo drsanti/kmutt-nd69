@@ -6,6 +6,7 @@
 
 # Student local envs / bags (workshop 02+)
 **/.venv/
+**/.vscode/
 **/__pycache__/
 **/*.egg-info/
 **/*.rbag

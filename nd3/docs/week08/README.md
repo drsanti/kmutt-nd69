@@ -18,6 +18,8 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 > - **ND01 (Embedded Track):** Embedded Systems & IoT — Focus on CLI-only pipeline using PC microphone, model quantization, and C firmware generation.
 > - **ND02 (App Track):** Backend & Frontend — Focus on Python SDK (`import robotos_kws`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
 > - **ND03 (This Track):** Automation & Robotics — Focus on real board hardware and 50 Hz IMU motion gestures.
+>
+> 💡 *Note: While **KWS** originally stands for **Keyword Spotting** (acoustic wake-words), `robotos-kws` is designed as a unified Edge AI toolkit: ND1/ND2 perform audio keyword spotting, while ND3 applies the exact same TinyML sliding-window pipeline to **Motion Gesture Spotting** using 6-DOF IMU sensors.*
 
 ---
 
