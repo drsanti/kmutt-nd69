@@ -56,15 +56,15 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 
 ---
 
-## Schedule (09:00–12:00)
+## Schedule
 
-| Time | Block | Topic | Hands-On CLI Command |
-| :--- | :--- | :--- | :--- |
-| **09:00–09:30** | Block 1 | Physical Telemetry & Wire Protocol Inspection | `robotos-kws check-imu --port COM7` |
-| **09:30–10:15** | Block 2 | Motion Gesture Dataset Collection (Physical Board) | `robotos-kws collect-imu --port COM7` |
-| **10:15–10:55** | Block 3 | 6-DOF Signal Conditioning & 1D-CNN Training | `robotos-kws train-imu --data imu_dataset` |
-| **10:55–11:30** | Block 4 | Person-Disjoint Benchmarking & Int8 Quantization | Review `imu_artifacts/meta.json` |
-| **11:30–12:00** | Block 5 | Real-Time Hardware Recognition & Robot FSM | `python robot_fsm.py --port COM7` |
+| Block | Topic | Hands-On CLI Command |
+| :--- | :--- | :--- |
+| **Block 1** | Physical Telemetry & Wire Protocol Inspection | `robotos-kws check-imu --port COM7` |
+| **Block 2** | Motion Gesture Dataset Collection (Physical Board) | `robotos-kws collect-imu --port COM7` |
+| **Block 3** | 6-DOF Signal Conditioning & 1D-CNN Training | `robotos-kws train-imu --data imu_dataset` |
+| **Block 4** | Person-Disjoint Benchmarking & Int8 Quantization | Review `imu_artifacts/meta.json` |
+| **Block 5** | Real-Time Hardware Recognition & Robot FSM | `python robot_fsm.py --port COM7` |
 
 ---
 
