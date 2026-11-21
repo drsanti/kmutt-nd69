@@ -63,9 +63,17 @@ Inside `nd1/docs/week08/labs/python`:
 ```bash
 cd nd1/docs/week08/labs/python
 
-# 1. Create and activate virtual environment (Python 3.10 - 3.13)
-py -3.11 -m venv .venv           # Windows
+# 1. Create and activate virtual environment (Python 3.10 - 3.13; avoid 3.14+)
+# (Windows: if 3.11 not installed, run: winget install Python.Python.3.11)
+# (macOS:   if 3.11 not installed, run: brew install python@3.11)
+
+# Windows:
+py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+
+# Linux / macOS:
+python3.11 -m venv .venv       # or: python3.12 -m venv .venv / python3 -m venv .venv
+source .venv/bin/activate
 
 # 2. Install dependencies & precompiled wheel
 pip install -r requirements.txt

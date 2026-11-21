@@ -12,16 +12,31 @@
 
 ### `ModuleNotFoundError: No module named 'numpy._core._multiarray_umath'` or NumPy C-extension failure
 
-- **Cause:** Your terminal's default `python` is **Python 3.14** (an unreleased pre-release with experimental free-threading `cp314t`). Pre-compiled C-extensions for NumPy and TensorFlow are binary-incompatible with Python 3.14.
-- **Fix:** Use **Python 3.10 to 3.13**. Create your virtual environment specifically pointing to Python 3.11 or 3.12:
+- **Cause:** Your terminal's default `python` is **Python 3.14** (Homebrew default on macOS or pre-release on Windows). Pre-compiled C-extensions and wheels for TensorFlow are not available for Python 3.14 (`No matching distribution found for tensorflow`).
+- **Fix:** Use **Python 3.10 to 3.13** (Python 3.11 or 3.12 recommended).
+  *If you already created `.venv` with the wrong Python version, you must deactivate and delete it first:*
+  ```bash
+  # macOS / Linux:
+  deactivate
+  rm -rf .venv
+  python3.11 -m venv .venv       # (brew install python@3.11 if needed)
+  source .venv/bin/activate
+  python --version               # Verify it outputs Python 3.11.x!
+  pip install -r requirements.txt
+  ```
   ```powershell
   # Windows PowerShell:
-  py -3.11 -m venv .venv
+  deactivate
+  Remove-Item -Recurse -Force .venv
+  py -3.11 -m venv .venv         # (winget install Python.Python.3.11 if needed)
   .\.venv\Scripts\Activate.ps1
+  python --version               # Verify it outputs Python 3.11.x!
   pip install -r requirements.txt
   ```
   In Git Bash (`MINGW64`):
   ```bash
+  deactivate
+  rm -rf .venv
   py -3.11 -m venv .venv
   source .venv/Scripts/activate
   pip install -r requirements.txt

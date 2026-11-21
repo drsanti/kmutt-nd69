@@ -34,6 +34,16 @@ cd nd1/docs/week08/labs/python
 
 ### 1.2 Create & Activate Virtual Environment
 
+> [!IMPORTANT]
+> **Python Version Requirement (Python 3.10 – 3.13; Python 3.11 recommended):**  
+> TensorFlow does **not** yet have wheels for Python 3.14+ on Windows or macOS.  
+> - **Windows:** If Python 3.11 is not installed, install it in PowerShell: `winget install Python.Python.3.11`
+> - **macOS:** If `python3 --version` shows 3.14+, install Python 3.11 via Homebrew: `brew install python@3.11`
+> - **Already created `.venv` with the wrong Python (e.g. 3.14)? Delete and recreate it:**
+>   - macOS/Linux: `deactivate && rm -rf .venv && python3.11 -m venv .venv && source .venv/bin/activate`
+>   - Windows (PowerShell): `deactivate; Remove-Item -Recurse -Force .venv; py -3.11 -m venv .venv; .\.venv\Scripts\Activate.ps1`
+>   - Verify with: `python --version` (must output `Python 3.11.x`!)
+
 Choose the section matching your shell:
 
 - **Windows (Git Bash):**
@@ -55,7 +65,9 @@ Choose the section matching your shell:
   ```
 - **Linux / macOS (bash/zsh):**
   ```bash
-  python3 -m venv .venv
+  # Check your version with 'python3 --version'. If it shows 3.14+ (common on Homebrew),
+  # specify python3.11 or python3.12 (TensorFlow requires Python 3.10-3.13):
+  python3.11 -m venv .venv       # or: python3.12 -m venv .venv / python3 -m venv .venv
   source .venv/bin/activate
   ```
 

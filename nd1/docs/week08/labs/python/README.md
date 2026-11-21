@@ -11,13 +11,20 @@
 ## Install
 
 > [!IMPORTANT]
-> **Use Python 3.10 to 3.13.**
-> Check your command with `python --version`, `python3 --version`, or `py --version` (Windows).
-> On Windows with multiple Python versions installed, specify Python 3.11 with `py -3.11 -m venv .venv`. Avoid Python 3.14+ (incompatible with pre-compiled TensorFlow/NumPy C-extensions).
+> **Use Python 3.10 to 3.13 (Python 3.11 strongly recommended).**
+> Avoid Python 3.14+ (TensorFlow has no pre-compiled wheels for Python 3.14+ on Windows or macOS).
+> - **Windows:** If Python 3.11 is not installed (or `py -3.11` fails), install it in PowerShell via: `winget install Python.Python.3.11`
+> - **macOS:** If `python3 --version` shows 3.14+, install Python 3.11 via Homebrew: `brew install python@3.11`
+> - **Already created `.venv` with an incompatible version (like 3.14)? Delete and recreate it:**
+>   - macOS/Linux: `deactivate && rm -rf .venv && python3.11 -m venv .venv && source .venv/bin/activate`
+>   - Windows (PowerShell): `deactivate; Remove-Item -Recurse -Force .venv; py -3.11 -m venv .venv; .\.venv\Scripts\Activate.ps1`
+>   - Verify with: `python --version` (must say `Python 3.11.x`!)
 
 ```bash
 # Linux / macOS:
-python3 -m venv .venv && source .venv/bin/activate
+# Check 'python3 --version'. If 3.14+ (common on Homebrew), use python3.11 or python3.12:
+python3.11 -m venv .venv && source .venv/bin/activate   # or: python3.12 / python3
+# (On macOS if needed: brew install python@3.11)
 
 # Windows Git Bash:
 py -3.11 -m venv .venv && source .venv/Scripts/activate
