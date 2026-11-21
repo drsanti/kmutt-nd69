@@ -49,10 +49,10 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 - **On-Board Sensor:** QMI8658 6-axis IMU (3-axis Accelerometer $\pm 4g$, 3-axis Gyroscope $\pm 512^\circ/\text{s}$).
 - **Prebuilt Firmware:** Workshop prebuilt `ws28p` firmware (`BoardInfo.caps = 0x3c`).
   ```bash
-  # Flash prebuilt firmware with esptool (no compilation required):
-  python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
+  # Automated firmware flasher (auto-detects port, downloads binaries, flashes, and verifies):
+  robotos-kws flash-firmware
   ```
-  *(Prebuilt binaries available at [`drsanti/hardware-interface-workshop/firmware-prebuilt/ws28p`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p); see the [Firmware Prebuilt Guide](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md) for how to use `esptool`)*.
+  *(Prebuilt binaries and manual guide available at [`hardware-interface-workshop/firmware-prebuilt`](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md))*.
 
 ---
 

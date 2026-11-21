@@ -100,11 +100,11 @@ cd nd3/docs/week08/labs/robotics
 
 ```bash
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.1-py3-none-any.whl
+pip install ../dist/robotos_kws-0.1.2-py3-none-any.whl
 ```
 
 > [!TIP]
-> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.1-py3-none-any.whl`.
+> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.2-py3-none-any.whl`.
 
 Verify that the CLI is ready:
 ```bash
@@ -129,13 +129,14 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
    - macOS: `/dev/cu.usbmodem*`
 3. If not already flashed with the workshop firmware:
    ```bash
-   # Flash prebuilt ws28p firmware (download from https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p):
-   python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
+   # Automated firmware flasher (auto-detects port, downloads files, flashes, and verifies):
+   robotos-kws flash-firmware
    ```
-   *(Download `flash_args` and binaries from [`hardware-interface-workshop/firmware-prebuilt/ws28p`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt/ws28p))*.
+   *(Or optionally specify `--port <PORT>` if multiple boards are attached, e.g. `robotos-kws flash-firmware --port COM17` or on macOS `--port /dev/cu.usbmodem1101`)*.
 
    > [!TIP]
-   > For detailed instructions on how to install and use `esptool` (including port selection and flashing commands), see the [Firmware Prebuilt Guide](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md).
+   > The `flash-firmware` command automatically detects your ESP32-S3 board, downloads and caches prebuilt firmware binaries from the workshop repository, displays real-time flashing progress via `esptool`, and performs an automated telemetry handshake to confirm the board is ready!
+   > For manual flashing instructions or troubleshooting, refer to the [Firmware Prebuilt Guide](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md).
 
 > [!WARNING]
 > **Serial Port Exclusivity**: Close any open serial monitors (Arduino IDE, VSCode Serial Monitor, WebSerial tabs) before running board commands. Only one application can access the COM port at a time.

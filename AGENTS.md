@@ -78,6 +78,17 @@ This script automatically:
   ```
 - **Never** allow PySerial's default constructor (`serial.Serial(port, baudrate)`) to run without explicitly clearing RTS and DTR, as it will reset the microcontroller every time a command connects or exits.
 
+### Firmware Flashing Command (ND1, ND2, ND3)
+```bash
+# Auto-detects port, downloads prebuilt binaries, flashes, and verifies:
+robotos-kws flash-firmware
+
+# Or specify board/port explicitly:
+robotos-kws flash-firmware --board ws28p --port COM17
+# macOS:
+robotos-kws flash-firmware --board ws28p --port /dev/cu.usbmodem1101
+```
+
 ### Live Verification Command
 ```bash
 # Windows:
@@ -114,7 +125,7 @@ When working on **macOS (Apple Silicon / Intel)**:
   # Or from kmutt-nd69:
   python3 ../sdk/python-kws/publish_to_students.py
   ```
-- **Wheel Compatibility**: `robotos_kws-0.1.1-py3-none-any.whl` is a pure-Python wheel (`py3-none-any`). It installs and executes natively on macOS (Apple Silicon arm64 & Intel x86_64), Linux, and Windows without recompilation.
+- **Wheel Compatibility**: `robotos_kws-0.1.2-py3-none-any.whl` is a pure-Python wheel (`py3-none-any`). It installs and executes natively on macOS (Apple Silicon arm64 & Intel x86_64), Linux, and Windows without recompilation.
 - The pipeline script automatically detects POSIX paths (`.venv/bin/python`), updates wheels in all 3 tracks, audits against code leaks, and runs smoke tests.
 
 ### 4.3 Serial Port Naming on macOS (`/dev/cu.*` vs `/dev/tty.*`)
