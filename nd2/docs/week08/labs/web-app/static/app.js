@@ -1,7 +1,10 @@
-// RobotOS Edge AI Studio - Industrial SCADA Dashboard Frontend
+// ==========================================================================
+// RobotOS Edge AI Studio - Figma-Like UI Frontend Controller (ND02)
+// Clean separation of UI state, real-time Web Audio API & WebSocket telemetry
+// ==========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  // DOM Elements
+  // DOM Elements - Navigation & Header
   const wsStatusBadge = document.getElementById("wsStatusBadge");
   const footerWsStatus = document.getElementById("footerWsStatus");
   const headerThresholdBadge = document.getElementById("headerThresholdBadge");
@@ -11,6 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const presetRelaxed = document.getElementById("presetRelaxed");
   const presetBalanced = document.getElementById("presetBalanced");
   const presetStrict = document.getElementById("presetStrict");
+
+  // Left Panel Navigation
+  const leftTabLayers = document.getElementById("leftTabLayers");
+  const leftTabAssets = document.getElementById("leftTabAssets");
+  const layersSection = document.getElementById("layersSection");
+  const assetsSection = document.getElementById("assetsSection");
 
   // Voice Interaction Controller Elements
   const pttButton = document.getElementById("pttButton");
@@ -27,11 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const activeStreamLabel = document.getElementById("activeStreamLabel");
   const enableMicBtn = document.getElementById("enableMicBtn");
 
+  // FSM Artboard Elements
   const stateBanner = document.getElementById("stateBanner");
   const stateIcon = document.getElementById("stateIcon");
   const stateTitle = document.getElementById("stateTitle");
   const stateDesc = document.getElementById("stateDesc");
   const lastTriggerTime = document.getElementById("lastTriggerTime");
+
+  // Telemetry Console & Property Inspector
   const eventLog = document.getElementById("eventLog");
   const clearLogBtn = document.getElementById("clearLogBtn");
   const probBarsContainer = document.getElementById("probBarsContainer");
@@ -45,16 +57,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const audioDbfsMeter = document.getElementById("audioDbfsMeter");
   const audioCanvas = document.getElementById("audioVisualizer");
 
-  // Terminal Tabs
+  // Terminal Drawer Tabs
   const tabBtnWs = document.getElementById("tabBtnWs");
   const tabBtnRest = document.getElementById("tabBtnRest");
   const tabBtnThresh = document.getElementById("tabBtnThresh");
   const tabBtnCurl = document.getElementById("tabBtnCurl");
 
+  // Default labels and internal state
   const DEFAULT_LABELS = ["red", "green", "blue", "off", "_silence_", "_unknown_"];
   let knownLabels = [...DEFAULT_LABELS];
   let currentThreshold = 0.80;
-  let modelMetaData = null;
   let lastRestPayload = null;
 
   // Real Web Audio API Nodes & Analyzer State
@@ -70,36 +82,53 @@ document.addEventListener("DOMContentLoaded", () => {
   let isContinuousMode = false;  // Whether in continuous hands-free streaming
   let isPttActive = false;       // Whether PTT button / spacebar is held
 
-  // 1. Initialize Probability Meters with Industrial Styling & Threshold Marker
+  // 1. Left Panel Tab Switching (Layers vs Assets)
+  if (leftTabLayers && leftTabAssets && layersSection && assetsSection) {
+    leftTabLayers.addEventListener("click", () => {
+      leftTabLayers.className = "text-white font-semibold flex items-center gap-1.5 border-b-2 border-[#0d99ff] pb-2 pt-2.5";
+      leftTabAssets.className = "text-[#a1a1aa] hover:text-white flex items-center gap-1.5 pb-2 pt-2.5";
+      layersSection.classList.remove("hidden");
+      assetsSection.classList.remove("hidden"); // Keep visible in desktop scroll
+    });
+
+    leftTabAssets.addEventListener("click", () => {
+      leftTabAssets.className = "text-white font-semibold flex items-center gap-1.5 border-b-2 border-[#0d99ff] pb-2 pt-2.5";
+      leftTabLayers.className = "text-[#a1a1aa] hover:text-white flex items-center gap-1.5 pb-2 pt-2.5";
+      assetsSection.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  // 2. Initialize Probability Meters with Figma Minimalist Styling & Threshold Marker
   function initProbBars(labels) {
+    if (!probBarsContainer) return;
     probBarsContainer.innerHTML = "";
     const threshPct = Math.round(currentThreshold * 100);
 
     labels.forEach((label) => {
-      const colorClass =
-        label === "red" ? "bg-red-500" :
-        label === "green" ? "bg-emerald-500" :
-        label === "blue" ? "bg-sky-500" :
-        label === "off" ? "bg-slate-400" :
-        label === "_silence_" ? "bg-amber-600" : "bg-purple-600";
+      const barColorClass =
+        label === "red" ? "bg-[#f43f5e]" :
+        label === "green" ? "bg-[#10b981]" :
+        label === "blue" ? "bg-[#0d99ff]" :
+        label === "off" ? "bg-[#a1a1aa]" :
+        label === "_silence_" ? "bg-[#71717a]" : "bg-[#8b5cf6]";
 
       const badgeColor =
-        label === "red" ? "text-red-400" :
-        label === "green" ? "text-emerald-400" :
-        label === "blue" ? "text-sky-400" :
-        label === "off" ? "text-slate-300" : "text-slate-500";
+        label === "red" ? "text-[#f43f5e]" :
+        label === "green" ? "text-[#10b981]" :
+        label === "blue" ? "text-[#0d99ff]" :
+        label === "off" ? "text-[#f4f4f6]" : "text-[#a1a1aa]";
 
       const row = document.createElement("div");
-      row.className = "space-y-1.5 font-mono";
+      row.className = "space-y-1 font-mono text-xs";
       row.innerHTML = `
-        <div class="flex justify-between text-xs items-center">
-          <span class="font-bold tracking-wider ${badgeColor}">${label}</span>
-          <span id="prob-val-${label}" class="text-slate-300 font-bold">0.0%</span>
+        <div class="flex justify-between items-center">
+          <span class="font-semibold ${badgeColor}">${label}</span>
+          <span id="prob-val-${label}" class="text-[#a1a1aa] font-medium text-[11px]">0.0%</span>
         </div>
-        <div class="w-full bg-[#0a0e16] rounded-md h-3.5 relative overflow-hidden border border-[#232e42] p-[1px]">
+        <div class="figma-meter-container">
           <!-- Dynamic Softmax Bar -->
-          <div id="prob-bar-${label}" class="h-full rounded-sm ${colorClass} transition-all duration-150" style="width: 0%"></div>
-          <!-- Threshold Marker Vertical Line -->
+          <div id="prob-bar-${label}" class="h-full rounded-xs ${barColorClass} transition-all duration-100" style="width: 0%"></div>
+          <!-- Threshold Marker Guideline -->
           <div class="threshold-marker" id="threshMarker-${label}" style="left: ${threshPct}%" title="Threshold: ${threshPct}%"></div>
         </div>
       `;
@@ -108,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   initProbBars(knownLabels);
 
-  // 2. Threshold Dynamic Controller
+  // 3. Dynamic Threshold Controller
   function updateThresholdUI(val) {
     currentThreshold = parseFloat(val);
     const pct = Math.round(currentThreshold * 100);
@@ -125,10 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Update preset button highlights
+    // Update segmented preset button states
     if (presetLow && presetRelaxed && presetBalanced && presetStrict) {
-      const activeClass = "py-1 px-1 rounded bg-sky-950/50 border border-sky-500/40 text-[10px] font-mono text-sky-300 font-bold text-center";
-      const inactiveClass = "py-1 px-1 rounded bg-[#182335] hover:bg-[#22314a] border border-[#273852] text-[10px] font-mono text-slate-300 text-center";
+      const activeClass = "figma-segmented-btn active";
+      const inactiveClass = "figma-segmented-btn";
 
       presetLow.className = Math.abs(currentThreshold - 0.10) < 0.03 ? activeClass : inactiveClass;
       presetRelaxed.className = Math.abs(currentThreshold - 0.50) < 0.05 ? activeClass : inactiveClass;
@@ -186,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. Connect to WebSocket Stream
+  // 4. WebSocket Real-Time Connection
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const wsUrl = `${protocol}//${window.location.host}/ws/kws`;
   let socket = null;
@@ -195,9 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
     socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
-      wsStatusBadge.className =
-        "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25";
-      wsStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> LIVE WS (16kHz)';
+      if (wsStatusBadge) {
+        wsStatusBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#18181b] text-[#10b981] border border-[#10b981]/30 text-[11px] font-mono font-medium";
+        wsStatusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span> LIVE WS';
+      }
       if (footerWsStatus) footerWsStatus.textContent = "WS: Connected (16kHz)";
       addLogEntry("SYSTEM", "WebSocket channel opened. Real-time edge stream active.");
     };
@@ -214,7 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
             updateThresholdUI(data.threshold);
           }
         } else if (data.event === "live_stream_update") {
-          // CONTINUOUS STREAMING UPDATE: Softmax bars!
           handleLiveStreamUpdate(data);
         } else if (data.event === "keyword_detected") {
           handleKeywordDetected(data.keyword, data.confidence, data.timestamp, data.source || "mic");
@@ -227,9 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     socket.onclose = () => {
-      wsStatusBadge.className =
-        "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/25";
-      wsStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Reconnecting...';
+      if (wsStatusBadge) {
+        wsStatusBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#18181b] text-[#f59e0b] border border-[#f59e0b]/30 text-[11px] font-mono font-medium";
+        wsStatusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#f59e0b] animate-pulse"></span> Reconnecting...';
+      }
       if (footerWsStatus) footerWsStatus.textContent = "WS: Disconnected";
       setTimeout(connectWebSocket, 3000);
     };
@@ -241,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   connectWebSocket();
 
-  // 4. Real-Time Audio Downsampling Utility
+  // 5. Real-Time Audio Downsampling Utility (AudioContext -> 16kHz PCM16)
   function downsampleToInt16(float32Array, inRate, outRate = 16000) {
     if (inRate === outRate) {
       const pcm16 = new Int16Array(float32Array.length);
@@ -265,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return pcm16;
   }
 
-  // 5. Initialize Live Web Audio Context & FFT Analyser
+  // 6. Initialize Live Web Audio Context & FFT Analyser
   async function initMicrophoneMonitor() {
     if (micSourceNode && analyserNode) return true;
     try {
@@ -310,8 +340,8 @@ document.addEventListener("DOMContentLoaded", () => {
       audioProcessor.connect(audioCtx.destination);
 
       if (enableMicBtn) {
-        enableMicBtn.className = "px-2.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 font-mono text-[11px] font-bold cursor-default";
-        enableMicBtn.innerHTML = "✓ Live FFT Mic Connected";
+        enableMicBtn.className = "px-2 py-0.5 rounded bg-[#10b981]/15 border border-[#10b981]/30 text-[#10b981] font-mono text-[11px] font-medium cursor-default";
+        enableMicBtn.innerHTML = "✓ Live FFT Active";
       }
       addLogEntry("SYSTEM", "Live Web Audio Analyser initialized. Spectrum & dBFS meter active.");
       return true;
@@ -333,24 +363,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 6. Voice Stream Transmit UI Controllers
+  // 7. Voice Stream Transmit UI Controllers
   function setVoiceStreamActiveUI(active) {
     if (active) {
       if (activeStreamBadge) {
-        activeStreamBadge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/50 border border-emerald-500/50 font-mono text-xs text-emerald-300";
-        activeStreamDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
-        activeStreamLabel.textContent = "Stream: Transmitting (16 kHz)";
+        activeStreamBadge.className = "hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-[#10b981]/10 border border-[#10b981]/30 font-mono text-[10px] text-[#10b981]";
+        if (activeStreamDot) activeStreamDot.className = "w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse";
+        if (activeStreamLabel) activeStreamLabel.textContent = "Stream: Transmitting (16 kHz)";
       }
     } else {
       if (activeStreamBadge) {
-        activeStreamBadge.className = "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141d2c] border border-[#26374f] font-mono text-xs text-slate-300";
-        activeStreamDot.className = "w-2 h-2 rounded-full bg-slate-500";
-        activeStreamLabel.textContent = "Stream: Idle (Monitoring)";
+        activeStreamBadge.className = "hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-[#19191d] border border-[#333339] font-mono text-[10px] text-[#a1a1aa]";
+        if (activeStreamDot) activeStreamDot.className = "w-1.5 h-1.5 rounded-full bg-[#71717a]";
+        if (activeStreamLabel) activeStreamLabel.textContent = "Stream: Idle";
       }
     }
   }
 
-  // 7. Push-to-Talk (PTT) Event Handlers
+  // 8. Push-to-Talk (PTT) Event Handlers
   async function activatePtt() {
     if (isContinuousMode || isPttActive) return;
     const ok = await initMicrophoneMonitor();
@@ -358,10 +388,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isPttActive = true;
     isAudioStreaming = true;
-    pttButton.className = "relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-2xl transition-all bg-gradient-to-r from-red-600 to-rose-600 border border-red-400 scale-105";
-    pttPulseHalo.className = "absolute -inset-1 rounded-xl bg-red-500/50 opacity-100 transition duration-150 blur-md pointer-events-none";
-    pttIcon.textContent = "🔴";
-    pttText.textContent = "TRANSMITTING (SPEAK)";
+    if (pttButton) {
+      pttButton.classList.add("transmitting");
+    }
+    if (pttIcon) pttIcon.textContent = "🔴";
+    if (pttText) pttText.textContent = "TRANSMITTING";
     setVoiceStreamActiveUI(true);
   }
 
@@ -369,15 +400,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isContinuousMode || !isPttActive) return;
     isPttActive = false;
     isAudioStreaming = false;
-    pttButton.className = "relative select-none flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm text-white shadow-lg transition-all bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 active:scale-95 border border-sky-400/40 cursor-pointer";
-    pttPulseHalo.className = "absolute -inset-1 rounded-xl bg-sky-500/30 opacity-0 transition duration-200 blur-sm pointer-events-none";
-    pttIcon.textContent = "🎙️";
-    pttText.textContent = "HOLD TO TALK";
+    if (pttButton) {
+      pttButton.classList.remove("transmitting");
+    }
+    if (pttIcon) pttIcon.textContent = "🎙️";
+    if (pttText) pttText.textContent = "HOLD TO TALK";
     setVoiceStreamActiveUI(false);
   }
 
   if (pttButton) {
-    // Mouse / Touch hold
     pttButton.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       activatePtt();
@@ -400,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 8. Continuous Speech Stream Toggle Handler
+  // 9. Continuous Speech Stream Toggle Handler
   if (continuousToggleBtn) {
     continuousToggleBtn.addEventListener("click", async () => {
       if (!isContinuousMode) {
@@ -409,9 +440,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         isContinuousMode = true;
         isAudioStreaming = true;
-        continuousToggleBtn.className = "flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-emerald-500/50 bg-emerald-950/40 text-emerald-200 cursor-pointer";
-        continuousStatusDot.className = "w-3 h-3 rounded-full bg-emerald-400 animate-pulse";
-        continuousToggleText.textContent = "Continuous Speech: LIVE";
+        continuousToggleBtn.classList.add("live");
+        if (continuousStatusDot) continuousStatusDot.className = "w-2 h-2 rounded-full bg-[#10b981] animate-pulse";
+        if (continuousToggleText) continuousToggleText.textContent = "Continuous: LIVE";
         if (pttButton) {
           pttButton.classList.add("opacity-50", "pointer-events-none");
         }
@@ -420,9 +451,9 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         isContinuousMode = false;
         isAudioStreaming = false;
-        continuousToggleBtn.className = "flex items-center gap-2.5 px-4 py-3.5 rounded-xl font-mono text-xs font-bold transition-all border border-[#283852] bg-[#141d2d] text-slate-300 hover:bg-[#1b273d] hover:text-white cursor-pointer";
-        continuousStatusDot.className = "w-3 h-3 rounded-full bg-slate-500";
-        continuousToggleText.textContent = "Continuous Speech: OFF";
+        continuousToggleBtn.classList.remove("live");
+        if (continuousStatusDot) continuousStatusDot.className = "w-2 h-2 rounded-full bg-[#71717a]";
+        if (continuousToggleText) continuousToggleText.textContent = "Continuous: OFF";
         if (pttButton) {
           pttButton.classList.remove("opacity-50", "pointer-events-none");
         }
@@ -431,9 +462,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 9. Live Continuous Streaming Updates from Server
+  // 10. Live Continuous Streaming Updates from Server
   function handleLiveStreamUpdate(data) {
-    // 1. Update live meters for all classes continuously
     if (data.probabilities) {
       Object.entries(data.probabilities).forEach(([lb, p]) => {
         const bar = document.getElementById(`prob-bar-${lb}`);
@@ -443,90 +473,118 @@ document.addEventListener("DOMContentLoaded", () => {
           bar.style.width = `${pct}%`;
           val.textContent = `${pct}%`;
 
-          // Threshold crossing glow
+          // Threshold crossing highlight
           if (p >= currentThreshold && lb !== "_silence_" && lb !== "_unknown_") {
-            bar.classList.add("ring-2", "ring-white", "brightness-125");
+            bar.classList.add("brightness-125");
           } else {
-            bar.classList.remove("ring-2", "ring-white", "brightness-125");
+            bar.classList.remove("brightness-125");
           }
         }
       });
     }
 
-    // 2. Keyword trigger event
+    // Keyword trigger event from streaming inference
     if (data.triggered && data.keyword) {
       handleKeywordDetected(data.keyword, data.confidence, data.timestamp, "live_stream");
     }
   }
 
-  // 10. Handle Keyword Detections & Reactive Industrial State Updates
+  // 11. Handle Keyword Detections & Reactive FSM State Updates
   function handleKeywordDetected(keyword, confidence, timestamp, source = "mic") {
     const timeStr = new Date().toLocaleTimeString();
-    lastTriggerTime.textContent = `Last trigger: ${timeStr} (${confidence >= 0 ? (confidence * 100).toFixed(1) + '%' : ''})`;
+    if (lastTriggerTime) {
+      lastTriggerTime.textContent = `Last trigger: ${timeStr} (${confidence >= 0 ? (confidence * 100).toFixed(1) + '%' : ''})`;
+    }
 
-    // Reset styles
-    stateBanner.className = "p-8 sm:p-10 rounded-2xl border-2 border-[#26334a] bg-[#0e1422]/95 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden shadow-2xl";
+    if (stateBanner) {
+      stateBanner.className = "state-banner-container";
+    }
 
     const kw = keyword.toLowerCase();
     if (kw === "red") {
-      stateBanner.classList.add("glow-red", "hazard-stripes");
-      stateIcon.className = "w-24 h-24 rounded-2xl flex items-center justify-center text-5xl font-black mb-4 bg-red-600 text-white shadow-xl scale-105 transition-all";
-      stateIcon.textContent = "🛑";
-      stateTitle.textContent = "EMERGENCY STOP";
-      stateTitle.className = "text-4xl sm:text-5xl font-black tracking-tight text-red-400 font-mono";
-      stateDesc.textContent = "Safety Interlock Tripped! All motor outputs disabled (0.0 m/s). Active electromagnetic brake locked.";
+      if (stateBanner) stateBanner.classList.add("state-red");
+      if (stateIcon) {
+        stateIcon.className = "w-20 h-20 rounded-xl flex items-center justify-center text-4xl mb-3 bg-[#f43f5e]/20 text-white border border-[#f43f5e]/50 shadow-sm transition-transform duration-200";
+        stateIcon.textContent = "🛑";
+      }
+      if (stateTitle) {
+        stateTitle.textContent = "EMERGENCY STOP";
+        stateTitle.className = "text-3xl sm:text-4xl font-black tracking-tight text-[#f43f5e] font-mono";
+      }
+      if (stateDesc) {
+        stateDesc.textContent = "Safety Interlock Tripped! All motor outputs disabled (0.0 m/s). Active electromagnetic brake locked.";
+      }
     } else if (kw === "green") {
-      stateBanner.classList.add("glow-green");
-      stateIcon.className = "w-24 h-24 rounded-2xl flex items-center justify-center text-5xl font-black mb-4 bg-emerald-600 text-white shadow-xl scale-105 transition-all";
-      stateIcon.textContent = "🚀";
-      stateTitle.textContent = "DRIVE FORWARD";
-      stateTitle.className = "text-4xl sm:text-5xl font-black tracking-tight text-emerald-400 font-mono";
-      stateDesc.textContent = "Patrol Navigation Active. Linear velocity nominal: 0.50 m/s. Obstacle avoidance LiDAR engaged.";
+      if (stateBanner) stateBanner.classList.add("state-green");
+      if (stateIcon) {
+        stateIcon.className = "w-20 h-20 rounded-xl flex items-center justify-center text-4xl mb-3 bg-[#10b981]/20 text-white border border-[#10b981]/50 shadow-sm transition-transform duration-200";
+        stateIcon.textContent = "🚀";
+      }
+      if (stateTitle) {
+        stateTitle.textContent = "DRIVE FORWARD";
+        stateTitle.className = "text-3xl sm:text-4xl font-black tracking-tight text-[#10b981] font-mono";
+      }
+      if (stateDesc) {
+        stateDesc.textContent = "Patrol Navigation Active. Linear velocity nominal: 0.50 m/s. Obstacle avoidance LiDAR engaged.";
+      }
     } else if (kw === "blue") {
-      stateBanner.classList.add("glow-blue");
-      stateIcon.className = "w-24 h-24 rounded-2xl flex items-center justify-center text-5xl font-black mb-4 bg-sky-600 text-white shadow-xl scale-105 transition-all";
-      stateIcon.textContent = "🧭";
-      stateTitle.textContent = "MANUAL NAVIGATION";
-      stateTitle.className = "text-4xl sm:text-5xl font-black tracking-tight text-sky-400 font-mono";
-      stateDesc.textContent = "Waypoint Heading Adjust. Angular velocity: +0.35 rad/s. Operator manual steering active.";
+      if (stateBanner) stateBanner.classList.add("state-blue");
+      if (stateIcon) {
+        stateIcon.className = "w-20 h-20 rounded-xl flex items-center justify-center text-4xl mb-3 bg-[#0d99ff]/20 text-white border border-[#0d99ff]/50 shadow-sm transition-transform duration-200";
+        stateIcon.textContent = "🧭";
+      }
+      if (stateTitle) {
+        stateTitle.textContent = "MANUAL NAVIGATION";
+        stateTitle.className = "text-3xl sm:text-4xl font-black tracking-tight text-[#0d99ff] font-mono";
+      }
+      if (stateDesc) {
+        stateDesc.textContent = "Waypoint Heading Adjust. Angular velocity: +0.35 rad/s. Operator manual steering active.";
+      }
     } else if (kw === "off") {
-      stateBanner.classList.add("glow-amber");
-      stateIcon.className = "w-24 h-24 rounded-2xl flex items-center justify-center text-5xl font-black mb-4 bg-slate-800 text-slate-300 shadow-xl transition-all";
-      stateIcon.textContent = "💤";
-      stateTitle.textContent = "SYSTEM STANDBY";
-      stateTitle.className = "text-4xl sm:text-5xl font-black tracking-tight text-slate-300 font-mono";
-      stateDesc.textContent = "Low-power park mode entered. Sensors idling at 1.0 Hz telemetry heartbeat.";
+      if (stateBanner) stateBanner.classList.add("state-off");
+      if (stateIcon) {
+        stateIcon.className = "w-20 h-20 rounded-xl flex items-center justify-center text-4xl mb-3 bg-[#24242a] text-[#f4f4f6] border border-[#333339] shadow-sm transition-transform duration-200";
+        stateIcon.textContent = "💤";
+      }
+      if (stateTitle) {
+        stateTitle.textContent = "SYSTEM STANDBY";
+        stateTitle.className = "text-3xl sm:text-4xl font-black tracking-tight text-[#a1a1aa] font-mono";
+      }
+      if (stateDesc) {
+        stateDesc.textContent = "Low-power park mode entered. Sensors idling at 1.0 Hz telemetry heartbeat.";
+      }
     }
 
     const srcTag = source === "simulated" ? "SIM" : source === "live_stream" ? "LIVE" : "MIC";
     addLogEntry(keyword.toUpperCase(), `[${srcTag}] Conf: ${(confidence * 100).toFixed(1)}% | T: ${timestamp}s -> FSM State Triggered`);
   }
 
-  // 11. Append Log Entry to Terminal
+  // 12. Append Log Entry to Terminal Stream
   function addLogEntry(tag, msg) {
+    if (!eventLog) return;
     if (eventLog.children.length === 1 && eventLog.children[0].classList.contains("italic")) {
       eventLog.innerHTML = "";
     }
     const entry = document.createElement("div");
-    entry.className = "p-1.5 rounded bg-[#0e141f] border border-[#1a2333] flex items-center justify-between font-mono text-xs";
+    entry.className = "py-1 px-2 rounded bg-[#1c1c1f] border border-[#2d2d34] flex items-center justify-between font-mono text-[11px]";
 
     const tagBadge =
-      tag === "RED" ? "bg-red-500/20 text-red-400 border border-red-500/30 font-bold" :
-      tag === "GREEN" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold" :
-      tag === "BLUE" ? "bg-sky-500/20 text-sky-400 border border-sky-500/30 font-bold" :
-      tag === "OFF" ? "bg-slate-700/30 text-slate-300 border border-slate-600/30 font-bold" :
-      tag === "STREAM" ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold" :
-      tag === "REST" ? "bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold" :
-      tag === "THRESH" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold" :
-      "bg-slate-800 text-slate-400 border border-slate-700 font-bold";
+      tag === "RED" ? "bg-[#f43f5e]/15 text-[#f43f5e] border border-[#f43f5e]/30 font-bold" :
+      tag === "GREEN" ? "bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/30 font-bold" :
+      tag === "BLUE" ? "bg-[#0d99ff]/15 text-[#0d99ff] border border-[#0d99ff]/30 font-bold" :
+      tag === "OFF" ? "bg-[#333339] text-[#a1a1aa] border border-[#44444d] font-bold" :
+      tag === "STREAM" ? "bg-[#06b6d4]/15 text-[#06b6d4] border border-[#06b6d4]/30 font-bold" :
+      tag === "REST" ? "bg-[#a855f7]/15 text-[#a855f7] border border-[#a855f7]/30 font-bold" :
+      tag === "THRESH" ? "bg-[#f59e0b]/15 text-[#f59e0b] border border-[#f59e0b]/30 font-bold" :
+      "bg-[#28282e] text-[#a1a1aa] border border-[#38383e] font-bold";
 
     entry.innerHTML = `
       <div class="flex items-center gap-2">
-        <span class="text-[11px] text-slate-500">${new Date().toLocaleTimeString()}</span>
-        <span class="px-2 py-0.5 rounded text-[11px] ${tagBadge}">[${tag}]</span>
-        <span class="text-slate-200">${msg}</span>
+        <span class="text-[10px] text-[#71717a]">${new Date().toLocaleTimeString()}</span>
+        <span class="px-1.5 py-0.2 rounded text-[10px] ${tagBadge}">[${tag}]</span>
+        <span class="text-[#f4f4f6]">${msg}</span>
       </div>
-      <span class="text-[10px] text-slate-600 font-mono">0x${Math.floor(Math.random() * 0xffff).toString(16)}</span>
+      <span class="text-[10px] text-[#52525b] font-mono">0x${Math.floor(Math.random() * 0xffff).toString(16)}</span>
     `;
     eventLog.insertBefore(entry, eventLog.firstChild);
     while (eventLog.children.length > 50) {
@@ -534,11 +592,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  clearLogBtn.addEventListener("click", () => {
-    eventLog.innerHTML = '<div class="text-slate-500 italic p-1">[system] Telemetry log cleared. Stream listening...</div>';
-  });
+  if (clearLogBtn) {
+    clearLogBtn.addEventListener("click", () => {
+      eventLog.innerHTML = '<div class="text-[#71717a] italic p-1">[system] Telemetry log cleared. Stream listening...</div>';
+    });
+  }
 
-  // 12. Global Interactive Keyword Simulation Dispatcher
+  // 13. Global Interactive Keyword Simulation Dispatcher
   window.triggerKeywordSim = async function(keyword) {
     try {
       const resp = await fetch("/api/v1/simulate", {
@@ -556,7 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // 13. Terminal Panel Tab Switching
+  // 14. Terminal Panel Tab Switching
   if (tabBtnWs && tabBtnRest && tabBtnThresh && tabBtnCurl) {
     function resetTabs() {
       [tabBtnWs, tabBtnRest, tabBtnThresh, tabBtnCurl].forEach((t) => (t.className = "term-tab"));
@@ -564,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tabBtnWs.addEventListener("click", () => {
       resetTabs();
-      tabBtnWs.className = "term-tab active flex items-center gap-2";
+      tabBtnWs.className = "term-tab active";
     });
 
     tabBtnRest.addEventListener("click", () => {
@@ -573,7 +633,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (lastRestPayload) {
         addLogEntry("REST", `Cached REST Output: Top='${lastRestPayload.top_class}' (${(lastRestPayload.confidence * 100).toFixed(1)}%)`);
       } else {
-        addLogEntry("REST", "No REST payload cached yet. Click 'Use Built-in Sample' or 'Record Mic' to test.");
+        addLogEntry("REST", "No REST payload cached yet. Click 'sample_audio.wav' or 'Record Mic' to test.");
       }
     });
 
@@ -592,12 +652,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 14. REST API Audio Dispatcher
+  // 15. REST API Audio Dispatcher
   async function sendAudioBlobForClassification(blob, filename = "audio.wav") {
     const formData = new FormData();
     formData.append("file", blob, filename);
-    restResult.classList.remove("hidden");
-    restResult.innerHTML = '<span class="text-slate-400 font-mono">POST /api/v1/classify &bull; Running DS-CNN int8 inference...</span>';
+    if (restResult) {
+      restResult.classList.remove("hidden");
+      restResult.innerHTML = '<span class="text-[#a1a1aa] font-mono">POST /api/v1/classify • Running DS-CNN int8 inference...</span>';
+    }
 
     try {
       const resp = await fetch("/api/v1/classify", {
@@ -606,7 +668,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const data = await resp.json();
       lastRestPayload = data;
-      restResult.innerHTML = `<pre class="text-emerald-400 font-mono text-xs">${JSON.stringify(data, null, 2)}</pre>`;
+      if (restResult) {
+        restResult.innerHTML = `<pre class="text-[#10b981] font-mono text-[11px] leading-snug">${JSON.stringify(data, null, 2)}</pre>`;
+      }
 
       if (data.probabilities) {
         Object.entries(data.probabilities).forEach(([lb, p]) => {
@@ -626,28 +690,34 @@ document.addEventListener("DOMContentLoaded", () => {
         handleKeywordDetected(data.top_class, data.confidence, 0.0, "rest");
       }
     } catch (err) {
-      restResult.innerHTML = `<span class="text-red-400 font-mono text-xs">Error: ${err.message}</span>`;
+      if (restResult) {
+        restResult.innerHTML = `<span class="text-[#f43f5e] font-mono text-[11px]">Error: ${err.message}</span>`;
+      }
       addLogEntry("ERROR", `REST error: ${err.message}`);
     }
   }
 
-  // 14.1 Built-in Sample Audio Button
+  // 15.1 Built-in Sample Audio Button
   if (useSampleBtn) {
     useSampleBtn.addEventListener("click", async () => {
-      restResult.classList.remove("hidden");
-      restResult.innerHTML = '<span class="text-slate-400 font-mono">Fetching sample_audio.wav from server...</span>';
+      if (restResult) {
+        restResult.classList.remove("hidden");
+        restResult.innerHTML = '<span class="text-[#a1a1aa] font-mono">Fetching sample_audio.wav from server...</span>';
+      }
       try {
         const res = await fetch("/api/v1/sample-audio");
         if (!res.ok) throw new Error("sample_audio.wav not found on server");
         const blob = await res.blob();
         await sendAudioBlobForClassification(blob, "sample_audio.wav");
       } catch (err) {
-        restResult.innerHTML = `<span class="text-red-400 font-mono text-xs">Error: ${err.message}</span>`;
+        if (restResult) {
+          restResult.innerHTML = `<span class="text-[#f43f5e] font-mono text-[11px]">Error: ${err.message}</span>`;
+        }
       }
     });
   }
 
-  // 14.2 Single Take Mic Recorder (1s)
+  // 15.2 Single Take Mic Recorder (1s)
   function encodeWav(samples, sampleRate) {
     const buffer = new ArrayBuffer(44 + samples.length * 2);
     const view = new DataView(buffer);
@@ -682,9 +752,9 @@ document.addEventListener("DOMContentLoaded", () => {
     recordBrowserMicBtn.addEventListener("click", async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recordMicIcon.textContent = "🔴";
-        recordMicText.textContent = "Listening... (1s)";
-        recordBrowserMicBtn.classList.add("bg-red-950/60", "border-red-500/60");
+        if (recordMicIcon) recordMicIcon.textContent = "🔴";
+        if (recordMicText) recordMicText.textContent = "Listening... (1s)";
+        recordBrowserMicBtn.classList.add("border-[#f43f5e]");
 
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const source = ctx.createMediaStreamSource(stream);
@@ -708,9 +778,9 @@ document.addEventListener("DOMContentLoaded", () => {
           source.disconnect();
           stream.getTracks().forEach((t) => t.stop());
 
-          recordMicIcon.textContent = "🎙️";
-          recordMicText.textContent = "Record Browser Mic (1s)";
-          recordBrowserMicBtn.classList.remove("bg-red-950/60", "border-red-500/60");
+          if (recordMicIcon) recordMicIcon.textContent = "🎙️";
+          if (recordMicText) recordMicText.textContent = "Record Mic (1s)";
+          recordBrowserMicBtn.classList.remove("border-[#f43f5e]");
 
           const rawFloat32 = new Float32Array(recorded);
           const ratio = 16000 / ctx.sampleRate;
@@ -733,7 +803,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 14.3 Custom File Upload Form
+  // 15.3 Custom File Upload Form
   if (uploadForm && audioFileInput) {
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -746,7 +816,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 15. Real-Time 60 FPS Audio Spectrum & Waveform Oscilloscope
+  // 16. Real-Time 60 FPS Audio Spectrum & Waveform Visualizer
   if (audioCanvas) {
     const ctx = audioCanvas.getContext("2d");
 
@@ -758,8 +828,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Draw Technical Background Grid
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+      // 1. Draw Subtle Grid
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
       ctx.lineWidth = 1;
       for (let x = 0; x < width; x += 32) {
         ctx.beginPath();
@@ -774,7 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.stroke();
       }
 
-      // If Analyser is connected, read REAL microphone audio!
+      // If Analyser is connected, read REAL microphone audio
       if (analyserNode && freqDataArray && timeDataArray) {
         analyserNode.getByteFrequencyData(freqDataArray);
         analyserNode.getByteTimeDomainData(timeDataArray);
@@ -794,8 +864,8 @@ document.addEventListener("DOMContentLoaded", () => {
           const statusTag = isAudioStreaming ? "• STREAMING" : "• MONITOR";
           audioDbfsMeter.textContent = `MIC: ${clampedDbfs.toFixed(1)} dBFS ${statusTag}`;
           audioDbfsMeter.className =
-            clampedDbfs > -20 ? "text-red-400 font-bold" :
-            clampedDbfs > -45 ? "text-amber-400 font-bold" : "text-emerald-400 font-bold";
+            clampedDbfs > -20 ? "text-[#f43f5e] font-bold" :
+            clampedDbfs > -45 ? "text-[#f59e0b] font-bold" : "text-[#10b981] font-bold";
         }
         if (liveDbfsText) {
           liveDbfsText.textContent = `${clampedDbfs.toFixed(1)} dBFS`;
@@ -804,38 +874,35 @@ document.addEventListener("DOMContentLoaded", () => {
           const vuPct = Math.max(4, Math.min(100, Math.round(((clampedDbfs + 75) / 75) * 100)));
           liveVuBar.style.width = `${vuPct}%`;
           liveVuBar.className =
-            vuPct > 75 ? "h-full rounded-full bg-red-500" :
-            vuPct > 45 ? "h-full rounded-full bg-amber-400" : "h-full rounded-full bg-emerald-500";
+            vuPct > 75 ? "h-full rounded-full bg-[#f43f5e]" :
+            vuPct > 45 ? "h-full rounded-full bg-[#f59e0b]" : "h-full rounded-full bg-[#10b981]";
         }
 
-        // 2. Draw Real Frequency Spectrum Bars (48 Bins across audible frequencies)
+        // 2. Draw Real Frequency Spectrum Bars (48 Bins across audible spectrum)
         const numBars = 48;
         const barWidth = Math.floor(width / numBars) - 2;
         for (let i = 0; i < numBars; i++) {
           const binIndex = Math.floor(i * (freqDataArray.length / numBars));
-          const val = freqDataArray[binIndex] / 255.0; // 0..1 scale
-          const barHeight = Math.max(3, val * (height - 8));
+          const val = freqDataArray[binIndex] / 255.0;
+          const barHeight = Math.max(2, val * (height - 8));
           const x = i * (barWidth + 2) + 2;
           const y = height - barHeight - 2;
 
-          // Color coded: Peak (Red) -> Loud (Amber) -> Active Stream (Green) -> Monitor (Cyan)
           if (val > 0.72) {
-            ctx.fillStyle = "#ef4444";
+            ctx.fillStyle = "#f43f5e";
           } else if (val > 0.42) {
             ctx.fillStyle = "#f59e0b";
           } else if (isAudioStreaming) {
             ctx.fillStyle = "#10b981";
           } else {
-            ctx.fillStyle = "#38bdf8";
+            ctx.fillStyle = "#0d99ff";
           }
           ctx.fillRect(x, y, barWidth, barHeight);
         }
 
         // 3. Draw Real Time-Domain Waveform Overlay Line
-        ctx.lineWidth = 1.8;
-        ctx.strokeStyle = isAudioStreaming ? "rgba(16, 185, 129, 0.95)" : "rgba(56, 189, 248, 0.85)";
-        ctx.shadowColor = isAudioStreaming ? "#10b981" : "#38bdf8";
-        ctx.shadowBlur = 8;
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = isAudioStreaming ? "rgba(16, 185, 129, 0.9)" : "rgba(13, 153, 255, 0.85)";
         ctx.beginPath();
 
         const sliceWidth = width / timeDataArray.length;
@@ -848,12 +915,11 @@ document.addEventListener("DOMContentLoaded", () => {
           x += sliceWidth;
         }
         ctx.stroke();
-        ctx.shadowBlur = 0;
 
       } else {
         // Standby prompt before mic permission granted
-        ctx.fillStyle = "rgba(148, 163, 184, 0.75)";
-        ctx.font = "12px JetBrains Mono, monospace";
+        ctx.fillStyle = "rgba(161, 161, 170, 0.6)";
+        ctx.font = "11px Inter, sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("Microphone Standby. Click 'Enable Mic Monitor' or hold 'HOLD TO TALK' to activate live spectrum.", width / 2, height / 2 + 4);
       }

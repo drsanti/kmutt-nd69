@@ -1,241 +1,619 @@
-/* Modern Industrial VS Code Theme Stylesheet - High Legibility Scaling */
+/* ==========================================================================
+   Figma-Like UI Design System - RobotOS Edge AI Studio (KMUTT ND69 / ND02)
+   Design Tokens, Resilient Editor Layout, and Production Component Primitives
+   ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  --vscode-bg-darkest: #0a0d14;
-  --vscode-bg-sidebar: #10151f;
-  --vscode-bg-editor: #141a26;
-  --vscode-bg-panel: #0d111a;
-  --vscode-border: #1e2636;
-  --vscode-border-light: #2b364d;
-  --industrial-amber: #f59e0b;
-  --industrial-red: #ef4444;
-  --industrial-green: #10b981;
-  --industrial-blue: #0284c7;
+  /* Surface & Canvas Hierarchy */
+  --figma-bg-canvas: #141416;
+  --figma-bg-subtle: #1c1c1f;
+  --figma-bg-panel: #202024;
+  --figma-bg-panel-secondary: #26262b;
+  --figma-bg-toolbar: #28282e;
+  --figma-bg-input: #19191d;
+  --figma-bg-input-hover: #222227;
+  --figma-bg-active: #2e2e36;
+
+  /* Thin 1px Borders & Dividers */
+  --figma-border-subtle: rgba(255, 255, 255, 0.07);
+  --figma-border-default: #333339;
+  --figma-border-strong: #44444e;
+  --figma-border-focus: #0d99ff;
+
+  /* Typography Colors */
+  --figma-text-primary: #f4f4f6;
+  --figma-text-secondary: #a1a1aa;
+  --figma-text-tertiary: #71717a;
+  --figma-text-disabled: #52525b;
+
+  /* Accent & Interaction Tokens */
+  --figma-blue: #0d99ff;
+  --figma-blue-hover: #0b87e3;
+  --figma-blue-subtle: rgba(13, 153, 255, 0.12);
+  --figma-blue-border: rgba(13, 153, 255, 0.35);
+
+  /* Semantic State Tokens */
+  --figma-red: #f43f5e;
+  --figma-red-subtle: rgba(244, 63, 94, 0.12);
+  --figma-red-border: rgba(244, 63, 94, 0.35);
+
+  --figma-green: #10b981;
+  --figma-green-subtle: rgba(16, 185, 129, 0.12);
+  --figma-green-border: rgba(16, 185, 129, 0.35);
+
+  --figma-amber: #f59e0b;
+  --figma-amber-subtle: rgba(245, 158, 11, 0.12);
+  --figma-amber-border: rgba(245, 158, 11, 0.35);
+
+  --figma-purple: #8b5cf6;
+  --figma-purple-subtle: rgba(139, 92, 246, 0.12);
+
+  /* Dimensional Scale */
+  --topbar-height: 44px;
+  --statusbar-height: 26px;
+  --left-panel-width: 270px;
+  --right-panel-width: 310px;
+
+  /* Border Radii */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows (Subtle Figma Surface Elevation) */
+  --figma-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --figma-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --figma-shadow-artboard: 0 8px 32px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Base Document Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html, body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--vscode-bg-darkest);
-  color: #f1f5f9;
-  font-size: 15px;
-  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--figma-bg-canvas);
+  color: var(--figma-text-primary);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  user-select: none;
 }
 
 code, pre, .font-mono {
-  font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+  font-family: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* VS Code Minimal Scrollbars */
+/* ==========================================================================
+   Figma Custom Minimal Scrollbars
+   ========================================================================== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(10, 13, 20, 0.8);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #252f40;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b4860;
+  background: rgba(255, 255, 255, 0.28);
 }
 
-/* Industrial Grid Pattern */
-.industrial-grid {
-  background-size: 28px 28px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+/* ==========================================================================
+   Figma Infinite Canvas Dot Grid
+   ========================================================================== */
+.figma-canvas {
+  background-color: var(--figma-bg-canvas);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
 }
 
-/* Hazard Stripes for E-Stop */
-.hazard-stripes {
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(239, 68, 68, 0.18),
-    rgba(239, 68, 68, 0.18) 16px,
-    rgba(15, 23, 42, 0.8) 16px,
-    rgba(15, 23, 42, 0.8) 32px
-  );
+/* ==========================================================================
+   Artboard Container & Floating Figma Frame Labels
+   ========================================================================== */
+.figma-artboard {
+  background: var(--figma-bg-subtle);
+  border: 1px solid var(--figma-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--figma-shadow-artboard);
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* State Glows */
-.glow-red {
-  box-shadow: 0 0 45px -5px rgba(239, 68, 68, 0.5);
-  border-color: rgba(239, 68, 68, 0.8) !important;
+.figma-artboard:hover {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.glow-green {
-  box-shadow: 0 0 45px -5px rgba(16, 185, 129, 0.5);
-  border-color: rgba(16, 185, 129, 0.8) !important;
+.figma-artboard.selected {
+  border-color: var(--figma-blue);
+  box-shadow: 0 0 0 1px var(--figma-blue), var(--figma-shadow-artboard);
 }
 
-.glow-blue {
-  box-shadow: 0 0 45px -5px rgba(2, 132, 199, 0.5);
-  border-color: rgba(2, 132, 199, 0.8) !important;
-}
-
-.glow-amber {
-  box-shadow: 0 0 45px -5px rgba(245, 158, 11, 0.5);
-  border-color: rgba(245, 158, 11, 0.8) !important;
-}
-
-/* Activity Bar Icon Button */
-.activity-icon {
-  width: 54px;
-  height: 52px;
+.figma-artboard-label {
+  position: absolute;
+  top: -24px;
+  left: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #64748b;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--figma-text-secondary);
+  pointer-events: none;
+}
+
+.figma-artboard-label .frame-hash {
+  color: var(--figma-text-tertiary);
+  font-weight: 600;
+}
+
+.figma-artboard-label .frame-dims {
+  color: var(--figma-text-tertiary);
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-left: 4px;
+}
+
+/* ==========================================================================
+   Floating Canvas Toolbar
+   ========================================================================== */
+.figma-floating-toolbar {
+  background: var(--figma-bg-toolbar);
+  border: 1px solid var(--figma-border-default);
+  box-shadow: var(--figma-shadow-md);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+}
+
+.figma-tool-btn {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--figma-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
-  position: relative;
   transition: all 0.15s ease;
 }
 
-.activity-icon:hover {
-  color: #f1f5f9;
+.figma-tool-btn:hover {
+  background: var(--figma-bg-panel-hover);
+  color: var(--figma-text-primary);
 }
 
-.activity-icon.active {
-  color: #ffffff;
+.figma-tool-btn.active {
+  background: var(--figma-blue-subtle);
+  color: var(--figma-blue);
+  border-color: var(--figma-blue-border);
 }
 
-.activity-icon.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10px;
-  bottom: 10px;
-  width: 3px;
-  background-color: #38bdf8;
-  border-radius: 0 2px 2px 0;
-}
-
-/* Tab Header */
-.tab-item {
-  display: flex;
+/* ==========================================================================
+   Push-to-Talk (PTT) Pill Controls
+   ========================================================================== */
+.figma-ptt-btn {
+  position: relative;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #94a3b8;
-  border-right: 1px solid var(--vscode-border);
-  background: #111622;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--figma-blue);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: var(--figma-shadow-sm);
   cursor: pointer;
   user-select: none;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
 }
 
-.tab-item:hover {
-  color: #f1f5f9;
-  background: #151c2a;
+.figma-ptt-btn:hover {
+  background: var(--figma-blue-hover);
 }
 
-.tab-item.active {
-  color: #ffffff;
-  background: var(--vscode-bg-editor);
-  border-top: 2px solid #38bdf8;
-  padding-top: 7px;
+.figma-ptt-btn:active,
+.figma-ptt-btn.transmitting {
+  background: var(--figma-red) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.35) !important;
+  transform: translateY(1px);
 }
 
-/* Terminal Tab */
-.term-tab {
-  padding: 6px 16px;
+.figma-continuous-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
+  color: var(--figma-text-secondary);
+  background: var(--figma-bg-input);
+  border: 1px solid var(--figma-border-default);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.figma-continuous-btn:hover {
+  background: var(--figma-bg-panel-hover);
+  color: var(--figma-text-primary);
+  border-color: var(--figma-border-strong);
+}
+
+.figma-continuous-btn.live {
+  background: var(--figma-green-subtle) !important;
+  border-color: var(--figma-green-border) !important;
+  color: var(--figma-green) !important;
+}
+
+/* ==========================================================================
+   FSM Reactive State Banners (Figma Restrained State Card Aesthetic)
+   ========================================================================== */
+.state-banner-container {
+  background: var(--figma-bg-subtle);
+  border: 1px solid var(--figma-border-default);
+  border-radius: var(--radius-md);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.state-banner-container.state-red {
+  background: linear-gradient(180deg, rgba(244, 63, 94, 0.08) 0%, rgba(28, 28, 31, 0.95) 100%);
+  border-color: var(--figma-red-border);
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.12);
+}
+
+.state-banner-container.state-green {
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(28, 28, 31, 0.95) 100%);
+  border-color: var(--figma-green-border);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
+}
+
+.state-banner-container.state-blue {
+  background: linear-gradient(180deg, rgba(13, 153, 255, 0.08) 0%, rgba(28, 28, 31, 0.95) 100%);
+  border-color: var(--figma-blue-border);
+  box-shadow: 0 0 24px rgba(13, 153, 255, 0.12);
+}
+
+.state-banner-container.state-off {
+  background: var(--figma-bg-subtle);
+  border-color: var(--figma-border-default);
+  box-shadow: none;
+}
+
+/* Legacy support classes from app.js */
+.glow-red {
+  border-color: var(--figma-red) !important;
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.25) !important;
+}
+.glow-green {
+  border-color: var(--figma-green) !important;
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.25) !important;
+}
+.glow-blue {
+  border-color: var(--figma-blue) !important;
+  box-shadow: 0 0 24px rgba(13, 153, 255, 0.25) !important;
+}
+.glow-amber {
+  border-color: var(--figma-amber) !important;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.25) !important;
+}
+.hazard-stripes {
+  /* Subtle restrained accent line at top instead of jarring full-card hazard stripes */
+  border-top: 3px solid var(--figma-red) !important;
+}
+
+/* ==========================================================================
+   Component Variants Grid (Interactive FSM Simulator Cards)
+   ========================================================================== */
+.figma-variant-card {
+  background: var(--figma-bg-panel);
+  border: 1px solid var(--figma-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.figma-variant-card:hover {
+  background: var(--figma-bg-panel-secondary);
+  border-color: var(--figma-border-strong);
+  transform: translateY(-1px);
+}
+
+.figma-sim-btn {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  border: 1px solid var(--figma-border-default);
+  background: var(--figma-bg-input);
+  color: var(--figma-text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-top: 10px;
+}
+
+.figma-sim-btn:hover {
+  background: var(--figma-bg-panel-hover);
+  border-color: var(--figma-border-strong);
+}
+
+.figma-sim-btn:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   Properties Inspector Inputs & Sliders
+   ========================================================================== */
+.figma-inspector-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--figma-border-subtle);
+}
+
+.figma-inspector-header {
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
+  color: var(--figma-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-.term-tab:hover {
-  color: #e2e8f0;
+.figma-property-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 8px;
 }
 
-.term-tab.active {
-  color: #38bdf8;
-  border-bottom-color: #38bdf8;
+.figma-property-row:last-child {
+  margin-bottom: 0;
 }
 
-/* VU Meter Pulse */
-@keyframes vuPulse {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+.figma-property-label {
+  color: var(--figma-text-secondary);
+  font-size: 12px;
 }
 
-.vu-active {
-  animation: vuPulse 1.2s infinite ease-in-out;
+.figma-property-value {
+  color: var(--figma-text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
 }
 
-/* Industrial Custom Range Slider */
+.figma-input-field {
+  background: var(--figma-bg-input);
+  border: 1px solid var(--figma-border-default);
+  border-radius: var(--radius-xs);
+  color: var(--figma-text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 4px 8px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.figma-input-field:focus {
+  border-color: var(--figma-border-focus);
+}
+
+/* Figma-Style Slim Range Slider */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
-  background: #182232;
-  border-radius: 3px;
+  height: 4px;
+  background: #2b2b31;
+  border-radius: 2px;
   outline: none;
-  border: 1px solid #28374d;
+  border: none;
+  margin: 10px 0;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  background: #38bdf8;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-  border: 2px solid #0f172a;
-  transition: all 0.15s ease;
+  border: 2px solid var(--figma-blue);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s ease, background-color 0.1s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  background: #7dd3fc;
-  transform: scale(1.15);
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.9);
+  transform: scale(1.2);
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  background: #38bdf8;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-  border: 2px solid #0f172a;
+  border: 2px solid var(--figma-blue);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
-/* Threshold Marker on Probability Meters */
+/* Segmented Control Chips */
+.figma-segmented-group {
+  display: flex;
+  background: var(--figma-bg-input);
+  border: 1px solid var(--figma-border-default);
+  border-radius: var(--radius-xs);
+  padding: 2px;
+  gap: 2px;
+}
+
+.figma-segmented-btn {
+  flex: 1;
+  padding: 4px 6px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  text-align: center;
+  color: var(--figma-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.figma-segmented-btn:hover {
+  color: var(--figma-text-primary);
+}
+
+.figma-segmented-btn.active {
+  background: var(--figma-bg-toolbar);
+  color: var(--figma-text-primary);
+  font-weight: 600;
+  box-shadow: var(--figma-shadow-sm);
+}
+
+/* ==========================================================================
+   Softmax Meters & Vertical Threshold Marker
+   ========================================================================== */
+.figma-meter-container {
+  width: 100%;
+  height: 14px;
+  background: var(--figma-bg-input);
+  border: 1px solid var(--figma-border-subtle);
+  border-radius: var(--radius-xs);
+  position: relative;
+  overflow: hidden;
+}
+
 .threshold-marker {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 2px;
-  background-color: #f59e0b;
-  box-shadow: 0 0 6px #f59e0b;
+  background-color: var(--figma-blue);
+  box-shadow: 0 0 4px var(--figma-blue);
   z-index: 10;
   pointer-events: none;
 }
 
-/* Audio Visualizer Canvas */
-#audioVisualizer {
-  background: radial-gradient(circle at center, #101622 0%, #090c13 100%);
-  border: 1px solid #1e293b;
+/* ==========================================================================
+   Left Panel Layers Tree & Asset Items
+   ========================================================================== */
+.figma-layer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 12px;
+  color: var(--figma-text-secondary);
+  cursor: pointer;
+  transition: all 0.1s ease;
 }
 
-/* Tactile Click Effect */
-button:active {
-  transform: translateY(1px);
+.figma-layer-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--figma-text-primary);
+}
+
+.figma-layer-item.active {
+  background: var(--figma-blue-subtle);
+  color: var(--figma-blue);
+}
+
+.figma-asset-card {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--figma-bg-panel);
+  border: 1px solid var(--figma-border-subtle);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.figma-asset-card:hover {
+  background: var(--figma-bg-panel-secondary);
+  border-color: var(--figma-border-default);
+}
+
+/* ==========================================================================
+   Terminal / Telemetry Drawer Tabs
+   ========================================================================== */
+.term-tab {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  color: var(--figma-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.term-tab:hover {
+  color: var(--figma-text-primary);
+}
+
+.term-tab.active {
+  color: var(--figma-blue);
+  border-bottom-color: var(--figma-blue);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Audio Visualizer Canvas Styling
+   ========================================================================== */
+#audioVisualizer {
+  background: #101014;
+  border: 1px solid var(--figma-border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+/* Status Bar Text */
+.statusbar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--figma-text-secondary);
 }
