@@ -40,6 +40,8 @@ Run the deployment script from `robotos/sdk/python-kws/` (or via Python):
 ```bash
 python robotos/sdk/python-kws/publish_to_students.py
 ```
+*(On macOS/Linux, run `python3 robotos/sdk/python-kws/publish_to_students.py` or `python3 ../sdk/python-kws/publish_to_students.py`)*
+
 This script automatically:
 1. Verifies Python syntax across all package modules and examples (`py_compile`).
 2. Cleans build caches and builds the new `.whl`.
@@ -78,7 +80,11 @@ This script automatically:
 
 ### Live Verification Command
 ```bash
-robotos-kws check-imu --port <COM_PORT>
+# Windows:
+robotos-kws check-imu --port COM17
+
+# macOS (always use /dev/cu.usbmodem*):
+robotos-kws check-imu --port /dev/cu.usbmodem1101
 ```
 Expected behavior:
 - Connects cleanly without restarting the board.
@@ -87,17 +93,62 @@ Expected behavior:
 
 ---
 
-## 4. Web Application & Backend Services (ND2 Track)
+## 4. macOS Environment, Wheel Building & Hardware Telemetry Guide
+
+When working on **macOS (Apple Silicon / Intel)**:
+
+### 4.1 Python Environment on macOS
+- Python version requirement: **Python 3.10 – 3.13** (Python 3.11 recommended, e.g. via Homebrew: `brew install python@3.11`).
+- Virtual environments use POSIX structure:
+  ```bash
+  python3.11 -m venv .venv
+  source .venv/bin/activate
+  pip install --upgrade pip build wheel setuptools
+  ```
+- Note: POSIX virtual environment binaries are under `.venv/bin/python`, not `.venv/Scripts/python.exe`.
+
+### 4.2 Building and Deploying the Wheel on macOS
+- Run the multi-track pipeline script directly:
+  ```bash
+  python3 robotos/sdk/python-kws/publish_to_students.py
+  # Or from kmutt-nd69:
+  python3 ../sdk/python-kws/publish_to_students.py
+  ```
+- **Wheel Compatibility**: `robotos_kws-0.1.1-py3-none-any.whl` is a pure-Python wheel (`py3-none-any`). It installs and executes natively on macOS (Apple Silicon arm64 & Intel x86_64), Linux, and Windows without recompilation.
+- The pipeline script automatically detects POSIX paths (`.venv/bin/python`), updates wheels in all 3 tracks, audits against code leaks, and runs smoke tests.
+
+### 4.3 Serial Port Naming on macOS (`/dev/cu.*` vs `/dev/tty.*`)
+- On macOS, the ESP32-S3 USB Serial device appears under `/dev/cu.usbmodem*`:
+  ```bash
+  ls -l /dev/cu.usbmodem*
+  ```
+- **CRITICAL**: Always use `/dev/cu.usbmodem*` (callout device).
+- **NEVER** use `/dev/tty.usbmodem*`: on macOS, opening `/dev/tty.*` blocks waiting for Data Carrier Detect (DCD) and will hang the Python process indefinitely.
+- Example telemetry check on macOS:
+  ```bash
+  robotos-kws check-imu --port /dev/cu.usbmodem1101
+  ```
+
+### 4.4 macOS Microphone Privacy Permissions (`sounddevice`)
+- For audio keyword spotting data collection (ND1 / ND2 PC microphone):
+- macOS requires explicit microphone access granted to the terminal or IDE:
+  `System Settings -> Privacy & Security -> Microphone -> Enable for Terminal / iTerm / VS Code / Cursor / Antigravity`.
+- If permission is denied, `sounddevice` will raise `PortAudioError` or return silent zero-buffers.
+- If PortAudio dynamic library is needed: `brew install portaudio`.
+
+---
+
+## 5. Web Application & Backend Services (ND2 Track)
 
 - ND2 lab features a FastAPI backend located at `nd2/docs/week08/labs/web-app/server.py`.
 - **Default Port**: `8000` (`http://127.0.0.1:8000`).
 - **Health check**: `curl http://127.0.0.1:8000/api/v1/model/info`.
 - **Frontend Vite UI**: Located at `nd2/docs/week08/labs/web-app/ui/` running on port `5173`.
-- Before starting a new server instance, check if port 8000 is already active to avoid `Errno 10048` (Address already in use).
+- Before starting a new server instance, check if port 8000 is already active to avoid `Errno 10048` / `EADDRINUSE`.
 
 ---
 
-## 5. Git Commit & Push Guidelines
+## 6. Git Commit & Push Guidelines
 
 - Changes to student curriculum, documentation, wheels, and track examples belong to `kmutt-nd69` (branch `main`).
 - Always run `git status` and verify that no unwanted temporary files (`.pyc`, caches, raw sources) are staged.
@@ -105,7 +156,7 @@ Expected behavior:
 
 ---
 
-## 6. Historical Handoff Notes (2026-11-16)
+## 7. Historical Handoff Notes (2026-11-16)
 
 For reference regarding the 2026-11-16 configurable-frame migration:
 - Refer to `docs/MACOS-COORDINATE-HANDOFF.md` in the parent `robotos` repository.
