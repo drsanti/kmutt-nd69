@@ -255,25 +255,35 @@ Clients connect to `ws://localhost:8000/ws/kws` and immediately receive real-tim
 
 ---
 
-## 5. Lab 2.4: Full-Stack Voice-Reactive Dashboard (VS Code Theme)
+## 5. Lab 2.4: Full-Stack Voice-Reactive Dashboard (Figma-Like Design System)
 
 Open `http://localhost:8000` (or `http://127.0.0.1:8000`) in your browser.
 
-The dashboard uses a modern **VS Code-style split-panel industrial layout**:
+The dashboard uses a modern **Figma-inspired visual editor desktop layout** built with a dark slate design system, thin 1px dividers, and high-density telemetry:
 
-1. **Activity Bar & Primary Sidebar (Left)**:
-   - **Model Profile**: Architecture specs (`DS-CNN int8`), active vocab labels, threshold settings.
-   - **Inference Actions**: One-click **"📁 Use Built-in Sample"**, **"🎙️ Record Mic (1s)"**, or custom file upload.
-2. **Main SCADA Stage (Center)**:
-   - **Industrial HUD State Monitor**: Large glowing status indicator reacting with hazard stripes on `"red"` (E-STOP), emerald glow on `"green"` (DRIVE), sky glow on `"blue"` (NAV), and amber glow on `"off"` (STANDBY).
-   - **Safety Interlock Matrix**: Status cards defining the 4-state deterministic robot FSM.
-   - **Live Audio Activity Indicator**: Shows continuous 16 kHz PCM server stream status.
-3. **Softmax Distribution Meters (Right)**:
-   - High-precision segmented probability bars and percentage readouts across all classes.
-4. **Bottom Terminal / Output Panel**:
-   - Tabbed output console (`WEBSOCKET TELEMETRY`, `REST INSPECTOR`, `MODEL META`) streaming real-time timestamped event logs with color-coded tags.
-5. **VS Code Status Bar (Bottom)**:
-   - Displays git branch, live WebSocket link, DSP frame specs, and runtime telemetry.
+1. **TopBar (Application Header & Breadcrumb)**:
+   - **Document Breadcrumb**: `RobotOS / Voice Controller [ND02]`.
+   - **View Switcher Tabs**: `Canvas`, `Model`, and `Telemetry` view toggles.
+   - **Live Indicators**: Active threshold readout pill (`⚡ Thresh: 80%`), WebSocket live connection badge, and Swagger API docs shortcut (`/docs`).
+2. **Left Panel: Layers & Audio Assets (270px)**:
+   - **Layers Hierarchy**: Component tree representing the `# Finite State Machine (FSM)` artboard frame with child vocab classes (`red`, `green`, `blue`, `off`, `_silence_`, `_unknown_`) and active detection status badges.
+   - **Audio Assets & Inputs**: One-click **"📁 sample_audio.wav"** server benchmark, **"🎙️ Record Mic (1s)"** single-take browser capture, and custom `.wav` multipart file upload form.
+   - **DSP Pipeline Specifications**: Frame length (512 / 32 ms), hop size (320 / 20 ms), periodic Hann window, 40 Mel bins, and int8 quantization `[-128..127]`.
+3. **Center Canvas Viewport (Infinite Dot-Grid Workspace)**:
+   - **Floating Canvas Toolbar**: Push-to-Talk button (`[ HOLD TO TALK ]` / hold `Spacebar`), Continuous hands-free stream toggle (`[ Continuous: LIVE ]`), and real-time instantaneous microphone energy meter (dBFS and VU bar).
+   - **Audio Spectrum & Waveform Oscilloscope**: 60 FPS real-time Web Audio API visualizer rendering frequency spectrum bins and time-domain waveform overlay.
+   - **Artboard Frame (`# Finite State Machine (FSM) 880 × 360`)**:
+     - **Active Robot State Display**: Responsive central state card indicating current robot operation (`STANDBY`, `EMERGENCY STOP`, `DRIVE FORWARD`, `MANUAL NAVIGATION`) with telemetry metadata (`SYS_ID`, `INTERLOCK: ACTIVE`, `16.0 kHz`, `<35ms`).
+     - **Safety Interlock Component Variants**: 4 interactive state variant cards with 1-click simulation trigger buttons (`⚡ Test "red"`, `⚡ Test "green"`, `⚡ Test "blue"`, `⚡ Test "off"`).
+4. **Right Panel: Properties Inspector (310px)**:
+   - **Model & Input Dimensions**: Architecture (`DS-CNN int8`), quantized size (`18.8 KiB`), and input matrix dimensions ($49 \times 40$ Log-Mel).
+   - **Dynamic Detection Sensitivity Threshold**: Exact numeric readout, slim slider track, and segmented preset buttons (`10%`, `50%`, `80%`, `95%`) backed by `POST /api/v1/model/threshold`.
+   - **Softmax Probability Distribution**: Real-time progress bars for each vocabulary class with a dynamic vertical guideline indicating the active confidence threshold.
+   - **REST Payload Inspector**: Collapsible JSON payload viewer formatting raw HTTP response outputs from `/api/v1/classify`.
+5. **Bottom Drawer (Console & Telemetry Stream)**:
+   - Tabbed console (`WebSocket Telemetry`, `REST Inspector`, `Threshold Audit`, `cURL Guide`) streaming real-time timestamped events with color-coded tags and a one-click **Clear Log** action.
+6. **StatusBar (Footer - 26px)**:
+   - Minimalist status strip displaying active Git branch (`main*`), WebSocket connection heartbeat, safety interlock state (`ARM_OK`), model specs, and workspace identifier (`KMUTT ND69 / ND02`).
 
 ---
 
