@@ -39,6 +39,9 @@ In this lab, you learn how to bridge Edge AI models into modern web and backend 
 
 ## 1. Environment Setup
 
+> [!TIP]
+> ✈️ **Before you begin:** Test your developer literacy with the **[Pre-Flight Readiness Quiz](../preflight.md)** (10 self-check questions on Python versions, terminal paths, and permissions).
+
 ### 1.1 Virtual Environment
 
 > [!IMPORTANT]

@@ -24,6 +24,7 @@ In this session, you build a complete Edge AI pipeline from raw audio signals to
 ## Table of Contents
 
 - [Labs Guide](labs/README.md)
+- [Pre-Flight Readiness Quiz (10 Questions)](preflight.md)
 - [Architecture Decision Record: `robotos-kws`](adr-robotos-kws.md)
 - [Checkpoint Quiz](checkpoint.md)
 - [Mini Challenge → Mini-Project 2](mini-challenge.md)

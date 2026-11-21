@@ -24,6 +24,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 ## Table of Contents
 
 - [Labs Guide](labs/README.md)
+- [Pre-Flight Readiness Quiz (10 Questions)](preflight.md)
 - [Checkpoint Quiz](checkpoint.md)
 - [Track Index](../../README.md)
 

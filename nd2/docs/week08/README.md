@@ -24,6 +24,7 @@ In this session, you learn how software engineers consume edge AI models program
 ## Table of Contents
 
 - [Labs Guide](labs/README.md)
+- [Pre-Flight Readiness Quiz (10 Questions)](preflight.md)
 - [Checkpoint Quiz](checkpoint.md)
 - [Track Index](../../README.md)
 

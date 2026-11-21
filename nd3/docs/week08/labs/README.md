@@ -26,6 +26,9 @@ In this lab, you work with physical hardware: the **ws28p ESP32-S3 board** strea
 
 ## 1. Environment Setup
 
+> [!TIP]
+> ✈️ **Before you begin:** Test your developer literacy with the **[Pre-Flight Readiness Quiz](../preflight.md)** (10 self-check questions on Python versions, terminal paths, and permissions).
+
 ### 1.1 Virtual Environment
 
 > [!IMPORTANT]

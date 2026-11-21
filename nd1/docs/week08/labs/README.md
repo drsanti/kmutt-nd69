@@ -26,6 +26,9 @@ In this lab, you complete the end-to-end Edge AI development lifecycle using the
 
 ## 1. Environment Setup & CLI Installation
 
+> [!TIP]
+> ✈️ **Before you begin:** Test your developer literacy with the **[Pre-Flight Readiness Quiz](../preflight.md)** (10 self-check questions on Python versions, terminal paths, and permissions).
+
 ### 1.1 Open Terminal & Navigate to Directory
 
 ```bash
