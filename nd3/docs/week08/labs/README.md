@@ -148,9 +148,9 @@ robotos-kws check-imu --port COM17
 ```
 *(Replace `COM17` with your actual serial port if different).*
 
-> [!NOTE]
-> **Board Restart on Serial Connect is Normal:**  
-> When the serial port is opened, the host operating system asserts the USB DTR/RTS lines, which momentarily triggers the ESP32-S3 hardware auto-reset (`EN`) circuit. You may see the board's screen or LED blink during reboot. The CLI automatically waits ~2.5 seconds (`SETTLE_S`) for the board to finish booting before reading `BoardInfo` and verifying the IMU telemetry stream.
+> [!TIP]
+> **Clean Connection Without Resets:**  
+> The `robotos-kws` CLI explicitly manages the USB DTR and RTS control line states to prevent unintended hardware resets on the ESP32-S3's native USB Serial/JTAG port. Telemetry streaming connects and disconnects smoothly without restarting your board.
 
 ### Expected Output:
 - Reads `BoardInfo`: Caps `0x3c` (IMU + RTC + BATT).
