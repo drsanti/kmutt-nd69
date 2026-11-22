@@ -20,14 +20,14 @@ From this directory (`nd2/docs/week08/labs/web-app`):
   py -3.11 -m venv .venv
   .\.venv\Scripts\Activate.ps1
   pip install -r requirements.txt
-  pip install ../dist/robotos_kws-0.1.7-py3-none-any.whl
+  pip install ../dist/robotos_kws-0.1.8-py3-none-any.whl
   ```
 - **macOS / Linux:**
   ```bash
   python3.11 -m venv .venv
   source .venv/bin/activate
   pip install -r requirements.txt
-  pip install ../dist/robotos_kws-0.1.7-py3-none-any.whl
+  pip install ../dist/robotos_kws-0.1.8-py3-none-any.whl
   ```
 
 > [!TIP]

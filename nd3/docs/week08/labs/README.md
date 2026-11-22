@@ -100,11 +100,11 @@ cd nd3/docs/week08/labs/robotics
 
 ```bash
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.7-py3-none-any.whl
+pip install ../dist/robotos_kws-0.1.8-py3-none-any.whl
 ```
 
 > [!TIP]
-> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.7-py3-none-any.whl`.
+> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.8-py3-none-any.whl`.
 
 Verify that the CLI is ready:
 ```bash
@@ -276,10 +276,10 @@ Collect labelled motion windows from the physical board:
 
 ```bash
 # 1. One-click Auto-Detection (Recommended):
-robotos collect-imu --person student_a --session s01 --takes 20
+robotos-kws collect-imu --person student_a --session s01 --takes 20
 
 # 2. Specify port manually:
-robotos collect-imu --port COM17 --person student_a --session s01 --takes 20
+robotos-kws collect-imu --port COM17 --person student_a --session s01 --takes 20
 ```
 
 ### The 4 Gestures to Record:
@@ -344,10 +344,10 @@ Run real-time sliding-window inference on the live USB stream:
 
 ```bash
 # 1. One-click Auto-Detection (Recommended):
-robotos live-imu --model imu_artifacts/model_int8.tflite
+robotos-kws live-imu --model imu_artifacts/model_int8.tflite
 
 # 2. Specify port manually:
-robotos live-imu --port COM17 --model imu_artifacts/model_int8.tflite
+robotos-kws live-imu --port COM17 --model imu_artifacts/model_int8.tflite
 ```
 Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
 
@@ -427,20 +427,17 @@ The included `air_drum.py` script features:
 **1. One-click Auto-Detection (Recommended):**
 ```bash
 python air_drum.py
-# (or via unified CLI: robotos air-drum)
 ```
 
 **2. Specify port manually:**
 ```bash
 python air_drum.py --port COM17
-# (or: robotos air-drum --port COM17)
 ```
 
 **3. Sound Check Demo (No hardware needed):**
 Verify your computer's audio synthesis and listen to all percussion sounds:
 ```bash
 python air_drum.py --demo
-# (or: robotos air-drum --demo)
 ```
 
 **4. Offline Replay Mode:**

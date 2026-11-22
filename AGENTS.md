@@ -125,7 +125,7 @@ When working on **macOS (Apple Silicon / Intel)**:
   # Or from kmutt-nd69:
   python3 ../sdk/python-kws/publish_to_students.py
   ```
-- **Wheel Compatibility**: `robotos_kws-0.1.7-py3-none-any.whl` is a pure-Python wheel (`py3-none-any`). It installs and executes natively on macOS (Apple Silicon arm64 & Intel x86_64), Linux, and Windows without recompilation.
+- **Wheel Compatibility**: `robotos_kws-0.1.8-py3-none-any.whl` is a pure-Python wheel (`py3-none-any`). It installs and executes natively on macOS (Apple Silicon arm64 & Intel x86_64), Linux, and Windows without recompilation.
 - The pipeline script automatically detects POSIX paths (`.venv/bin/python`), updates wheels in all 3 tracks, audits against code leaks, and runs smoke tests.
 
 ### 4.3 Serial Port Naming on macOS (`/dev/cu.*` vs `/dev/tty.*`)

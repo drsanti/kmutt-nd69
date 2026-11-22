@@ -68,7 +68,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 | Block | Topic | Hands-On CLI Command |
 | :--- | :--- | :--- |
 | **Prerequisite** | ⚡ **Flash Firmware First** (Auto-Detect, Flash & Verify) | `robotos flash-firmware` |
-| **Block 1** | Physical Telemetry & Wire Protocol Inspection | `robotos-kws check-imu --port COM7` |
+| **Block 1** | Physical Telemetry & Wire Protocol Inspection | `robotos check-imu` |
 | **Block 2** | Motion Gesture Dataset Collection (Physical Board) | `robotos-kws collect-imu --port COM7` |
 | **Block 3** | 6-DOF Signal Conditioning & 1D-CNN Training | `robotos-kws train-imu --data imu_dataset` |
 | **Block 4** | Person-Disjoint Benchmarking & Int8 Quantization | Review `imu_artifacts/meta.json` |
