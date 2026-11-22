@@ -361,6 +361,15 @@ Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print dete
 ### 7.2 Robotic Finite State Machine Interlock
 Run the included robot controller script:
 
+> [!TIP]
+> **Check Your Python Command (`python`, `python3`, or `py`):**
+> Depending on your operating system and environment setup, the command to invoke Python may differ:
+> - **Windows (PowerShell / Git Bash with `.venv`):** `python robot_fsm.py`
+> - **macOS / Linux:** `python3 robot_fsm.py` (or `python robot_fsm.py`)
+> - **Windows Python Launcher:** `py robot_fsm.py` (if `py.exe` was copied to your `.venv`)
+>
+> 💡 *Quick check:* Run `python --version` (or `where python` on Windows / `which python` on macOS/Linux) to ensure it points to your activated `.venv`!
+
 **With Physical ws28p Board:**
 ```bash
 # 1. One-click Auto-Detection (Recommended):
