@@ -25,6 +25,26 @@ Use this skill whenever modifying the Python SDK in `robotos/sdk/python-kws`, ch
 3. **ESP32-S3 Serial Safety**: The ESP32-S3 native USB Serial/JTAG resets when `RTS=1, DTR=0`. Always ensure PySerial is initialized with `rts=False, dtr=False`, and that `ser.rts=False; ser.dtr=False` is set before `ser.close()`.
 4. **macOS Serial Device Rule**: On macOS, ALWAYS use the callout device `/dev/cu.usbmodem*` (never `/dev/tty.*`, which blocks on carrier detect).
 
+## Automated Firmware Flashing (ND1, ND2, ND3)
+
+Students across all tracks can flash and verify their boards using:
+```bash
+# Auto-detects ESP32-S3 port, downloads prebuilt binaries, flashes, and verifies:
+robotos flash-firmware
+
+# Specify board variant:
+robotos flash-firmware --board ws28p    # IMU & Robotics (ND3)
+robotos flash-firmware --board es3c28p  # Mic & LED (ND1/ND2)
+
+# Use local directory (downloaded firmware files):
+robotos flash-firmware --from-dir ~/Downloads/ws28p
+
+# Use specific remote repository preset or custom GitHub URL:
+robotos flash-firmware --source robotos-workshop
+robotos flash-firmware --source hardware-interface-workshop
+robotos flash-firmware --source https://github.com/drsanti/robotos-workshop/tree/main/fw
+```
+
 ## Step-by-Step Workflow
 
 ### 1. Update SDK Code & Bump Version
