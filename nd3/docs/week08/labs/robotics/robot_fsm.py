@@ -97,8 +97,12 @@ def main():
         print(f"Replaying sample gesture file: {args.replay}")
         if args.model.exists():
             try:
-                import imu_common as ic
-                import live_infer_imu as lii
+                try:
+                    from robotos_edge.imu import features as ic
+                    from robotos_edge.ml import live_infer_imu as lii
+                except ImportError:
+                    import imu_common as ic
+                    import live_infer_imu as lii
 
                 print(f"Using trained model: {args.model}")
                 detector = lii.GestureDetector(str(args.model), threshold=0.70)
@@ -139,8 +143,12 @@ def main():
 
     if not args.port:
         try:
+            from robotos_edge.hardware import detect as detect_board
+            from robotos_edge.hardware import wire
+        except ImportError:
             import detect_board
             import wire
+        try:
             args.port = detect_board.auto_detect_port(need_cap=wire.CAP_IMU, preferred_model="ws28p")
         except Exception as e:
             print(f"[error] Could not auto-detect ws28p board: {e}")
@@ -148,11 +156,15 @@ def main():
             return 1
 
     try:
-        import live_infer_imu as lii
-        import wire
+        from robotos_edge.ml import live_infer_imu as lii
+        from robotos_edge.hardware import wire
     except ImportError:
-        print("[error] robotos_kws package not found. Please install the wheel from ../dist/")
-        return 1
+        try:
+            import live_infer_imu as lii
+            import wire
+        except ImportError:
+            print("[error] robotos_edge package not found. Please install the wheel from ../dist/")
+            return 1
 
     if not args.model.exists():
         print(f"[warning] Model {args.model} not found. Running with simulated detections...")

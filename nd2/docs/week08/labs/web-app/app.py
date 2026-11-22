@@ -25,8 +25,12 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-import kws_common as kc
-import robotos_kws as rk
+try:
+    from robotos_edge.audio import features as kc
+    import robotos_edge as rk
+except ImportError:
+    import kws_common as kc
+    import robotos_kws as rk
 
 app = FastAPI(
     title="RobotOS KWS Edge AI Microservice",
