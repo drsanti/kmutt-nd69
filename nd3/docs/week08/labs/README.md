@@ -232,18 +232,34 @@ robotos flash-firmware --source robotos-workshop
 
 ## 3. Lab 3.1: Hardware Telemetry & IMU Stream Inspection
 
-Test the board connection and verify the 50 Hz IMU telemetry stream:
+Test the board connection and verify the 50 Hz IMU telemetry stream. The CLI automatically detects your board port:
 
 ```bash
-robotos-kws check-imu --port COM17
+# 1. One-click Auto-Detection (Recommended):
+robotos check-imu
 ```
-*(Replace `COM17` with your actual serial port if different).*
+*(Or specify `--port <PORT>` explicitly if multiple devices are attached, e.g. `robotos check-imu --port COM17` on Windows or `robotos check-imu --port /dev/cu.usbmodem1101` on macOS)*.
+
+> [!TIP]
+> **Want to inspect all connected boards and their wire protocol handshake?**  
+> Run:
+> ```bash
+> robotos detect
+> ```
+> This scans all serial ports, tests the wire handshake, displays the board model (`ws28p` vs `es3c28p`), firmware version, UUID, and live sensor readings.
 
 > [!TIP]
 > **Clean Connection Without Resets:**  
 > The `robotos-kws` CLI explicitly manages the USB DTR and RTS control line states to prevent unintended hardware resets on the ESP32-S3's native USB Serial/JTAG port. Telemetry streaming connects and disconnects smoothly without restarting your board.
 
 ### Expected Output:
+```text
+   [auto-detect] Selected ESP32-S3 board on COM17 (ws28p, 0x3c (IMU|RTC|BATT|BTN))
+Board: IMU stream detected
+151 samples, 50.0 Hz, lost 0
+mean accel (m/s^2) [ 0.12  0.08  9.81]  |a| 9.81  (about 9.8 when still)
+gyro std (rad/s)   [0.002 0.001 0.001]
+```
 - Reads `BoardInfo`: Caps `0x3c` (IMU + RTC + BATT).
 - Confirms streaming rate: **~50 Hz** (one frame every 20 ms).
 - Acceleration magnitude: $|\vec{a}| \approx 9.8\text{ m/s}^2$ when stationary.
@@ -253,11 +269,12 @@ robotos-kws check-imu --port COM17
 
 ## 4. Lab 3.2: Multi-Class Motion Dataset Collection
 
-Collect labelled motion windows from the physical board:
+Collect labelled motion windows from the physical board (port auto-detected):
 
 ```bash
-robotos-kws collect-imu --port COM17 --person student_a --session s01 --takes 20
+robotos collect-imu --person student_a --session s01 --takes 20
 ```
+*(Or specify `--port COM17` if desired).*
 
 ### The 4 Gestures to Record:
 | Gesture | Physical Motion | Robotic Meaning |
@@ -317,10 +334,11 @@ Notice that the int8 model is only **~3.2 KiB**, small enough to run on any micr
 Now run real-time hardware inference connected to a robotic state machine.
 
 ### 7.1 Direct CLI Live Inference
-Run real-time sliding-window inference on the live USB stream:
+Run real-time sliding-window inference on the live USB stream (port is auto-detected):
 ```bash
-robotos-kws live-imu --port COM17 --model imu_artifacts/model_int8.tflite
+robotos live-imu --model imu_artifacts/model_int8.tflite
 ```
+*(Or specify `--port COM17` explicitly if desired).*
 Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
 
 > [!TIP]
