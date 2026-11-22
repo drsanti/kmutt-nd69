@@ -74,28 +74,44 @@ This script handles:
 
 ### 3. Verify Live Hardware (If physical board connected)
 Identify the serial port:
-- Windows: `COM17` (or from Device Manager)
-- macOS: `ls /dev/cu.usbmodem*` (e.g., `/dev/cu.usbmodem1101`)
+- Windows: `COM17` (or auto-detected)
+- macOS: `/dev/cu.usbmodem*` (e.g., `/dev/cu.usbmodem1101` or auto-detected)
 
-Run telemetry check:
+Run hardware check:
 ```bash
-# Windows:
-robotos-kws check-imu --port COM17
+# Auto-detection (Recommended on Windows & macOS):
+robotos check-imu
 
-# macOS:
-robotos-kws check-imu --port /dev/cu.usbmodem1101
+# Or specify port explicitly:
+# Windows:
+robotos check-imu --port COM17
+
+# macOS (always use /dev/cu.usbmodem*):
+robotos check-imu --port /dev/cu.usbmodem1101
 ```
 Confirm:
-- Connects without resetting the ESP32-S3 board.
+- Connects without resetting the ESP32-S3 board (DTR/RTS safety).
 - Receives 150+ samples at 50 Hz with 0 lost packets.
+- Measures gravity $|\vec{a}| \approx 9.8\text{ m/s}^2$ on vertical axis.
 - Exits cleanly without rebooting the board.
 
-### 4. macOS Audio/Mic Setup (ND1 & ND2)
-- Ensure Terminal / IDE has microphone access in:
-  `System Settings -> Privacy & Security -> Microphone`
-- If PortAudio missing: `brew install portaudio`
+### 4. macOS Audio & Sound Setup (ND1, ND2 & Air Drum)
+- Ensure Terminal / IDE has microphone and audio output access in:
+  `System Settings -> Privacy & Security -> Microphone -> Enable for Terminal / iTerm / VS Code / Cursor / Antigravity`
+- If PortAudio is missing on macOS: `brew install portaudio`
+- Python sound dependencies: `pip install sounddevice numpy` (already included in `.whl`)
 
-### 5. Commit and Push
+### 5. Separation of Concerns on macOS
+- **Hardware & Board CLI**: `robotos` (`detect`, `flash-firmware`, `check-imu`, `check-board`, `devices`)
+- **Machine Learning & Edge AI Toolkit**: `robotos-kws` (`collect-imu`, `train-imu`, `live-imu`, `train`, `live-board`)
+- **Student Lab Applications**:
+  ```bash
+  # In nd3/docs/week08/labs:
+  python3 air_drum.py
+  python3 robot_fsm.py --model imu_artifacts/model_int8.tflite
+  ```
+
+### 6. Commit and Push
 Commit changes in `robotos/kmutt-nd69`:
 ```bash
 cd robotos/kmutt-nd69

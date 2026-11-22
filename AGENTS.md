@@ -81,21 +81,25 @@ This script automatically:
 ### Firmware Flashing Command (ND1, ND2, ND3)
 ```bash
 # Auto-detects port, downloads prebuilt binaries, flashes, and verifies:
-robotos-kws flash-firmware
+robotos flash-firmware
 
 # Or specify board/port explicitly:
-robotos-kws flash-firmware --board ws28p --port COM17
+robotos flash-firmware --board ws28p --port COM17
 # macOS:
-robotos-kws flash-firmware --board ws28p --port /dev/cu.usbmodem1101
+robotos flash-firmware --board ws28p --port /dev/cu.usbmodem1101
 ```
 
 ### Live Verification Command
 ```bash
+# Auto-detection (Recommended):
+robotos check-imu
+
+# Or specify port manually:
 # Windows:
-robotos-kws check-imu --port COM17
+robotos check-imu --port COM17
 
 # macOS (always use /dev/cu.usbmodem*):
-robotos-kws check-imu --port /dev/cu.usbmodem1101
+robotos check-imu --port /dev/cu.usbmodem1101
 ```
 Expected behavior:
 - Connects cleanly without restarting the board.
@@ -137,15 +141,53 @@ When working on **macOS (Apple Silicon / Intel)**:
 - **NEVER** use `/dev/tty.usbmodem*`: on macOS, opening `/dev/tty.*` blocks waiting for Data Carrier Detect (DCD) and will hang the Python process indefinitely.
 - Example telemetry check on macOS:
   ```bash
-  robotos-kws check-imu --port /dev/cu.usbmodem1101
+  # Auto-detection:
+  robotos check-imu
+
+  # Or manual port:
+  robotos check-imu --port /dev/cu.usbmodem1101
   ```
 
 ### 4.4 macOS Microphone Privacy Permissions (`sounddevice`)
-- For audio keyword spotting data collection (ND1 / ND2 PC microphone):
-- macOS requires explicit microphone access granted to the terminal or IDE:
+- For audio keyword spotting data collection (ND1 / ND2 PC microphone) and sound synthesis (ND3 Air Drum):
+- macOS requires explicit microphone / audio access granted to the terminal or IDE:
   `System Settings -> Privacy & Security -> Microphone -> Enable for Terminal / iTerm / VS Code / Cursor / Antigravity`.
 - If permission is denied, `sounddevice` will raise `PortAudioError` or return silent zero-buffers.
 - If PortAudio dynamic library is needed: `brew install portaudio`.
+
+### 4.5 Architectural Separation: `robotos` vs `robotos-kws` on macOS
+Agents must maintain the strict separation of concerns across all platforms:
+- **`robotos`** (Platform & Hardware CLI — NO ML dependencies):
+  - `robotos detect`
+  - `robotos flash-firmware`
+  - `robotos check-imu`
+  - `robotos check-board`
+  - `robotos devices`
+- **`robotos-kws`** (Machine Learning & Edge AI Toolkit):
+  - `robotos-kws collect-imu` / `collect-pc` / `collect-board`
+  - `robotos-kws train-imu` / `train`
+  - `robotos-kws live-imu` / `live-pc` / `live-board`
+  - `robotos-kws evaluate` / `export` / `verify-c`
+
+### 4.6 Running Student Lab Applications on macOS
+Interactive lab applications are standalone Python scripts that import `DrumPolySynth` or `wire` from the installed wheel:
+- **Interactive Air Drum:**
+  ```bash
+  cd nd3/docs/week08/labs
+  python3 air_drum.py
+  # With manual port:
+  python3 air_drum.py --port /dev/cu.usbmodem1101
+  # Built-in demo:
+  python3 air_drum.py --demo
+  # Offline replay:
+  python3 air_drum.py --replay samples/circle.csv
+  ```
+- **Robotic Finite State Machine:**
+  ```bash
+  cd nd3/docs/week08/labs
+  python3 robot_fsm.py --model imu_artifacts/model_int8.tflite
+  ```
+*(On macOS, if multiple Pythons are present, invoke `.venv/bin/python3 air_drum.py` to ensure the virtual environment is used)*.
 
 ---
 
