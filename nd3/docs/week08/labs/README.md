@@ -374,13 +374,13 @@ Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print dete
 Run the included robot controller script:
 
 > [!TIP]
-> **Check Your Python Command (`python`, `python3`, or `py`):**
-> Depending on your operating system and environment setup, the command to invoke Python may differ:
-> - **Windows (PowerShell / Git Bash with `.venv`):** `python robot_fsm.py`
-> - **macOS / Linux:** `python3 robot_fsm.py` (or `python robot_fsm.py`)
-> - **Windows Python Launcher:** `py robot_fsm.py` (if `py.exe` was copied to your `.venv`)
+> **Check Your Python Command (`python`, `py`, or `python3`):**
+> If running `python robot_fsm.py` fails with `ModuleNotFoundError: No module named 'robotos_kws'`, your terminal's `python` command is resolving to the global system Python instead of your `.venv`!
+> - **If `python` fails, use `py`:** `py robot_fsm.py` (or `py air_drum.py`)
+> - **Or call the virtual environment directly:** `.\.venv\Scripts\py.exe robot_fsm.py` (or `.\.venv\Scripts\python.exe robot_fsm.py`)
+> - **macOS / Linux:** `python3 robot_fsm.py` (or `./.venv/bin/python robot_fsm.py`)
 >
-> 💡 *Quick check:* Run `python --version` (or `where python` on Windows / `which python` on macOS/Linux) to ensure it points to your activated `.venv`!
+> 💡 *Quick check:* Run `python -c "import sys; print(sys.executable)"` vs `py -c "import sys; print(sys.executable)"` to see which one points to your `.venv`!
 
 **With Physical ws28p Board:**
 ```bash
@@ -502,6 +502,28 @@ python air_drum.py --replay samples/lift.csv
 ---
 
 ## Troubleshooting
+
+- **`ModuleNotFoundError: No module named 'robotos_kws'`:**
+  - **Symptom:** You installed the wheel, but running `python air_drum.py` or `python robot_fsm.py` crashes with:
+    ```text
+    Traceback (most recent call last):
+      File "air_drum.py", line 27, in <module>
+        from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
+    ModuleNotFoundError: No module named 'robotos_kws'
+    ```
+  - **Root Cause:** On Windows, typing `python` may resolve to a global system Python or WindowsApps launcher rather than your `.venv`!
+  - **Fix 1 (Recommended):** Use **`py`** instead:
+    ```powershell
+    py air_drum.py
+    py robot_fsm.py
+    ```
+  - **Fix 2:** Invoke the `.venv` executable directly:
+    ```powershell
+    .\.venv\Scripts\py.exe air_drum.py
+    # or:
+    .\.venv\Scripts\python.exe air_drum.py
+    ```
+  - **Fix 3:** Check which Python is running: `where python` vs `where py`. Make sure your virtual environment is activated (`.\.venv\Scripts\Activate.ps1`).
 
 - **Access Denied / Permission Error on Serial Port:**
   Close all other applications using the COM port (VSCode Serial Monitor, Arduino IDE, Chrome WebSerial tabs).
