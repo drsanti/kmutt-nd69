@@ -151,7 +151,7 @@ def main():
         import live_infer_imu as lii
         import wire
     except ImportError:
-        print("[error] robotos_kws package not found. Please install the wheel from ../dist/")
+        print("[error] robotos_kws package not found. Please install the wheel from dist/")
         return 1
 
     if not args.model.exists():
