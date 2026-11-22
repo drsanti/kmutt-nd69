@@ -104,17 +104,29 @@ pip install ./dist/robotos_kws-0.1.8-py3-none-any.whl
 ```
 
 > [!TIP]
-> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ./dist/robotos_kws-0.1.8-py3-none-any.whl`.
+> **Check What Executables Exist in Your Virtual Environment (`.venv/Scripts/`):**
+> If you are unsure which command alias works in your terminal (or if your shell reports `command not found`), check directly inside your virtual environment's executable directory (`.venv/Scripts/` on Windows, or `.venv/bin/` on macOS/Linux):
+> - **In PowerShell:** `Get-ChildItem .\.venv\Scripts\*.exe`
+> - **In Git Bash / bash:** `ls .venv/Scripts/` (or `ls .venv/bin/` on macOS/Linux)
+>
+> You will see all available command binaries right there:
+> - **Package Installers:** `pip.exe`, `pip3.exe`, `pip3.11.exe`
+> - **Python Interpreters:** `python.exe`, `py.exe`
+> - **RobotOS CLIs:** `robotos.exe`, `robotos-kws.exe`
+>
+> You can run whichever alias matches your machine, or even invoke them directly by path:
+> ```bash
+> # Direct invocations if your shell PATH is confused:
+> .\.venv\Scripts\pip.exe install ./dist/robotos_kws-0.1.8-py3-none-any.whl
+> # or using pip3 / pip3.11:
+> .\.venv\Scripts\pip3.exe install ./dist/robotos_kws-0.1.8-py3-none-any.whl
+> ```
 
 Verify that the CLI is ready:
 ```bash
 robotos-kws --help
 ```
-*(Or use `python -m robotos_kws --help`)*
-
-> [!NOTE]
-> **Windows Note (`python` vs `py`):**  
-> On Windows, `py` launches the global system Python and ignores your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always use **`python`**, which points to `.venv/Scripts/python.exe`.
+*(Or use `python -m robotos_kws --help` / `py -m robotos_kws --help`)*
 
 You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed under Available Subcommands.
 
