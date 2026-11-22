@@ -89,7 +89,7 @@ Choose the section matching your shell:
 
 ```bash
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.9-py3-none-any.whl
+pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 ```
 
 > [!TIP]
@@ -97,7 +97,7 @@ pip install ../dist/robotos_kws-0.1.9-py3-none-any.whl
 > You can always run `pip` through Python directly:
 > ```bash
 > python -m pip install -r requirements.txt
-> python -m pip install ../dist/robotos_kws-0.1.9-py3-none-any.whl
+> python -m pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 > ```
 
 ### 1.4 Verify CLI

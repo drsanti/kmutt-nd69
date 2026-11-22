@@ -100,7 +100,7 @@ cd nd3/docs/week08/labs
 
 ```bash
 pip install -r requirements.txt
-pip install ./dist/robotos_kws-0.1.9-py3-none-any.whl
+pip install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 ```
 
 > [!TIP]
@@ -117,9 +117,9 @@ pip install ./dist/robotos_kws-0.1.9-py3-none-any.whl
 > You can run whichever alias matches your machine, or even invoke them directly by path:
 > ```bash
 > # Direct invocations if your shell PATH is confused:
-> .\.venv\Scripts\pip.exe install ./dist/robotos_kws-0.1.9-py3-none-any.whl
+> .\.venv\Scripts\pip.exe install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 > # or using pip3 / pip3.11:
-> .\.venv\Scripts\pip3.exe install ./dist/robotos_kws-0.1.9-py3-none-any.whl
+> .\.venv\Scripts\pip3.exe install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 > ```
 
 Verify that the CLI is ready:

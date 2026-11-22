@@ -78,7 +78,7 @@ source .venv/bin/activate
 
 # 2. Install dependencies & precompiled wheel
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.9-py3-none-any.whl
+pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 
 # 3. Verify CLI is ready
 robotos-kws --help

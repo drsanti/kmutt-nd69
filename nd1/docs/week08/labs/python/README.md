@@ -39,7 +39,7 @@ py -3.11 -m venv .venv && .venv\Scripts\activate.bat
 
 # Install lab packages and CLI wheel:
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.9-py3-none-any.whl
+pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 
 # (Universal fallback if 'pip' is not recognized: use 'python -m pip')
 ```

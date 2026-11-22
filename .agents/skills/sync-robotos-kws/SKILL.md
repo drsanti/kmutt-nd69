@@ -64,7 +64,7 @@ python3 robotos/sdk/python-kws/publish_to_students.py
 This script handles:
 - Python syntax compilation verification (`py_compile`) for all package modules and examples.
 - Cleaning build artifacts (`build/`, `*.egg-info`).
-- Building the wheel into `dist/` (`robotos_kws-0.1.9-py3-none-any.whl`).
+- Building the wheel into `dist/` (`robotos_edge-0.2.0-cp311-cp311-win_amd64.whl`).
 - Copying the wheel to `robotos/dist/` and `nd{1,2,3}/docs/week08/labs/dist/`.
 - Deleting old wheel versions from all student tracks.
 - Synchronizing examples to ND1 and ND2.
