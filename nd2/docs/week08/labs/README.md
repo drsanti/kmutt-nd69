@@ -165,6 +165,16 @@ If you wish to stream live audio or IMU frames from physical ESP32-S3 hardware d
    ```
    *(Or use `robotos-flash --board es3c28p`)*.
 
+3. **Test Board Telemetry:**
+   ```bash
+   # 1. One-click Auto-Detection (Recommended):
+   robotos check-board
+
+   # 2. Specify port manually:
+   robotos check-board --port COM5               # Windows
+   robotos check-board --port /dev/cu.usbmodem1101 # macOS
+   ```
+
 The tool auto-detects the serial port, downloads firmware binaries, flashes with live progress, and validates board telemetry via an automated handshake. Board connection classes (`Board()`) also auto-detect your port automatically!
 
 ---

@@ -58,7 +58,11 @@ robotos-kws detect
 
 # 1. Inspect PC audio devices & test board connection
 robotos-kws devices
-robotos-kws check-board                     # Auto-detects port, or specify --port COM5
+
+# Test board: 1. Auto-Detection (Recommended)
+robotos-kws check-board
+
+# Test board: 2. Specify port manually
 robotos-kws check-board --port COM5 --gain 80
 
 # 2. Collect keyword dataset

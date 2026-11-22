@@ -136,10 +136,15 @@ If you are using a physical ESP32-S3 board with microphone (`es3c28p`) or IMU (`
    ```
    *(Or use `robotos-flash --board es3c28p`)*.
 
-3. **Automatic Port Detection:**  
-   When running `check-board`, `collect-board`, or `live-board`, you can omit `--port` — the tool automatically selects your ESP32-S3 board:
+3. **Test Board Telemetry:**  
+   You can let the CLI auto-detect the port or specify it manually:
    ```bash
-   robotos check-board      # Port is auto-detected automatically!
+   # 1. One-click Auto-Detection (Recommended):
+   robotos check-board
+
+   # 2. Specify port manually:
+   robotos check-board --port COM5               # Windows
+   robotos check-board --port /dev/cu.usbmodem1101 # macOS
    ```
 
 ---

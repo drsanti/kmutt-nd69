@@ -232,13 +232,16 @@ robotos flash-firmware --source robotos-workshop
 
 ## 3. Lab 3.1: Hardware Telemetry & IMU Stream Inspection
 
-Test the board connection and verify the 50 Hz IMU telemetry stream. The CLI automatically detects your board port:
+Test the board connection and verify the 50 Hz IMU telemetry stream:
 
 ```bash
 # 1. One-click Auto-Detection (Recommended):
 robotos check-imu
+
+# 2. Specify port manually:
+robotos check-imu --port COM17                # Windows
+robotos check-imu --port /dev/cu.usbmodem1101 # macOS
 ```
-*(Or specify `--port <PORT>` explicitly if multiple devices are attached, e.g. `robotos check-imu --port COM17` on Windows or `robotos check-imu --port /dev/cu.usbmodem1101` on macOS)*.
 
 > [!TIP]
 > **Want to inspect all connected boards and their wire protocol handshake?**  
@@ -269,12 +272,15 @@ gyro std (rad/s)   [0.002 0.001 0.001]
 
 ## 4. Lab 3.2: Multi-Class Motion Dataset Collection
 
-Collect labelled motion windows from the physical board (port auto-detected):
+Collect labelled motion windows from the physical board:
 
 ```bash
+# 1. One-click Auto-Detection (Recommended):
 robotos collect-imu --person student_a --session s01 --takes 20
+
+# 2. Specify port manually:
+robotos collect-imu --port COM17 --person student_a --session s01 --takes 20
 ```
-*(Or specify `--port COM17` if desired).*
 
 ### The 4 Gestures to Record:
 | Gesture | Physical Motion | Robotic Meaning |
@@ -334,11 +340,15 @@ Notice that the int8 model is only **~3.2 KiB**, small enough to run on any micr
 Now run real-time hardware inference connected to a robotic state machine.
 
 ### 7.1 Direct CLI Live Inference
-Run real-time sliding-window inference on the live USB stream (port is auto-detected):
+Run real-time sliding-window inference on the live USB stream:
+
 ```bash
+# 1. One-click Auto-Detection (Recommended):
 robotos live-imu --model imu_artifacts/model_int8.tflite
+
+# 2. Specify port manually:
+robotos live-imu --port COM17 --model imu_artifacts/model_int8.tflite
 ```
-*(Or specify `--port COM17` explicitly if desired).*
 Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
 
 > [!TIP]
@@ -353,6 +363,10 @@ Run the included robot controller script:
 
 **With Physical ws28p Board:**
 ```bash
+# 1. One-click Auto-Detection (Recommended):
+python robot_fsm.py --model imu_artifacts/model_int8.tflite
+
+# 2. Specify port manually:
 python robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite
 ```
 
