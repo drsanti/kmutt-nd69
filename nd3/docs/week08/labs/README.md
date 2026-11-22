@@ -374,9 +374,11 @@ Run the included robot controller script:
 ```bash
 # 1. One-click Auto-Detection (Recommended):
 python robot_fsm.py --model imu_artifacts/model_int8.tflite
+# (or if using py on Windows: py robot_fsm.py --model imu_artifacts/model_int8.tflite)
 
 # 2. Specify port manually:
 python robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite
+# (or: py robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite)
 ```
 
 **Offline / Replay Mode (Without Board):**
@@ -394,6 +396,7 @@ python robot_fsm.py --replay samples/lift.csv --model imu_artifacts/model_int8.t
 # Full FSM sequence simulation (works even without trained model)
 python robot_fsm.py --replay sample_gesture.csv
 ```
+*(On Windows machines using `py`, replace `python` with `py` in any of the above commands)*.
 
 ### State Machine Behavior:
 ```mermaid
@@ -436,17 +439,20 @@ The included `air_drum.py` script features:
 **1. One-click Auto-Detection (Recommended):**
 ```bash
 python air_drum.py
+# (or if using py on Windows: py air_drum.py)
 ```
 
 **2. Specify port manually:**
 ```bash
 python air_drum.py --port COM17
+# (or: py air_drum.py --port COM17)
 ```
 
 **3. Sound Check Demo (No hardware needed):**
 Verify your computer's audio synthesis and listen to all percussion sounds:
 ```bash
 python air_drum.py --demo
+# (or: py air_drum.py --demo)
 ```
 
 **4. Offline Replay Mode:**
