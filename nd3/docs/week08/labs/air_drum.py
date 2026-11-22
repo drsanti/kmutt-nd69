@@ -24,8 +24,15 @@ import time
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
-from robotos_kws.drum_synth import ASCII_BANNER
+try:
+    from robotos_edge.audio.drum_synth import DrumPolySynth, render_drum_kit, run_sound_check_demo, ASCII_BANNER
+except ImportError:
+    try:
+        from robotos_edge import DrumPolySynth, render_drum_kit, run_sound_check_demo
+        from robotos_edge.audio.drum_synth import ASCII_BANNER
+    except ImportError:
+        from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
+        from robotos_kws.drum_synth import ASCII_BANNER
 
 
 # ==============================================================================
@@ -154,14 +161,20 @@ def main(argv: Optional[List[str]] = None) -> int:
         detector = None
         if args.model.exists():
             try:
-                import live_infer_imu as lii
+                try:
+                    from robotos_edge.ml import live_infer_imu as lii
+                except ImportError:
+                    import live_infer_imu as lii
                 detector = lii.GestureDetector(str(args.model), threshold=args.threshold)
                 print(f"Loaded 1D-CNN Model: {args.model}")
             except Exception as e:
                 print(f"[warning] Could not load model: {e}")
 
         try:
-            import imu_common as ic
+            try:
+                from robotos_edge.imu import features as ic
+            except ImportError:
+                import imu_common as ic
             rows = ic.load_window(args.replay)
             t = 0.0
             dt = 1.0 / ic.RATE_HZ
@@ -202,8 +215,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     # 3. Live ESP32-S3 Board Mode
     if not args.port:
         try:
+            from robotos_edge.hardware import detect as detect_board
+            from robotos_edge.hardware import wire
+        except ImportError:
             import detect_board
             import wire
+        try:
             args.port = detect_board.auto_detect_port(need_cap=wire.CAP_IMU, preferred_model="ws28p")
         except Exception as e:
             print(f"[error] Could not auto-detect ws28p board: {e}")
@@ -212,12 +229,16 @@ def main(argv: Optional[List[str]] = None) -> int:
             return 1
 
     try:
-        import live_infer_imu as lii
-        import wire
+        from robotos_edge.ml import live_infer_imu as lii
+        from robotos_edge.hardware import wire
     except ImportError:
-        print("[error] robotos_kws package not found. Please install the wheel from dist/")
-        synth.close()
-        return 1
+        try:
+            import live_infer_imu as lii
+            import wire
+        except ImportError:
+            print("[error] robotos_edge package not found. Please install the wheel from dist/")
+            synth.close()
+            return 1
 
     detector = None
     if args.model.exists():

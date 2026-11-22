@@ -24,8 +24,15 @@ import time
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
-from robotos_kws.drum_synth import ASCII_BANNER
+try:
+    from robotos_edge.audio.drum_synth import DrumPolySynth, render_drum_kit, run_sound_check_demo, ASCII_BANNER
+except ImportError:
+    try:
+        from robotos_edge import DrumPolySynth, render_drum_kit, run_sound_check_demo
+        from robotos_edge.audio.drum_synth import ASCII_BANNER
+    except ImportError:
+        from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
+        from robotos_kws.drum_synth import ASCII_BANNER
 
 
 # ==============================================================================

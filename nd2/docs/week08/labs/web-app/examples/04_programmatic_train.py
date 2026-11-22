@@ -1,5 +1,8 @@
 """Example 04: Programmatic training and evaluation using robotos_kws.Trainer."""
-import robotos_kws as rk
+try:
+    import robotos_edge as rk
+except ImportError:
+    import robotos_kws as rk
 
 
 def main():

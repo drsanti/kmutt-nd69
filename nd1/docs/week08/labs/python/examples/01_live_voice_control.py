@@ -4,7 +4,10 @@ Listens to your computer microphone and triggers actions when target keywords
 ('red', 'green', 'blue', 'off') are detected.
 """
 import sys
-import robotos_kws as rk
+try:
+    import robotos_edge as rk
+except ImportError:
+    import robotos_kws as rk
 
 
 def main():

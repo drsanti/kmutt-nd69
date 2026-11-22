@@ -4,7 +4,10 @@ Connects to the microcontroller over USB, streams live MEMS mic PCM,
 and recognizes spoken commands in real time.
 """
 import sys
-import robotos_kws as rk
+try:
+    import robotos_edge as rk
+except ImportError:
+    import robotos_kws as rk
 
 
 def main():

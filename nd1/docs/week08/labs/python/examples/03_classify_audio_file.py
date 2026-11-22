@@ -1,7 +1,10 @@
 """Example 03: Classify an existing audio file or in-memory PCM array."""
 import sys
 from pathlib import Path
-import robotos_kws as rk
+try:
+    import robotos_edge as rk
+except ImportError:
+    import robotos_kws as rk
 
 
 def main():
@@ -30,7 +33,19 @@ def main():
 
     print(f"Analyzing: {wav_path}")
 
-    detector = rk.Detector("artifacts/model_int8.tflite")
+    model_candidates = [
+        Path("artifacts/model_int8.tflite"),
+        Path("../artifacts/model_int8.tflite"),
+        Path("../python/artifacts/model_int8.tflite"),
+        Path("../../../../../nd1/docs/week08/labs/python/artifacts/model_int8.tflite"),
+    ]
+    model_path = next((p for p in model_candidates if p.exists()), Path("artifacts/model_int8.tflite"))
+    if not model_path.exists():
+        print(f"[error] Model file not found in: {[str(p) for p in model_candidates]}")
+        print("        Train a model first: robotos-edge train")
+        return 1
+
+    detector = rk.Detector(str(model_path))
 
     # 1. Top predicted class
     top_label, confidence = detector.predict(wav_path)
