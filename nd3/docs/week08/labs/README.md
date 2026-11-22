@@ -100,11 +100,11 @@ cd nd3/docs/week08/labs/robotics
 
 ```bash
 pip install -r requirements.txt
-pip install ../dist/robotos_kws-0.1.5-py3-none-any.whl
+pip install ../dist/robotos_kws-0.1.6-py3-none-any.whl
 ```
 
 > [!TIP]
-> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.5-py3-none-any.whl`.
+> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install ../dist/robotos_kws-0.1.6-py3-none-any.whl`.
 
 Verify that the CLI is ready:
 ```bash
@@ -400,6 +400,80 @@ stateDiagram-v2
 - When you **`shake`** the board $\to$ The controller immediately enters `EMERGENCY_STOP`, cutting virtual motor power.
 - When you **`lift`** the board $\to$ Enters `TRANSPORT_MODE`, disengaging wheel encoders.
 - When you draw a **`circle`** $\to$ Initiates `ACTIVE_PATROL` trajectory.
+
+---
+
+### 7.3 Interactive Musical Air Play: Air Drum Synthesizer
+
+In addition to state machines, the same 50 Hz IMU telemetry can transform the ESP32-S3 into a high-performance **interactive musical air instrument** (Air Drum).
+
+The included `air_drum.py` script features:
+- **Zero External Audio Files**: Generates punchy, studio-quality drum waveforms (Kick, Snare, Hi-Hat, Tom, Cowbell, Crash Cymbal) directly in memory using mathematical audio synthesis (`numpy` + `sounddevice`).
+- **Low-Latency Polyphonic Engine**: Multiple drum sounds ring out simultaneously without cutting each other off, with automatic soft-limiting saturation (`tanh`).
+- **Dual Triggering Architecture**:
+  1. **Transient Strike Detection**: Air-drumming downward strikes are captured instantly via peak acceleration ($|\vec{a}| > 19.5\text{ m/s}^2$). Dynamic velocity scaling ensures hitting harder produces a louder hit (35% to 100% volume). The tilt of your hand steers the instrument:
+     - **Tilted Left** ($a_y < -3.5$) $\to$ **Snare Drum**
+     - **Tilted Right** ($a_y > +3.5$) $\to$ **Tom Drum**
+     - **Hard Downward Strike** ($|\vec{a}| > 30\text{ m/s}^2$) $\to$ **Bass Kick Drum**
+     - **Flat / Horizontal Strike** $\to$ **Closed Hi-Hat**
+     - **Tilted Upward** ($a_x > 4.5$) $\to$ **Cowbell Accent**
+  2. **1D-CNN Gestural Music**:
+     - **`circle`** $\to$ Triggers an explosive, shimmering **Crash Cymbal** swell!
+     - **`shake`** $\to$ Triggers a rapid 4-hit **Hi-Hat / Snare Drum Roll**!
+     - **`lift`** $\to$ Triggers a dynamic **Tom Fill & Crash** finish!
+
+#### Running Air Drum:
+
+**1. One-click Auto-Detection (Recommended):**
+```bash
+python air_drum.py
+# (or via unified CLI: robotos air-drum)
+```
+
+**2. Specify port manually:**
+```bash
+python air_drum.py --port COM17
+# (or: robotos air-drum --port COM17)
+```
+
+**3. Sound Check Demo (No hardware needed):**
+Verify your computer's audio synthesis and listen to all percussion sounds:
+```bash
+python air_drum.py --demo
+# (or: robotos air-drum --demo)
+```
+
+**4. Offline Replay Mode:**
+Test gesture classification and drum triggers using pre-recorded gesture takes:
+```bash
+# Replay circle gesture -> Triggers Crash Cymbal
+python air_drum.py --replay samples/circle.csv
+
+# Replay shake gesture -> Triggers Hi-Hat / Snare Roll
+python air_drum.py --replay samples/shake.csv
+
+# Replay lift gesture -> Triggers Tom Drum Fill
+python air_drum.py --replay samples/lift.csv
+```
+
+#### Terminal ASCII Drum Pad Visualizer:
+```text
+  +--------------------------- AIR DRUM KIT ---------------------------+
+  |                                                                    |
+  |     [CRASH]                  (HI-HAT)                   [RIDE]     |
+  |       *                         #                       @          |
+  |                                                                    |
+  |               [SNARE]                        [TOM]                 |
+  |                 X                            o                     |
+  |                                                                    |
+  |                               (KICK)                               |
+  |                                 O                                  |
+  |                                                                    |
+  +--------------------------------------------------------------------+
+  >>> HIT: [SNARE DRUM]    | Accel:  28.4 m/s² | Velocity:  76%
+```
+
+---
 
 ---
 

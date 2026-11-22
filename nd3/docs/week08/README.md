@@ -39,7 +39,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 - **Lost Frame Detection**: Count timestamp gaps ($dt > 1.5 \times 20\text{ ms}$) caused by USB packet loss or CPU starvation, rejecting corrupted data windows.
 - **Temporal Signal Conditioning**: Resample irregular arrival timestamps onto a fixed 2.0-second uniform grid ($100\text{ rows} \times 6\text{ channels}$) and apply fixed physical unit normalization.
 - **1D-CNN Temporal Neural Network**: Train a 3-layer 1D-CNN on multi-channel time-series data with person-disjoint validation splits.
-- **Robotic State Interlock**: Connect real-time sliding-window inference into a robotic Finite State Machine (e.g. `shake` $\to$ E-STOP, `lift` $\to$ Safe Transport, `circle` $\to$ Patrol, `idle` $\to$ Standby).
+- **Robotic State Interlock & Musical Air Play**: Connect real-time sliding-window inference into a robotic Finite State Machine (e.g. `shake` $\to$ E-STOP, `lift` $\to$ Safe Transport, `circle` $\to$ Patrol) and an interactive Air Drum Synthesizer (`strike` $\to$ Kick/Snare, `circle` $\to$ Crash Cymbal, `shake` $\to$ Hi-Hat Roll).
 
 ---
 
@@ -72,7 +72,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 | **Block 2** | Motion Gesture Dataset Collection (Physical Board) | `robotos-kws collect-imu --port COM7` |
 | **Block 3** | 6-DOF Signal Conditioning & 1D-CNN Training | `robotos-kws train-imu --data imu_dataset` |
 | **Block 4** | Person-Disjoint Benchmarking & Int8 Quantization | Review `imu_artifacts/meta.json` |
-| **Block 5** | Real-Time Hardware Recognition & Robot FSM | `python robot_fsm.py --port COM7` |
+| **Block 5** | Real-Time Hardware Recognition, Robot FSM & Air Drum | `python robot_fsm.py` or `python air_drum.py` |
 
 ---
 
@@ -82,4 +82,5 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 flowchart LR
     BOARD["ws28p ESP32-S3\n(QMI8658 6-DOF IMU)"] -->|"50 Hz USB Stream\n(COBS + Protobuf)"| CLI["robotos-kws CLI\n(Grid Interpolation & 1D-CNN)"]
     CLI -->|"Real-Time Detections\n(hop = 200 ms)"| FSM["Robotic Finite State Machine\n• idle -> Standby\n• shake -> EMERGENCY STOP\n• lift -> Safe Transport\n• circle -> Patrol Mission"]
+    CLI -->|"Peak Strikes & Gestures"| DRUM["Air Drum Synthesizer\n• downward strike -> Kick/Snare\n• circle -> Crash Cymbal\n• shake -> Hi-Hat Roll"]
 ```
