@@ -29,15 +29,21 @@ The CLI provides subcommands for every stage of the Edge AI lifecycle:
 
 | Subcommand | Legacy Script | Role |
 | :--- | :--- | :--- |
+| `detect` | `detect_board.py` | Auto-detect connected ESP32-S3 boards and probe wire protocol handshake |
+| `flash-firmware` | `flash_firmware.py` | Automated firmware flashing (auto-detects port, downloads binaries, flashes, and verifies) |
 | `devices` | `collect_pc_mic.py --list-devices` | List available audio input devices |
-| `check-board` | `collect.py --info` | Verify ESP32-S3 wire connection and live dBFS meter |
+| `check-board` | `collect.py --info` | Verify ESP32-S3 wire connection and live dBFS meter (auto-detects port) |
 | `collect-pc` | `collect_pc_mic.py` | Record keyword clips with PC mic or slice WAV |
-| `collect-board` | `collect.py` | Record keyword clips streamed from board MEMS mic |
+| `collect-board` | `collect.py` | Record keyword clips streamed from board MEMS mic (auto-detects port) |
 | `synth-data` | `make_synthetic_dataset.py` | Generate synthetic audio dataset for testing |
 | `train` | `train.py` | Train DS-CNN, quantize to int8, export metadata |
 | `evaluate` | `evaluate.py` | Benchmark accuracy, generate confusion matrix & report |
 | `live-pc` | `live_infer_pc.py` | Real-time keyword spotting from PC mic or test WAV |
-| `live-board` | `live_infer_board.py` | Real-time keyword spotting streamed from board |
+| `live-board` | `live_infer_board.py` | Real-time keyword spotting streamed from board (auto-detects port) |
+| `check-imu` | `collect_imu.py --check` | Verify ws28p 50 Hz IMU telemetry stream (auto-detects port) |
+| `collect-imu` | `collect_imu.py` | Record 6-DOF motion gesture windows over USB (auto-detects port) |
+| `train-imu` | `train_imu.py` | Train 1D-CNN motion gesture neural network |
+| `live-imu` | `live_infer_imu.py` | Real-time sliding-window motion recognition (auto-detects port) |
 | `export` | `export_c_array.py` | Generate `model_data.cc` and `kws_labels.h` for ESP-IDF |
 | `verify-c` | `verify_c_features.py` | Cross-validate C feature extraction vs Python |
 

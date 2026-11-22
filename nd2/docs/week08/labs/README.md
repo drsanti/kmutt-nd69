@@ -147,20 +147,25 @@ Once you have completed Track 1 (ND1), copy your collected audio `dataset/` and 
 
 *(Note: Even if you do not copy the files manually, `robotos_kws` will automatically discover the ND1 dataset in your repository tree if ND1 was completed).*
 
-### 1.3 Optional: Flash Workshop Firmware to ESP32-S3 Board
+### 1.3 Optional: Hardware Auto-Detection & Firmware Flashing
 
-If you wish to stream live audio or IMU frames from physical ESP32-S3 hardware directly into your FastAPI application or WebSocket broadcaster, ensure the board is programmed with workshop firmware:
+If you wish to stream live audio or IMU frames from physical ESP32-S3 hardware directly into your FastAPI application or WebSocket broadcaster:
 
-```bash
-# For microphone board (ES3C28P):
-robotos flash-firmware --board es3c28p
+1. **Auto-Detect Board & Verify Handshake:**
+   ```bash
+   robotos detect
+   ```
+2. **Flash Workshop Firmware (if fresh or unprogrammed):**
+   ```bash
+   # For microphone board (ES3C28P):
+   robotos flash-firmware --board es3c28p
 
-# For IMU motion board (WS28P):
-robotos flash-firmware --board ws28p
-```
-*(Or use `robotos-flash --board es3c28p`)*.
+   # For IMU motion board (WS28P):
+   robotos flash-firmware --board ws28p
+   ```
+   *(Or use `robotos-flash --board es3c28p`)*.
 
-The tool auto-detects the serial port, downloads firmware binaries, flashes with live progress, and validates board telemetry via an automated handshake.
+The tool auto-detects the serial port, downloads firmware binaries, flashes with live progress, and validates board telemetry via an automated handshake. Board connection classes (`Board()`) also auto-detect your port automatically!
 
 ---
 

@@ -68,6 +68,13 @@ flowchart LR
 
 While ND2 builds backend services and web dashboards using your computer microphone and Web Audio API by default, you can also stream live sensor data directly from an ESP32-S3 board to your FastAPI service.
 
+> [!TIP]
+> ### 🔍 Auto-Detect Boards & Wire Handshake:
+> Run `robotos detect` to scan serial ports, test the wire protocol handshake, and identify your board's model, UUID, and live sensor stream:
+> ```bash
+> robotos detect
+> ```
+
 If using physical hardware, ensure it is flashed with the workshop firmware first:
 
 ```bash

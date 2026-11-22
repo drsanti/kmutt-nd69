@@ -53,14 +53,20 @@ Once installed, you can use the unified **`robotos-kws` CLI** or write code with
 The `robotos-kws` CLI consolidates all lab operations into simple subcommands:
 
 ```bash
+# 0. Auto-detect boards & test wire handshake
+robotos-kws detect
+
 # 1. Inspect PC audio devices & test board connection
 robotos-kws devices
+robotos-kws check-board                     # Auto-detects port, or specify --port COM5
 robotos-kws check-board --port COM5 --gain 80
 
 # 2. Collect keyword dataset
 robotos-kws collect-pc --speaker me --session s01 --labels red green blue off --takes 20
 robotos-kws collect-pc --speaker me --session s01 --labels _silence_ --takes 30 --no-prompt
 robotos-kws collect-pc --speaker me --session s01 --labels _unknown_ --takes 20
+# Or collect using board mic (auto-detects port):
+# robotos-kws collect-board --gain 80 --takes 20
 
 # 3. Train DS-CNN neural network & quantize to int8
 robotos-kws train --data dataset --out artifacts --epochs 40 --augment 4
@@ -70,7 +76,7 @@ robotos-kws evaluate --artifacts artifacts --data dataset
 
 # 5. Live real-time keyword spotting
 robotos-kws live-pc --model artifacts/model_int8.tflite --threshold 0.85
-robotos-kws live-board --port COM5 --gain 80 --model artifacts/model_int8.tflite
+robotos-kws live-board --model artifacts/model_int8.tflite  # Auto-detects port
 
 # 6. Export C array header for ESP-IDF microcontroller firmware
 robotos-kws export --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
@@ -108,23 +114,25 @@ Board scripts need the board running the [hardware-interface-workshop](https://g
 
 | Step | Command | Output |
 |---|---|---|
+| Auto-detect boards | `robotos detect` (or `python detect_board.py`) | Port, model, UUID, caps, live sensor check |
+| Flash firmware | `robotos flash-firmware --board es3c28p` | Auto-flashes and verifies board |
 | Protocol self-test | `python test_wire.py` | `ALL OK` (no board needed) |
-| Record (ES3C28P mic) | `python collect.py --port COM5 --speaker me --session s01 --gain 80 --takes 20` | `dataset/<label>/sNN_me_board_NNNN.wav` |
-| Mic level / board check | `python collect.py --port COM5 --info --gain 80` | BoardInfo, live level meter, 1 s test stream |
+| Record (ES3C28P mic) | `python collect.py --speaker me --session s01 --gain 80 --takes 20` | `dataset/<label>/sNN_me_board_NNNN.wav` (auto-detects port) |
+| Mic level / board check | `python collect.py --info --gain 80` | BoardInfo, live level meter, 1 s test stream |
 | Record (PC mic) | `python collect_pc_mic.py --speaker me --session s01 --takes 20` | `dataset/<label>/sNN_me_pc_NNNN.wav` |
 | Slice a long wav (also an ex28 recorder WAV) | `python collect_pc_mic.py --labels _silence_ --from-wav noise.wav --takes 60` | `_silence_` clips |
 | Test data | `python make_synthetic_dataset.py --out synth_dataset` | synthetic clips (plumbing test only) |
 | Train | `python train.py --data dataset --out artifacts` | `model.keras`, `model_float.tflite`, `model_int8.tflite`, `meta.json`, `splits.json` |
 | Test | `python evaluate.py --artifacts artifacts --data dataset [--device board]` | `artifacts/report.md` |
-| Live (board mic) | `python live_infer_board.py --port COM5 --gain 80 --model artifacts/model_int8.tflite` | detections on screen, lost-chunk count |
+| Live (board mic) | `python live_infer_board.py --gain 80 --model artifacts/model_int8.tflite` | detections on screen, lost-chunk count (auto-detects port) |
 | Live (PC mic) | `python live_infer_pc.py --model artifacts/model_int8.tflite [--wav file.wav]` | detections on screen |
 | Check C features | `python verify_c_features.py --data dataset` | `MATCH` / `MISMATCH` |
 | Export | `python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main` | `model_data.cc`, `kws_labels.h` |
-| IMU: check board | `python collect_imu.py --port COM7 --check` | rate, lost samples, mean accel |
-| IMU: record | `python collect_imu.py --port COM7 --person me --session s01 --takes 20` | `imu_dataset/<gesture>/sNN_me_ws28p_NNNN.csv` |
+| IMU: check board | `python collect_imu.py --check` | rate, lost samples, mean accel (auto-detects port) |
+| IMU: record | `python collect_imu.py --person me --session s01 --takes 20` | `imu_dataset/<gesture>/sNN_me_ws28p_NNNN.csv` (auto-detects port) |
 | IMU: pack | `python imu_common.py pack --data imu_dataset` | `imu_dataset.npz` |
 | IMU: train | `python train_imu.py --data imu_dataset --out imu_artifacts` (or `--synthetic`) | `model_float.tflite`, `model_int8.tflite`, `meta.json` |
-| IMU: live | `python live_infer_imu.py --port COM7 --model imu_artifacts/model_int8.tflite` | gestures on screen |
+| IMU: live | `python live_infer_imu.py --model imu_artifacts/model_int8.tflite` | gestures on screen (auto-detects port) |
 
 Every script has `--help`. Both `collect.py` and `collect_pc_mic.py` support `--labels <word...>` to record or re-record specific words (e.g. `--labels blue` or `--labels _silence_ --no-prompt --takes 30`), and `--seconds <sec>` to adjust the raw recording window (default 1.5 s). `collect_pc_mic.py` supports `--device <index>` to select your desired microphone from `--list-devices`. Exit codes of the board scripts: `0` ok, `2` connection/protocol problem, `3` wrong board.
 

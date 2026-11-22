@@ -63,7 +63,8 @@ MEMS mic ─► ES8311 ADC ─I2S─► ESP32-S3 (prebuilt firmware)            
    ```bash
    cd nd1/docs/week08/labs/python
    python test_wire.py                     # protocol self-test, no board needed
-   python collect.py --port COM5 --info --gain 80   # speak while it runs
+   robotos detect                          # auto-detect board port, model & handshake
+   python collect.py --info --gain 80      # speak while it runs (port is auto-detected!)
    ```
 
    `--info` prints the `BoardInfo` line (model, firmware, capabilities), a live level meter from the board's `AudioLevel` messages, and a 1-second test stream. Speech should peak around −20 to −6 dBFS (peak amplitude 4,000 to 15,000, speech RMS −26 to −18 dBFS). If it clips, use `--gain 50`; if it is very quiet (< −38 dBFS), use `--gain 80` or `--gain 85`.

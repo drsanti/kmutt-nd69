@@ -92,6 +92,14 @@ While the primary ND1 lab operates entirely on your computer's microphone, you c
 - **Audio Board (`es3c28p`):** Onboard ES8311 microphone + WS2812 RGB LED (`caps = 0x33`).
 - **IMU Board (`ws28p`):** QMI8658 6-axis IMU + LCD display (`caps = 0x3c`).
 
+> [!TIP]
+> ### 🔍 Auto-Detect Boards & Wire Handshake:
+> Run `robotos detect` to automatically scan serial ports, test the wire protocol handshake, and inspect your board's model, UUID, and live sensor levels:
+> ```bash
+> robotos detect
+> ```
+> Board commands (`check-board`, `collect-board`, `live-board`) also **auto-detect your serial port** if `--port` is omitted!
+
 > [!IMPORTANT]
 > ### ⚡ If using an ESP32-S3 Board, Flash Workshop Firmware First!
 > Before running hardware telemetry commands (`check-board`, `collect-board`, `live-board`), ensure your board is programmed with the workshop firmware:

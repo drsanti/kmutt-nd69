@@ -116,20 +116,31 @@ python -m robotos_kws --help
 > **Windows Note (`python` vs `py`):**  
 > On Windows, `py` launches the global system Python and ignores your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always use **`python`**, which points to `.venv/Scripts/python.exe`.
 
-### 1.5 Optional: Flash Workshop Firmware to ESP32-S3 Board
+### 1.5 Optional: Flash Workshop Firmware & Board Auto-Detection
 
-If you are using a physical ESP32-S3 board with microphone (`es3c28p`) or IMU (`ws28p`), flash the workshop firmware first:
+If you are using a physical ESP32-S3 board with microphone (`es3c28p`) or IMU (`ws28p`):
 
-```bash
-# For microphone board (ES3C28P):
-robotos flash-firmware --board es3c28p
+1. **Auto-Detect Board & Test Handshake:**
+   ```bash
+   robotos detect
+   ```
+   Scans all serial ports, tests the wire protocol handshake, and displays the board model, UUID, and live sensor telemetry.
 
-# For IMU motion board (WS28P):
-robotos flash-firmware --board ws28p
-```
-*(Or use `robotos-flash --board es3c28p`)*.
+2. **Flash Workshop Firmware (if fresh or unprogrammed):**
+   ```bash
+   # For microphone board (ES3C28P):
+   robotos flash-firmware --board es3c28p
 
-The tool auto-detects your serial port (`COM*` or `/dev/cu.usbmodem*`), downloads the binaries, flashes with live progress, and performs an automated handshake verification confirming the board is ready.
+   # For IMU motion board (WS28P):
+   robotos flash-firmware --board ws28p
+   ```
+   *(Or use `robotos-flash --board es3c28p`)*.
+
+3. **Automatic Port Detection:**  
+   When running `check-board`, `collect-board`, or `live-board`, you can omit `--port` — the tool automatically selects your ESP32-S3 board:
+   ```bash
+   robotos check-board      # Port is auto-detected automatically!
+   ```
 
 ---
 
