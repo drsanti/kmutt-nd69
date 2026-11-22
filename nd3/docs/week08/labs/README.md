@@ -51,7 +51,7 @@ In this lab, you work with physical hardware: the **ws28p ESP32-S3 board** strea
 >   - Verify with: `python --version` (must output `Python 3.11.x`!)
 
 ```bash
-cd nd3/docs/week08/labs/robotics
+cd nd3/docs/week08/labs
 ```
 
 - **Windows (Git Bash):**
@@ -450,21 +450,33 @@ The included `air_drum.py` script features:
 
 **1. One-click Auto-Detection (Recommended):**
 ```bash
+# Windows:
 python air_drum.py
 # (or if using py on Windows: py air_drum.py)
+
+# macOS / Linux:
+python3 air_drum.py
 ```
 
 **2. Specify port manually:**
 ```bash
+# Windows:
 python air_drum.py --port COM17
 # (or: py air_drum.py --port COM17)
+
+# macOS (always use /dev/cu.usbmodem*):
+python3 air_drum.py --port /dev/cu.usbmodem1101
 ```
 
 **3. Sound Check Demo (No hardware needed):**
 Verify your computer's audio synthesis and listen to all percussion sounds:
 ```bash
+# Windows:
 python air_drum.py --demo
 # (or: py air_drum.py --demo)
+
+# macOS:
+python3 air_drum.py --demo
 ```
 
 **4. Offline Replay Mode:**
@@ -511,19 +523,38 @@ python air_drum.py --replay samples/lift.csv
         from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
     ModuleNotFoundError: No module named 'robotos_kws'
     ```
-  - **Root Cause:** On Windows, typing `python` may resolve to a global system Python or WindowsApps launcher rather than your `.venv`!
-  - **Fix 1 (Recommended):** Use **`py`** instead:
+  - **Root Cause:** On Windows or macOS, running `python` or `python3` may resolve to a global system interpreter rather than your virtual environment where the wheel is installed.
+  - **Fix 1 (Windows - Recommended):** Use **`py`**:
     ```powershell
     py air_drum.py
     py robot_fsm.py
     ```
-  - **Fix 2:** Invoke the `.venv` executable directly:
+  - **Fix 2 (Windows - Direct Invocation):** Invoke the `.venv` executable directly:
     ```powershell
     .\.venv\Scripts\py.exe air_drum.py
     # or:
     .\.venv\Scripts\python.exe air_drum.py
     ```
-  - **Fix 3:** Check which Python is running: `where python` vs `where py`. Make sure your virtual environment is activated (`.\.venv\Scripts\Activate.ps1`).
+  - **Fix 3 (macOS / Linux):** Ensure `.venv` is activated, or invoke directly:
+    ```bash
+    source .venv/bin/activate
+    python3 air_drum.py
+    # or direct invocation:
+    ./.venv/bin/python3 air_drum.py
+    ```
+  - **Fix 4:** Check which Python is running:
+    - Windows: `where python` vs `where py`
+    - macOS / Linux: `which python3`
+
+- **macOS Audio / SoundDevice `PortAudioError`:**
+  - **Symptom:** Running `air_drum.py` or microphone audio collection on macOS raises `PortAudioError` or produces silent audio.
+  - **Fix:** Grant Terminal or your IDE microphone/audio permissions in:
+    `System Settings -> Privacy & Security -> Microphone -> Enable for Terminal / iTerm / VS Code / Cursor`.
+  - If PortAudio runtime library is missing: `brew install portaudio`.
+
+- **macOS Serial Port Hang:**
+  - **Symptom:** Running `robotos check-imu` or `air_drum.py` with `/dev/tty.usbmodem*` freezes indefinitely.
+  - **Fix:** On macOS, **always use `/dev/cu.usbmodem*`** (e.g. `/dev/cu.usbmodem1101`). Do NOT use `/dev/tty.*` as it blocks waiting for Data Carrier Detect (DCD). Automatic detection (`robotos check-imu` without `--port`) selects `/dev/cu.*` automatically.
 
 - **Access Denied / Permission Error on Serial Port:**
   Close all other applications using the COM port (VSCode Serial Monitor, Arduino IDE, Chrome WebSerial tabs).
