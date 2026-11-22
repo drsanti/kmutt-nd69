@@ -86,7 +86,7 @@ class RobotController:
 
 def main():
     parser = argparse.ArgumentParser(description="Robotic FSM controller driven by IMU telemetry.")
-    parser.add_argument("--port", help="Serial port, e.g. COM17 or /dev/ttyACM0")
+    parser.add_argument("--port", default=None, help="Serial port, e.g. COM17 or /dev/ttyACM0 (auto-detects if omitted)")
     parser.add_argument("--model", type=Path, default=Path("imu_artifacts/model_int8.tflite"), help="Path to int8 model")
     parser.add_argument("--replay", type=Path, help="Replay CSV take instead of connecting to real board")
     args = parser.parse_args()
@@ -138,8 +138,14 @@ def main():
         return 0
 
     if not args.port:
-        print("[error] Please specify --port <PORT> or --replay <FILE.csv>")
-        return 1
+        try:
+            import detect_board
+            import wire
+            args.port = detect_board.auto_detect_port(need_cap=wire.CAP_IMU, preferred_model="ws28p")
+        except Exception as e:
+            print(f"[error] Could not auto-detect ws28p board: {e}")
+            print("        Please specify --port <PORT> or --replay <FILE.csv>")
+            return 1
 
     try:
         import live_infer_imu as lii
