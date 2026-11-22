@@ -83,3 +83,24 @@ pip install ../dist/robotos_kws-0.1.3-py3-none-any.whl
 # 3. Verify CLI is ready
 robotos-kws --help
 ```
+
+---
+
+## Hardware & Firmware Flashing (Optional for ND1)
+
+While the primary ND1 lab operates entirely on your computer's microphone, you can also connect and test directly with physical ESP32-S3 boards:
+- **Audio Board (`es3c28p`):** Onboard ES8311 microphone + WS2812 RGB LED (`caps = 0x33`).
+- **IMU Board (`ws28p`):** QMI8658 6-axis IMU + LCD display (`caps = 0x3c`).
+
+> [!IMPORTANT]
+> ### ⚡ If using an ESP32-S3 Board, Flash Workshop Firmware First!
+> Before running hardware telemetry commands (`check-board`, `collect-board`, `live-board`), ensure your board is programmed with the workshop firmware:
+> ```bash
+> # Flash audio/mic board firmware:
+> robotos flash-firmware --board es3c28p
+>
+> # Or for IMU/motion board:
+> robotos flash-firmware --board ws28p
+> ```
+> *(Or use `robotos-flash --board es3c28p`)*.
+> The automated flasher detects the USB port, downloads prebuilt binaries, flashes with live progress, and performs an automated handshake verification.

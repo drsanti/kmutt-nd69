@@ -61,3 +61,21 @@ flowchart LR
     API -->|"HTTP JSON"| CLIENT1["REST API Clients"]
     API -->|"WebSocket Stream"| DASH["Voice-Reactive Web Dashboard\n(HTML5 / Tailwind / JS)"]
 ```
+
+---
+
+## Hardware & Firmware Flashing (Optional for ND2)
+
+While ND2 builds backend services and web dashboards using your computer microphone and Web Audio API by default, you can also stream live sensor data directly from an ESP32-S3 board to your FastAPI service.
+
+If using physical hardware, ensure it is flashed with the workshop firmware first:
+
+```bash
+# Audio / Microphone board (ES3C28P):
+robotos flash-firmware --board es3c28p
+
+# IMU / Motion Gesture board (WS28P):
+robotos flash-firmware --board ws28p
+```
+*(Or use `robotos-flash --board es3c28p`)*.
+The flasher automatically detects your USB serial port (`COM*` or `/dev/cu.usbmodem*`), downloads the binaries, flashes with live progress, and performs an automated handshake verification.

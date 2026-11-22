@@ -29,6 +29,7 @@ In this lab, you learn how to bridge Edge AI models into modern web and backend 
 - [1. Environment Setup](#1-environment-setup)
   - [1.1 Virtual Environment](#11-virtual-environment)
   - [1.2 Import Dataset and Model from ND1](#12-import-dataset-and-model-from-nd1)
+  - [1.3 Optional: Flash Workshop Firmware to ESP32-S3 Board](#13-optional-flash-workshop-firmware-to-esp32-s3-board)
 - [2. Lab 2.1: Python SDK Fundamentals & Audio Classification](#2-lab-21-python-sdk-fundamentals--audio-classification)
 - [3. Lab 2.2: Building an Audio Inference Microservice (FastAPI)](#3-lab-22-building-an-audio-inference-microservice-fastapi)
 - [4. Lab 2.3: Real-Time Event Streaming over WebSockets](#4-lab-23-real-time-event-streaming-over-websockets)
@@ -145,6 +146,21 @@ Once you have completed Track 1 (ND1), copy your collected audio `dataset/` and 
   ```
 
 *(Note: Even if you do not copy the files manually, `robotos_kws` will automatically discover the ND1 dataset in your repository tree if ND1 was completed).*
+
+### 1.3 Optional: Flash Workshop Firmware to ESP32-S3 Board
+
+If you wish to stream live audio or IMU frames from physical ESP32-S3 hardware directly into your FastAPI application or WebSocket broadcaster, ensure the board is programmed with workshop firmware:
+
+```bash
+# For microphone board (ES3C28P):
+robotos flash-firmware --board es3c28p
+
+# For IMU motion board (WS28P):
+robotos flash-firmware --board ws28p
+```
+*(Or use `robotos-flash --board es3c28p`)*.
+
+The tool auto-detects the serial port, downloads firmware binaries, flashes with live progress, and validates board telemetry via an automated handshake.
 
 ---
 

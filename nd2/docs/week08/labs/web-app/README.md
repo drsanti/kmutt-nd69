@@ -30,6 +30,15 @@ From this directory (`nd2/docs/week08/labs/web-app`):
   pip install ../dist/robotos_kws-0.1.3-py3-none-any.whl
   ```
 
+> [!TIP]
+> **Using an ESP32-S3 Hardware Board?**  
+> If streaming sensor data from a physical ESP32-S3 microphone or IMU board to this web app, ensure the board is running workshop firmware by flashing it first:
+> ```bash
+> robotos flash-firmware --board es3c28p    # Audio / Mic board
+> # or:
+> robotos flash-firmware --board ws28p      # IMU / Motion board
+> ```
+
 ### 1.2 Start the Development Server
 
 ```bash

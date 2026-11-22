@@ -14,6 +14,7 @@ In this lab, you complete the end-to-end Edge AI development lifecycle using the
 ## Table of Contents
 
 - [1. Environment Setup & CLI Installation](#1-environment-setup--cli-installation)
+  - [1.5 Optional: Flash Workshop Firmware to ESP32-S3 Board](#15-optional-flash-workshop-firmware-to-esp32-s3-board)
 - [2. Lab 1.1: Audio Sensing & Device Calibration](#2-lab-11-audio-sensing--device-calibration)
 - [3. Lab 1.2: Rigorous Multi-Class Audio Collection](#3-lab-12-rigorous-multi-class-audio-collection)
 - [4. Lab 1.3: Deep Learning Training & Int8 Quantization](#4-lab-13-deep-learning-training--int8-quantization)
@@ -114,6 +115,21 @@ python -m robotos_kws --help
 > [!NOTE]
 > **Windows Note (`python` vs `py`):**  
 > On Windows, `py` launches the global system Python and ignores your virtual environment. Once your `.venv` is activated (your prompt shows `(.venv)`), always use **`python`**, which points to `.venv/Scripts/python.exe`.
+
+### 1.5 Optional: Flash Workshop Firmware to ESP32-S3 Board
+
+If you are using a physical ESP32-S3 board with microphone (`es3c28p`) or IMU (`ws28p`), flash the workshop firmware first:
+
+```bash
+# For microphone board (ES3C28P):
+robotos flash-firmware --board es3c28p
+
+# For IMU motion board (WS28P):
+robotos flash-firmware --board ws28p
+```
+*(Or use `robotos-flash --board es3c28p`)*.
+
+The tool auto-detects your serial port (`COM*` or `/dev/cu.usbmodem*`), downloads the binaries, flashes with live progress, and performs an automated handshake verification confirming the board is ready.
 
 ---
 
