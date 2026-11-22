@@ -151,6 +151,7 @@ Identify:
 * **macOS:** Serial devices appear under `/dev/cu.usbmodem*` (e.g. `/dev/cu.usbmodem1101` or `/dev/cu.usbserial-*`).
 * **Critical macOS distinction:** Always connect using the **`/dev/cu.*`** (Call-Up device) device path, **never** `/dev/tty.*`. The `tty.*` device waits for hardware carrier detect (DCD) asserting and can cause your script to hang indefinitely.
 * You can find your port on macOS by running: `ls /dev/cu.usb*`.
+* **Automated Flashing:** The `robotos flash-firmware` command automatically detects your ESP32-S3 serial port across both Windows and macOS by inspecting USB VID:PID (`0x303A:0x1001`), so you typically do not even need to type the port manually!
 </details>
 
 ---

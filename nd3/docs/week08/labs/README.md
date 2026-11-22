@@ -23,7 +23,7 @@ In this lab, you work with physical hardware: the **ws28p ESP32-S3 board** strea
 ## Table of Contents
 
 - [1. Environment Setup](#1-environment-setup)
-- [2. Hardware Connection & Prebuilt Firmware](#2-hardware-connection--prebuilt-firmware)
+- [2. Hardware Preparation: Flash Firmware First](#2-hardware-preparation-flash-firmware-first)
 - [3. Lab 3.1: Hardware Telemetry & IMU Stream Inspection](#3-lab-31-hardware-telemetry--imu-stream-inspection)
 - [4. Lab 3.2: Multi-Class Motion Dataset Collection](#4-lab-32-multi-class-motion-dataset-collection)
 - [5. Lab 3.3: 6-DOF Signal Windowing & 1D-CNN Training](#5-lab-33-6-dof-signal-windowing--1d-cnn-training)
@@ -120,26 +120,113 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
 
 ---
 
-## 2. Hardware Connection & Prebuilt Firmware
+## 2. Hardware Preparation: Flash Firmware First
 
-1. Connect your **ws28p** board (Waveshare ESP32-S3-Touch-LCD-2.8) to your computer with a USB-C data cable.
-2. Identify your serial port:
-   - Windows: `COM17` (check in Device Manager)
-   - Linux: `/dev/ttyACM0` or `/dev/ttyUSB0`
-   - macOS: `/dev/cu.usbmodem*`
-3. If not already flashed with the workshop firmware:
-   ```bash
-   # Automated firmware flasher (auto-detects port, downloads files, flashes, and verifies):
-   robotos-kws flash-firmware
-   ```
-   *(Or optionally specify `--port <PORT>` if multiple boards are attached, e.g. `robotos-kws flash-firmware --port COM17` or on macOS `--port /dev/cu.usbmodem1101`)*.
+> [!IMPORTANT]
+> ### ⚡ MANDATORY STEP: Flash Your Board Before Starting Lab 3.1!
+> Fresh ESP32-S3 boards (**ws28p**) or boards flashed in other courses do **not** have the RobotOS 50 Hz IMU telemetry firmware. If you skip this step and try to run `check-imu` or `collect-imu`, your terminal will hang or report:
+> ```text
+> WireError: Serial timeout waiting for BoardInfo on COM...
+> ```
+> You must flash the workshop firmware first using the automated flasher.
 
-   > [!TIP]
-   > The `flash-firmware` command automatically detects your ESP32-S3 board, downloads and caches prebuilt firmware binaries from the workshop repository, displays real-time flashing progress via `esptool`, and performs an automated telemetry handshake to confirm the board is ready!
-   > For manual flashing instructions or troubleshooting, refer to the [Firmware Prebuilt Guide](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md).
+### 2.1 Connect the Hardware
+1. Connect your **ws28p** board (Waveshare ESP32-S3-Touch-LCD-2.8) to your computer using a **USB-C data cable** (avoid charge-only cables).
+2. The board will appear as a USB Serial / JTAG device:
+   - **Windows:** `COM...` (e.g. `COM17` or `COM7`, visible in Device Manager)
+   - **macOS:** `/dev/cu.usbmodem*` (e.g. `/dev/cu.usbmodem1101` — find with `ls /dev/cu.usb*`)
+   - **Linux:** `/dev/ttyACM0` or `/dev/ttyUSB0`
 
 > [!WARNING]
-> **Serial Port Exclusivity**: Close any open serial monitors (Arduino IDE, VSCode Serial Monitor, WebSerial tabs) before running board commands. Only one application can access the COM port at a time.
+> **Serial Port Exclusivity**: Close any open serial monitors (Arduino IDE, VSCode Serial Monitor, WebSerial browser tabs) before flashing or inspecting. Only one process can access the serial port at a time.
+
+### 2.2 Flash the Firmware (One Command)
+With your virtual environment active (`(.venv)`), run:
+
+```bash
+robotos flash-firmware
+```
+*(Or use any alias: `robotos flash`, `robotos-flash`, or `robotos-kws flash-firmware`)*.
+
+#### What Happens Automatically:
+1. **Auto-Detects ESP32-S3:** Scans USB hardware VID/PID (`303A:1001`) and selects your port automatically.
+2. **Auto-Installs `esptool`:** If missing in `.venv`, installs `esptool>=4.7` automatically via pip.
+3. **Downloads & Caches Firmware:** Automatically fetches `bootloader.bin`, `partition-table.bin`, and `robotos_board.bin` for `ws28p` from the workshop repository to `~/.robotos/firmware/ws28p`.
+4. **Flashes Board:** Flashes all partitions with a smooth single-line in-place progress bar.
+5. **Verifies Board Telemetry:** Performs an automated handshake — verifies `BoardInfo` (caps `0x3c`), reads board UUID, and tests 1.5 seconds of live 50 Hz IMU streaming!
+
+#### Sample Successful Output:
+```text
+============================================================
+ RobotOS Firmware Flasher (ESP32-S3)
+ Target Board: ws28p (Waveshare ESP32-S3-Touch-LCD-2.8)
+============================================================
+
+[1/4] Detecting ESP32-S3 Serial Port...
+   ✓ Auto-detected ESP32-S3 on port: COM17 (USB Serial Device)
+
+[2/4] Resolving Prebuilt Firmware for board: 'ws28p'...
+   Local Cache: C:\Users\student\.robotos\firmware\ws28p
+     • bootloader.bin       (14.8 kB) [cached]
+     • partition-table.bin  (3.0 kB)  [cached]
+     • robotos_board.bin    (1.3 MB)  [cached]
+
+[3/4] Flashing Firmware to ESP32-S3 via esptool...
+   Target Port: COM17
+   Baud Rate:   460800
+   ------------------------------------------------------------
+   [chip]  Chip is ESP32-S3 (QFN56) (revision v0.2)
+   [flash] Writing at 0x00153a30 ============================== 100.0% 822.39kB/822.39kB [4s]
+   [flash] ✓ Wrote 1373568 bytes (842127 compressed) at 0x00010000 in 4.1 seconds
+   [done]  Hash of data verified.
+   [done]  Hard resetting via RTS pin...
+   ✓ Firmware written successfully! Board reset triggered.
+
+[4/4] Verifying Board Telemetry Handshake...
+   Waiting for board to finish booting on COM17...
+   ✓ Board Telemetry Verified:
+     • Hardware Model:  ws28p
+     • Firmware ID:     robotos-fw-v1.0.0
+     • Capabilities:    0x3c (IMU, RTC, BATT)
+     • Board UUID:      a4cf1289fe20
+   Checking live 50 Hz IMU telemetry stream for 1.5 seconds...
+     • Received: 75 frames (streaming at 50.1 Hz)
+     • Mean accel magnitude: 9.81 m/s² [verified]
+
+============================================================
+ ✓ Board ws28p is successfully flashed, verified, and ready!
+============================================================
+```
+
+### 2.3 Advanced / Alternative Flashing Options
+If you have multiple boards connected, or need to flash offline:
+
+```bash
+# Explicit serial port (if multiple USB devices are connected):
+robotos flash-firmware --port COM17                     # Windows
+robotos flash-firmware --port /dev/cu.usbmodem1101      # macOS
+
+# Use pre-downloaded local folder (offline mode):
+robotos flash-firmware --from-dir ~/Downloads/ws28p
+
+# Specify custom remote repository:
+robotos flash-firmware --source robotos-workshop
+
+# Manual guide and raw files:
+# https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md
+```
+
+### 2.4 Flashing Troubleshooting
+- **Port Busy / Access Denied (`PermissionError`):**  
+  Close Arduino IDE, VSCode Serial Monitor, or any browser WebSerial tabs.
+- **Board Not Detected (`Could not find an ESP32-S3`):**  
+  Ensure your USB-C cable supports data (test with another cable or port).
+- **Flashing Fails / esptool Timeout:**  
+  Put the board into ROM bootloader mode:
+  1. Hold down the physical **BOOT** button.
+  2. Press and release the **RESET** button.
+  3. Release the **BOOT** button.
+  4. Run `robotos flash-firmware`.
 
 ---
 
