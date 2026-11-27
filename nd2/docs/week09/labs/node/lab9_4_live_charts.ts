@@ -19,15 +19,14 @@ run(async () => {
   intro(args, {
     live: "Look at the board: a CHARTS tab appears. Tilt the board in all directions, then shake it.",
     replay: "Look at the board: a CHARTS tab appears; the recorded motion drives the chart and the bubble.",
-    look: "Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).",
-    before: "only the red ax line (TODO 1) and a bubble that stays in the centre (TODO 2). Once the bubble moves, it leaves a trail until TODO 3.",
+    look: "Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail.",
   });
   const d = await rk.Display.open({ port: args.port, name: "CHARTS" });
   onExit(() => d.close());
   const src = imuSource(args, d.session);
 
-  // TODO 1: create a StripChart with 3 traces (ax red, ay green, az blue), each with range [-20, 20] m/s^2, at x 4, y 50, w 312, h 90
-  const chart = new rk.StripChart(d, { ranges: [[-20, 20]], x: 4, y: 50, w: 312, h: 90 });
+  // Step 1: create a StripChart with 3 traces (ax red, ay green, az blue), each with range [-20, 20] m/s^2, at x 4, y 50, w 312, h 90
+  const chart = new rk.StripChart(d, { ranges: [[-20, 20], [-20, 20], [-20, 20]], colors: [rk.Color.RED, rk.Color.GREEN, rk.Color.BLUE], x: 4, y: 50, w: 312, h: 90 });
 
   const paint = () => {
     d.clear();
@@ -47,10 +46,14 @@ run(async () => {
   for await (const s of src) {
     let drawn = chart.push(s.ax, s.ay, s.az);
     if (++n % 5 === 0) {                                   // bubble at 10 Hz
-      // TODO 2: bubble position from tilt: ax / G and ay / G are about -1..1 (clip them); move up to LEVEL_R - BUBBLE_R pixels from the centre
-      const [bx, by] = [LEVEL_CX, LEVEL_CY];
+      // Step 2: bubble position from tilt: ax / G and ay / G are about -1..1 (clip them); move up to LEVEL_R - BUBBLE_R pixels from the centre
+      const reach = LEVEL_R - BUBBLE_R;
+      const clip = (v: number) => Math.max(-1, Math.min(1, v));
+      const bx = LEVEL_CX + Math.round(clip(s.ax / rk.G) * reach);
+      const by = LEVEL_CY + Math.round(clip(s.ay / rk.G) * reach);
       if (!old || old[0] !== bx || old[1] !== by) {
-        // TODO 3: the starter leaves a TRAIL of bubbles. Erase only the old bubble (paint it in the dial colour, rk.Color.DARK), then draw the new one in YELLOW
+        // Step 3: a simpler version leaves a TRAIL of bubbles. Erase only the old bubble (paint it in the dial colour, rk.Color.DARK), then draw the new one in YELLOW
+        if (old) d.circle(old[0], old[1], BUBBLE_R, rk.Color.DARK);
         d.circle(bx, by, BUBBLE_R, rk.Color.YELLOW);
         d.hline(LEVEL_CX - LEVEL_R, LEVEL_CY, 2 * LEVEL_R, rk.Color.GRAY).vline(LEVEL_CX, LEVEL_CY - LEVEL_R, 2 * LEVEL_R, rk.Color.GRAY);
         old = [bx, by];

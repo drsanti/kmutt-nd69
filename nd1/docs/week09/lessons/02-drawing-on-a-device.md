@@ -62,7 +62,7 @@ elif width < shown: d.fill_rect(x + width, y, shown - width, h, BLACK)        # 
 shown = width
 ```
 
-`Display.bars()`, `StripChart` and `WaveformSweep` do this internally. Labs 9.3 and 9.4 have you write it yourself.
+`Display.bars()`, `StripChart` and `WaveformSweep` do this internally. Labs 9.3 and 9.4 show it in a few lines (Step 3 in each).
 
 ## 5. Showing a decision
 

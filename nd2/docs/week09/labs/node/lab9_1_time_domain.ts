@@ -44,20 +44,20 @@ run(async () => {
     live: "Move the board around for a few seconds, then hold it still until recording ends (8 s; change with --seconds). A page of plots opens in your browser at the end.",
     replay: "Nothing to do: the recorded idle, shake, circle and lift motions are used. A page of plots opens in your browser at the end.",
     look: "|a| stays near 9.81 m/s^2 when the board is still, whatever its tilt; during a lift it dips below, then rises above. The script prints the sample rate, lost samples and the axis along gravity.",
-    before: "|a| is all zeros (TODO 1), the rate prints 0.0 Hz (TODO 2) and the axis along gravity always says x (TODO 3).",
   });
   const { samples, lost } = await record(args);
   const t = samples.map((s) => s.t);
   const axes = [samples.map((s) => s.ax), samples.map((s) => s.ay), samples.map((s) => s.az)];
 
-  // TODO 1: compute |a| = sqrt(ax² + ay² + az²) for every sample (an array of N numbers)
-  const aMag = samples.map(() => 0);
+  // Step 1: compute |a| = sqrt(ax² + ay² + az²) for every sample (an array of N numbers)
+  const aMag = samples.map((s) => Math.sqrt(s.ax ** 2 + s.ay ** 2 + s.az ** 2));
 
-  // TODO 2: estimate the sample rate in Hz from the timestamps t (hint: the median time between two samples)
-  const rateHz = 0;
+  // Step 2: estimate the sample rate in Hz from the timestamps t (hint: the median time between two samples)
+  const rateHz = 1 / median(diff(t));
 
-  // TODO 3: which axis (0 = x, 1 = y, 2 = z) points along gravity? Compare the mean of each accel axis in axes (absolute value)
-  const upAxis = 0;
+  // Step 3: which axis (0 = x, 1 = y, 2 = z) points along gravity? Compare the mean of each accel axis in axes (absolute value)
+  const means = axes.map((a) => Math.abs(mean(a)));
+  const upAxis = means.indexOf(Math.max(...means));
 
   const still = samples.slice(0, 50);                 // the first second
   const noise = ["ax", "ay", "az"].map((k) => std(still.map((s) => s[k as "ax"])).toFixed(3));

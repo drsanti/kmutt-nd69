@@ -52,7 +52,9 @@ Every stage of an Edge AI pipeline should be something you can **see**: the raw 
 
 ## How the labs work
 
-Each lab is one short Python script in `labs/python/` with **three `# TODO` tasks**. Every script already runs before you change anything — the screen or plot just shows zeros, a flicker or a trail until you complete the TODOs. Work through them in order; each TODO says exactly what to compute or draw.
+Each lab is one short, **complete and working** Python script in `labs/python/`. Run it and it does the whole job: it plots, or it draws live on the board's screen. When it starts, it prints what it does, what to do now and what to look for. In the code, comments `# Step 1`, `# Step 2`, `# Step 3` mark the key parts, which the [labs guide](labs/README.md) explains.
+
+**Exercises (optional, separate):** the same labs with parts of the code left for you to write are in [`labs/python/exercises/`](labs/python/exercises/README.md). They do not change the demos.
 
 ```bash
 cd nd1/docs/week09/labs/python

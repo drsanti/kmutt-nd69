@@ -19,10 +19,10 @@ FS = 50.0                                   # sample rate (Hz)
 
 def spectrum(a_mag):
     """Return (freqs_hz, magnitude) of one window of |a| samples."""
-    # TODO 1: remove the mean (gravity, 0 Hz) and take the magnitude of the real FFT
-    mag = np.zeros(len(a_mag) // 2 + 1)
-    # TODO 2: the frequency (Hz) of each FFT bin; the last one must be FS / 2 (Nyquist)
-    freqs = np.arange(len(mag), dtype=float)
+    # Step 1: remove the mean (gravity, 0 Hz) and take the magnitude of the real FFT
+    mag = np.abs(np.fft.rfft(a_mag - a_mag.mean()))
+    # Step 2: the frequency (Hz) of each FFT bin; the last one must be FS / 2 (Nyquist)
+    freqs = np.fft.rfftfreq(len(a_mag), d=1.0 / FS)
     return freqs, mag
 
 
@@ -30,8 +30,7 @@ def main():
     args = parse_args(__doc__)
     intro(__doc__, args,
           do='Nothing to do: it analyses the 4 recordings in samples/ (or the files after --replay) and opens a plot window.',
-          look='The dominant frequency of each gesture (printed, and a red line in the plot): shake peaks near 11.5 Hz. The bottom row is exactly what the gesture model receives (100 samples x 6 channels).',
-          before='every dominant frequency is 0.00 Hz and the spectra are flat (TODO 1), and the axis is wrong: resolution 1.00 Hz, Nyquist 50.0 Hz instead of 0.50 and 25.0 (TODO 2).')
+          look='The dominant frequency of each gesture (printed, and a red line in the plot): shake peaks near 11.5 Hz. The bottom row is exactly what the gesture model receives (100 samples x 6 channels).')
     if args.replay is None:
         args.replay = []
     files = replay_files(args)
@@ -42,8 +41,8 @@ def main():
         win = np.array([s.accel + s.gyro for s in rk.ImuReplay(f, realtime=False)])[: ic.WINDOW]
         a_mag = np.sqrt((win[:, :3] ** 2).sum(axis=1))
         freqs, mag = spectrum(a_mag)
-        # TODO 3: the dominant frequency in Hz (ignore bin 0, the leftover DC)
-        peak_hz = 0.0
+        # Step 3: the dominant frequency in Hz (ignore bin 0, the leftover DC)
+        peak_hz = float(freqs[1 + np.argmax(mag[1:])])
         name = Path(f).stem
         print(f"{name:8s} dominant {peak_hz:5.2f} Hz   resolution {freqs[1]:.2f} Hz   Nyquist {freqs[-1]:.1f} Hz")
         axes[0, k].plot(freqs, mag)

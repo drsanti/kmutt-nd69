@@ -23,7 +23,6 @@ run(async () => {
     live: "First start the service in another terminal (cd ../service, activate .venv, python gesture_service.py). Then look at the board: a MODEL tab appears. Perform shake, circle and lift; tap high or low on the bars to move the yellow threshold line.",
     replay: "First start the service in another terminal (cd ../service, activate .venv, python gesture_service.py). Then look at the board: a MODEL tab appears and the recorded gestures play; tap high or low on the bars to move the yellow threshold line.",
     look: "Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right. The service terminal prints every detection.",
-    before: "all four bars stay at 0 (TODO 1), there is no yellow threshold line or orange highlight (TODO 2), and tapping the bars does nothing (TODO 3).",
   });
   const model = await rk.GestureClient.connect();             // ws://127.0.0.1:8765/ws
   onExit(() => model.close());
@@ -47,13 +46,14 @@ run(async () => {
   let nDet = 0, n = 0;
   const tEnd = Date.now() + args.seconds * 1000;
   for await (const s of src) {
-    // TODO 1: send every IMU sample to the gesture service (model.push)
-    void s;
+    // Step 1: send every IMU sample to the gesture service (model.push)
+    model.push(s);
     if (++n % 5) continue;                                   // screen at 10 Hz
     const probs = gestures.map((g) => model.probs[g] ?? 0);
     const top = probs.indexOf(Math.max(...probs));
-    // TODO 2: draw the bars with labels and the threshold line; highlight the top class only if it is not "idle" and >= the threshold
-    d.bars(probs, gestures, BARS);
+    // Step 2: draw the bars with labels and the threshold line; highlight the top class only if it is not "idle" and >= the threshold
+    const lit = gestures[top] !== "idle" && probs[top] >= model.threshold ? top : null;
+    d.bars(probs, gestures, BARS, { threshold: model.threshold, highlight: lit });
     if (model.detections.length > nDet) {                    // new detection(s): update the counters
       for (const det of model.detections.slice(nDet)) {
         hits[det.label]++;
@@ -63,8 +63,11 @@ run(async () => {
       nDet = model.detections.length;
     }
     for (const t of d.touches()) {
-      // TODO 3: a tap inside the bars' plot area sets the threshold: top of the plot = 1.0, bottom = 0.0 (round to 2 decimals, then model.setThreshold)
-      void t;
+      // Step 3: a tap inside the bars' plot area sets the threshold: top of the plot = 1.0, bottom = 0.0 (round to 2 decimals, then model.setThreshold)
+      if (t.event === rk.TOUCH_DOWN && t.x >= BARS.x && t.x < BARS.x + BARS.w && t.y >= BARS.y && t.y < BARS.y + PLOT_H) {
+        model.setThreshold(Math.round((1 - (t.y - BARS.y) / PLOT_H) * 100) / 100);
+        d.text(216, 176, `thr ${model.threshold.toFixed(2)}`, rk.Color.YELLOW);
+      }
     }
     await d.flush();
     if (Date.now() > tEnd) break;

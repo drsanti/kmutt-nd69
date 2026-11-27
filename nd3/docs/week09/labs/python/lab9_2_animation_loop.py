@@ -21,8 +21,7 @@ def main():
                       extra=lambda ap: ap.add_argument("--fps", type=float, default=15.0))
     intro(__doc__, args,
           do='Look at the board: a box moves along a track and bounces at both ends. Then run it again with --fps 5.',
-          look='After TODO 1 the box crosses the track in the same time at any --fps (only less smoothly); after TODO 3 the flicker is gone.',
-          before='the box moves 4 px per frame, so --fps 5 makes it slower (TODO 1); it jumps back to the start instead of bouncing (TODO 2); and it flickers (TODO 3).')
+          look='The box crosses the track in the same time at any --fps (only less smoothly at 5), and it never flickers: each frame redraws only the old and the new box position.')
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(10, 50, f"Lab 9.2 animation loop @ {args.fps:.0f} fps", rk.Color.GRAY)
@@ -34,13 +33,19 @@ def main():
     clock, t_end, frames = Clock(args.fps), time.monotonic() + args.seconds, 0
     while time.monotonic() < t_end:
         dt = clock.tick()
-        # TODO 1: move the box: new x = x + speed * dt (then the speed in px/s is the same at any fps)
-        x = x + 4
-        # TODO 2: bounce: when the box reaches X0 or X1 - BOX_W, clamp x and reverse the speed v
-        x = X0 if x > X1 - BOX_W else x
+        # Step 1: move the box: new x = x + speed * dt (then the speed in px/s is the same at any fps)
+        x = x + v * dt
+        # Step 2: bounce: when the box reaches X0 or X1 - BOX_W, clamp x and reverse the speed v
+        if x > X1 - BOX_W:
+            x, v = X1 - BOX_W, -abs(v)
+        elif x < X0:
+            x, v = X0, abs(v)
         xi = int(round(x))
-        # TODO 3: the starter clears the whole track and redraws the box every frame (it FLICKERS). Draw only the change: erase the old box, then draw the new one, in ONE flush
-        d.fill_rect(X0, Y, X1 - X0, BOX_H, rk.Color.BLACK); d.flush(); d.fill_rect(xi, Y, BOX_W, BOX_H, BOX)
+        # Step 3: a simpler version clears the whole track and redraws the box every frame (it FLICKERS). Draw only the change: erase the old box, then draw the new one, in ONE flush
+        if shown is not None and shown != xi:
+            d.fill_rect(shown, Y, BOX_W, BOX_H, rk.Color.BLACK)
+        if shown != xi:
+            d.fill_rect(xi, Y, BOX_W, BOX_H, BOX)
         shown = xi
         if frames % 15 == 0:
             d.text(10, 160, f"fps {clock.fps:5.1f}  dt {dt * 1000:5.1f} ms ", rk.Color.WHITE)

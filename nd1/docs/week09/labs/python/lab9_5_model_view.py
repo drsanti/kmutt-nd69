@@ -26,8 +26,7 @@ def main():
     intro(__doc__, args,
           live='Look at the board: a MODEL tab appears. Perform shake, circle and lift. Tap high or low on the bars to move the yellow threshold line. (Needs imu_artifacts/model_int8.tflite - see Setup.)',
           replay='Look at the board: a MODEL tab appears and the recorded gestures play. Tap high or low on the bars to move the yellow threshold line. (Needs imu_artifacts/model_int8.tflite - see Setup.)',
-          look='Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right.',
-          before='all four bars stay at 0 (TODO 1), there is no yellow threshold line or orange highlight (TODO 2), and tapping the bars does nothing (TODO 3).')
+          look='Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right.')
     if not MODEL.exists():
         raise SystemExit(f"{MODEL} not found — train one first: robotos-kws train-imu --synthetic --out imu_artifacts")
     det = rk.GestureDetector(str(MODEL), threshold=0.7, verbose=False)
@@ -50,14 +49,15 @@ def main():
     n_det, n, t_end = 0, 0, time.monotonic() + args.seconds
     for s in src:
         n += 1
-        # TODO 1: give every sample to the gesture detector (time, accel tuple, gyro tuple)
-        pass
+        # Step 1: give every sample to the gesture detector (time, accel tuple, gyro tuple)
+        det.push(s.t, s.accel, s.gyro)
         if n % 5:
             continue
         probs = [det.probs[g] for g in ic.GESTURES]
         top = max(range(len(probs)), key=lambda i: probs[i])
-        # TODO 2: draw the bars with labels and the threshold line; highlight the top class only if it is not "idle" and >= the threshold
-        d.bars(probs, ic.GESTURES, BAR_X, BAR_Y, BAR_W, BAR_H)
+        # Step 2: draw the bars with labels and the threshold line; highlight the top class only if it is not "idle" and >= the threshold
+        lit = top if ic.GESTURES[top] != "idle" and probs[top] >= det.threshold else None
+        d.bars(probs, ic.GESTURES, BAR_X, BAR_Y, BAR_W, BAR_H, threshold=det.threshold, highlight=lit)
         if len(det.detections) > n_det:                     # new detection(s): update the counters
             for _, label, _ in det.detections[n_det:]:
                 hits[label] += 1
@@ -65,8 +65,10 @@ def main():
                 d.text(216, 72 + 20 * i, f"{label:<6} {hits[label]:3d}", rk.Color.ORANGE)
             n_det = len(det.detections)
         for t in d.touches():
-            # TODO 3: a tap inside the bars' plot area sets the threshold: top of the plot = 1.0, bottom = 0.0
-            pass
+            # Step 3: a tap inside the bars' plot area sets the threshold: top of the plot = 1.0, bottom = 0.0
+            if t.event == TOUCH_DOWN and BAR_X <= t.x < BAR_X + BAR_W and BAR_Y <= t.y < BAR_Y + PLOT_H:
+                det.threshold = round(1.0 - (t.y - BAR_Y) / PLOT_H, 2)
+                d.text(216, 176, f"thr {det.threshold:.2f}", rk.Color.YELLOW)
         d.flush()
         if time.monotonic() > t_end:
             break

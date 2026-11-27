@@ -18,10 +18,11 @@ const USAGE = "npx tsx lab9_2_frequency.ts [--replay file.csv ...]";
 
 /** Return the frequency (Hz) and magnitude of every FFT bin of one window of |a| samples. */
 function spectrum(aMag: number[]): { freqs: number[]; mag: number[] } {
-  // TODO 1: remove the mean (gravity, 0 Hz) from the window, then take the magnitude of the FFT: rfft(centered).map(abs)
-  const mag = new Array(Math.floor(aMag.length / 2) + 1).fill(0);
-  // TODO 2: the frequency of bin k is k * FS / N (N = number of samples); the last bin must be FS / 2 (Nyquist)
-  const freqs = mag.map((_, k) => k);
+  // Step 1: remove the mean (gravity, 0 Hz) from the window, then take the magnitude of the FFT: rfft(centered).map(abs)
+  const m = mean(aMag);
+  const mag = rfft(aMag.map((v) => v - m)).map(abs);
+  // Step 2: the frequency of bin k is k * FS / N (N = number of samples); the last bin must be FS / 2 (Nyquist)
+  const freqs = mag.map((_, k) => (k * FS) / aMag.length);
   return { freqs, mag };
 }
 
@@ -30,7 +31,6 @@ run(async () => {
   intro(args, {
     "do": "Nothing to do: it analyses the 4 recordings in samples/ (or the files after --replay) and opens a page of plots in your browser.",
     look: "The dominant frequency of each gesture (printed, and a red dashed line in the plot): shake peaks near 11.5 Hz. The heat maps at the bottom are exactly what the gesture model receives (100 samples x 6 channels).",
-    before: "every dominant frequency is 0.00 Hz and the spectra are flat (TODO 1), and the axis is wrong: resolution 1.00 Hz, Nyquist 50.0 Hz instead of 0.50 and 25.0 (TODO 2).",
   });
   if (args.replay === null) args.replay = [];
   const files = replayFiles(args);
@@ -40,8 +40,8 @@ run(async () => {
     const win = rk.loadCsv(f).slice(0, rk.WINDOW);
     const aMag = win.map((s) => s.aMag);
     const { freqs, mag } = spectrum(aMag);
-    // TODO 3: the dominant frequency in Hz: the bin with the largest magnitude, ignoring bin 0 (leftover DC)
-    const peakHz = 0;
+    // Step 3: the dominant frequency in Hz: the bin with the largest magnitude, ignoring bin 0 (leftover DC)
+    const peakHz = freqs[1 + argmax(mag.slice(1))];
     const name = basename(f, ".csv");
     console.log(`${name.padEnd(8)} dominant ${peakHz.toFixed(2).padStart(5)} Hz   resolution ${freqs[1].toFixed(2)} Hz   Nyquist ${freqs[freqs.length - 1].toFixed(1)} Hz`);
     fig.panel({ title: `${name}: peak ${peakHz.toFixed(1)} Hz`, xlabel: "Hz" }).line(freqs, mag).vline(peakHz);

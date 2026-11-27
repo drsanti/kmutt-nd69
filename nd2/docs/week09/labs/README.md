@@ -8,7 +8,9 @@
 
 [Week 09 index](../README.md) · Lessons: [01 — Time and frequency](../lessons/01-time-and-frequency.md) · [02 — Drawing on a device](../lessons/02-drawing-on-a-device.md)
 
-Five labs, about 30 minutes each. Each file in `labs/node/` runs as-is and has **three `// TODO` tasks**; complete them in order.
+Five labs, about 30 minutes each. Each file in `labs/node/` is a **complete, working demo**: run it, follow what it prints, and read the code. The table under each lab explains the key parts, marked `// Step 1`–`// Step 3` in the code.
+
+> **Exercises (optional):** the same labs with parts of the code left for you to write are in a separate folder, [`node/exercises/`](node/exercises/README.md). The demos here are complete and unchanged.
 
 | You have | Run labs with |
 |---|---|
@@ -178,7 +180,7 @@ npx tsx lab9_1_time_domain.ts --seconds 10         # ws28p: move it around, then
 
 The plots open in your browser (`lab9_1_time_domain.html`, refresh it after each run).
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Compute \|a\| = √(ax² + ay² + az²) for every sample |
 | 2 | Estimate the sample rate from the timestamps |
@@ -199,7 +201,7 @@ npx tsx lab9_2_frequency.ts                        # the 4 sample gestures
 npx tsx lab9_2_frequency.ts --replay ../service/imu_dataset/shake/s01_yourname_ws28p_0000.csv   # your own take (Setup 1b, model B)
 ```
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Remove the mean (gravity, 0 Hz) and take the magnitude of the FFT (`rk.dsp.rfft`, `rk.dsp.abs`) |
 | 2 | Build the frequency axis; the last bin must be 25 Hz |
@@ -222,13 +224,13 @@ npx tsx lab9_3_display_basics.ts                   # ws28p: live
 
 A new **METER** tab appears on the board's screen.
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Draw the static parts once: title, frame, scale |
 | 2 | Convert \|a\| (0–30 m/s²) to a bar width (0–300 px) |
-| 3 | The starter **flickers**. Fix it: draw only the part of the bar that changed |
+| 3 | Draw only the part of the bar that changed, so it never flickers |
 
-**Observe:** before TODO 3, watch the bar blink; after it, the bar moves smoothly. The script prints `link: { commands: … }` at the end — compare the number of commands before and after your fix.
+**Observe:** the bar moves smoothly, without blinking, because each update redraws only the part that changed. The script prints `link: { commands: … }` at the end: very few commands for a whole run.
 
 **Answer in your notes:** (1) Why does clearing and redrawing flicker on this screen? (2) How many bytes does one full-screen RGB565 image need, and why don't we send that every frame?
 
@@ -245,11 +247,11 @@ npx tsx lab9_4_live_charts.ts                      # ws28p: tilt and shake it
 
 A **CHARTS** tab: a scrolling 3-axis chart on top, a bubble level bottom right.
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Create a `StripChart` with three traces (ax red, ay green, az blue), range −20…20 m/s² |
 | 2 | Convert tilt (ax/g, ay/g) into the bubble's position inside the dial |
-| 3 | The starter leaves a **trail** of bubbles. Erase only the old bubble before drawing the new one |
+| 3 | Erase only the old bubble, then draw the new one, so it leaves no trail |
 
 **Observe:** the chart sweeps left to right with a white cursor, like a chart recorder — only the newest columns are sent. Tap another tab and back: `d.onShown` repaints the page.
 
@@ -281,7 +283,7 @@ npx tsx lab9_5_model_view.ts                       # ws28p: shake, circle, lift
 
 A **MODEL** tab: four probability bars (idle, shake, circle, lift), a yellow threshold line, and detection counters. The service prints each detection too.
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Send every IMU sample to the service (`model.push`) |
 | 2 | Draw the bars with the threshold line; highlight a detected gesture (not idle, above the threshold) |

@@ -20,13 +20,16 @@ def main():
     intro(__doc__, args,
           live='Look at the board: a METER tab appears. Move and shake the board - the bar shows how hard.',
           replay='Look at the board: a METER tab appears and the recorded motion drives the bar.',
-          look="Before TODO 3 the bar flickers; after it, it moves smoothly. At the end, compare 'commands' in the printed link stats before and after your fix.",
-          before='no title or frame on the screen (TODO 1) and an empty bar (TODO 2). Once the bar moves, it flickers until TODO 3.')
+          look="The bar moves smoothly without flicker: each update redraws only the part of the bar that changed. The link stats printed at the end show how few commands that needs.")
     d = rk.Display.open(args.port, name="METER")
     src = imu_source(args, d.session)
 
-    # TODO 1: draw the static parts once: clear the page, a title, and a white frame around the meter
+    # Step 1: draw the static parts once: clear the page, a title, and a white frame around the meter
     d.clear()
+    d.text(10, 56, "Lab 9.3  |a| meter", rk.Color.WHITE)
+    d.rect(BAR_X - 2, BAR_Y - 2, BAR_W + 4, BAR_H + 4, rk.Color.WHITE)
+    d.text(BAR_X, BAR_Y + BAR_H + 6, "0", rk.Color.GRAY)
+    d.text(BAR_X + BAR_W - 24, BAR_Y + BAR_H + 6, f"{A_MAX:.0f}", rk.Color.GRAY)
     d.flush()
 
     shown, shown_color = 0, None                    # what the bar on screen looks like now
@@ -35,11 +38,19 @@ def main():
         n += 1
         if n % 5:                                   # 50 Hz IMU -> redraw at 10 Hz
             continue
-        # TODO 2: convert |a| (0..A_MAX) to a bar width in pixels (0..BAR_W), clipped
-        width = 0
+        # Step 2: convert |a| (0..A_MAX) to a bar width in pixels (0..BAR_W), clipped
+        width = int(min(max(s.a_mag / A_MAX, 0.0), 1.0) * BAR_W)
         color = rk.Color.GREEN if s.a_mag < 15 else rk.Color.YELLOW if s.a_mag < 22 else rk.Color.RED
-        # TODO 3: the starter repaints the whole bar every frame and FLICKERS. Draw only what changed instead: grow -> paint the new part, shrink -> erase the extra part, new colour -> repaint the bar
-        d.fill_rect(BAR_X, BAR_Y, BAR_W, BAR_H, rk.Color.BLACK); d.flush(); d.fill_rect(BAR_X, BAR_Y, width, BAR_H, color)
+        # Step 3: a simpler version repaints the whole bar every frame and FLICKERS. Draw only what changed instead: grow -> paint the new part, shrink -> erase the extra part, new colour -> repaint the bar
+        if color != shown_color:
+            d.fill_rect(BAR_X, BAR_Y, width, BAR_H, color)
+            if width < shown:
+                d.fill_rect(BAR_X + width, BAR_Y, shown - width, BAR_H, rk.Color.BLACK)
+        elif width > shown:
+            d.fill_rect(BAR_X + shown, BAR_Y, width - shown, BAR_H, color)
+        elif width < shown:
+            d.fill_rect(BAR_X + width, BAR_Y, shown - width, BAR_H, rk.Color.BLACK)
+        shown, shown_color = width, color
         d.text(10, 160, f"|a| = {s.a_mag:5.2f} m/s^2  ", rk.Color.WHITE)
         d.flush()
         if time.monotonic() > t_end:

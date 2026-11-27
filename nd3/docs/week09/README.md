@@ -52,7 +52,9 @@ An HMI, a SCADA mimic and a digital twin all do the same thing: they **draw the 
 
 ## How the labs work
 
-Each lab is one short Python script in `labs/python/` with **three `# TODO` tasks**. Every script already runs before you change anything — the screen just shows a placeholder, a flicker, a trail or a frozen machine until you complete the TODOs. Work through them in order; each TODO says exactly what to compute or draw.
+Each lab is one short, **complete and working** Python script in `labs/python/`. Run it and the factory cell comes alive on the board's screen. When it starts, it prints what it does, what to do now and what to look for. In the code, comments `# Step 1`, `# Step 2`, `# Step 3` mark the key parts, which the [labs guide](labs/README.md) explains.
+
+**Exercises (optional, separate):** the same labs with parts of the code left for you to write are in [`labs/python/exercises/`](labs/python/exercises/README.md). They do not change the demos.
 
 ```bash
 cd nd3/docs/week09/labs/python

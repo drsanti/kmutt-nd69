@@ -21,13 +21,13 @@ def main():
     intro(__doc__, args,
           live='Look at the board: a CHARTS tab appears. Tilt the board in all directions, then shake it.',
           replay='Look at the board: a CHARTS tab appears; the recorded motion drives the chart and the bubble.',
-          look='Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).',
-          before='only the red ax line (TODO 1) and a bubble that stays in the centre (TODO 2). Once the bubble moves, it leaves a trail until TODO 3.')
+          look='Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail.')
     d = rk.Display.open(args.port, name="CHARTS")
     src = imu_source(args, d.session)
 
-    # TODO 1: create a StripChart for 3 traces (ax red, ay green, az blue), range -20..20 m/s^2, at x=4 y=50 w=312 h=90
-    chart = rk.StripChart(d, ranges=[(-20, 20)], x=4, y=50, w=312, h=90)
+    # Step 1: create a StripChart for 3 traces (ax red, ay green, az blue), range -20..20 m/s^2, at x=4 y=50 w=312 h=90
+    chart = rk.StripChart(d, ranges=[(-20, 20)] * 3, colors=[rk.Color.RED, rk.Color.GREEN, rk.Color.BLUE],
+                          x=4, y=50, w=312, h=90)
 
     def paint(_d=None):
         d.clear()
@@ -48,10 +48,14 @@ def main():
         n += 1
         drawn = chart.push(s.ax, s.ay, s.az)
         if n % 5 == 0:                              # bubble at 10 Hz
-            # TODO 2: bubble position from tilt: ax/G and ay/G are in -1..1; move up to LEVEL_R - BUBBLE_R pixels from the centre
-            bx, by = LEVEL_CX, LEVEL_CY
+            # Step 2: bubble position from tilt: ax/G and ay/G are in -1..1; move up to LEVEL_R - BUBBLE_R pixels from the centre
+            reach = LEVEL_R - BUBBLE_R
+            bx = LEVEL_CX + int(max(-1.0, min(1.0, s.ax / G)) * reach)
+            by = LEVEL_CY + int(max(-1.0, min(1.0, s.ay / G)) * reach)
             if (bx, by) != old:
-                # TODO 3: erase only the old bubble (paint it in the dial colour), then draw the new one in YELLOW
+                # Step 3: erase only the old bubble (paint it in the dial colour), then draw the new one in YELLOW
+                if old is not None:
+                    d.circle(old[0], old[1], BUBBLE_R, rk.Color.DARK)
                 d.circle(bx, by, BUBBLE_R, rk.Color.YELLOW)
                 d.hline(LEVEL_CX - LEVEL_R, LEVEL_CY, 2 * LEVEL_R, rk.Color.GRAY)
                 d.vline(LEVEL_CX, LEVEL_CY - LEVEL_R, 2 * LEVEL_R, rk.Color.GRAY)

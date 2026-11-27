@@ -64,7 +64,7 @@ else if (width < shown) d.fillRect(x + width, y, shown - width, h, BLACK);     /
 shown = width;
 ```
 
-`Display.bars()` and `StripChart` do this internally. Labs 9.3 and 9.4 have you write it yourself.
+`Display.bars()` and `StripChart` do this internally. Labs 9.3 and 9.4 show it in a few lines (Step 3 in each).
 
 ## 5. Showing a decision
 

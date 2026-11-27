@@ -22,14 +22,24 @@ PRESETS = [(90, 110), (230, 110), (200, 170), (110, 160)]
 
 def fk(q1, q2):
     """Forward kinematics: joint angles (rad) -> elbow (x1, y1) and gripper (x2, y2) in screen px."""
-    # TODO 1: elbow = base + L1 * (cos q1, -sin q1); gripper = elbow + L2 * (cos(q1+q2), -sin(q1+q2)). Screen y grows DOWN, hence the minus
-    return BASE[0], BASE[1] - L1, BASE[0], BASE[1] - L1 - L2
+    # Step 1: elbow = base + L1 * (cos q1, -sin q1); gripper = elbow + L2 * (cos(q1+q2), -sin(q1+q2)). Screen y grows DOWN, hence the minus
+    x1 = BASE[0] + L1 * math.cos(q1)
+    y1 = BASE[1] - L1 * math.sin(q1)
+    x2 = x1 + L2 * math.cos(q1 + q2)
+    y2 = y1 - L2 * math.sin(q1 + q2)
+    return x1, y1, x2, y2
 
 
 def ik(x, y):
     """Inverse kinematics: gripper target (screen px) -> (q1, q2) elbow-up, or None if unreachable."""
-    # TODO 3: law of cosines. dx = x - BASE_x, dy = BASE_y - y; cos q2 = (dx²+dy²-L1²-L2²)/(2 L1 L2) (None if |cos q2| > 1); q2 = -acos(...) for elbow up; q1 = atan2(dy, dx) - atan2(L2 sin q2, L1 + L2 cos q2)
-    return None
+    # Step 3: law of cosines. dx = x - BASE_x, dy = BASE_y - y; cos q2 = (dx²+dy²-L1²-L2²)/(2 L1 L2) (None if |cos q2| > 1); q2 = -acos(...) for elbow up; q1 = atan2(dy, dx) - atan2(L2 sin q2, L1 + L2 cos q2)
+    dx, dy = x - BASE[0], BASE[1] - y
+    c2 = (dx * dx + dy * dy - L1 * L1 - L2 * L2) / (2 * L1 * L2)
+    if abs(c2) > 1:
+        return None
+    q2 = -math.acos(c2)
+    q1 = math.atan2(dy, dx) - math.atan2(L2 * math.sin(q2), L1 + L2 * math.cos(q2))
+    return q1, q2
 
 
 def arm_shapes(pose):
@@ -45,8 +55,7 @@ def main():
     args = parse_args(__doc__, seconds=40)
     intro(__doc__, args,
           do='Tap a point on the screen: the arm reaches for it. Without taps it visits four preset targets in turn.',
-          look="Smooth joint motion with no trail (TODO 2), and 'out of reach!' when you tap too far from the shoulder (TODO 3).",
-          before="the arm stands straight up and does not move (TODO 1), every target, tapped or preset, says 'out of reach!' (TODO 3), and once it moves it leaves a trail until TODO 2.")
+          look="Smooth joint motion with no trail, and 'out of reach!' when you tap too far from the shoulder.")
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(10, 50, "Lab 9.4 robot arm: tap a target", rk.Color.GRAY)
@@ -77,8 +86,8 @@ def main():
                 q[i] += max(-TURN * dt, min(TURN * dt, err))
         pose = tuple(int(round(v)) for v in fk(*q))
         if pose != shown:
-            # TODO 2: the starter only draws each new pose, so the arm leaves a trail. Move a Sprite instead: arm.move(arm_shapes(pose)) erases only the pixels the old pose no longer covers and draws the new pose, in ONE screen update, so there is no trail and no blink
-            d.draw_shapes(arm_shapes(pose))
+            # Step 2: a simpler version only draws each new pose, so the arm leaves a trail. Move a Sprite instead: arm.move(arm_shapes(pose)) erases only the pixels the old pose no longer covers and draws the new pose, in ONE screen update, so there is no trail and no blink
+            arm.move(arm_shapes(pose))
             shown = pose
         if target_xy:
             d.circle(int(target_xy[0]), int(target_xy[1]), 3, rk.Color.YELLOW)

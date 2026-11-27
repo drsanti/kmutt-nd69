@@ -42,7 +42,7 @@ def imu_source(args, session=None):
 
 # ------------------------------------------------------------------ start-up guide
 WIDTH = 78
-_TODO = re.compile(r"^\s*#\s*(?:>>> )?TODO (\d+): (.*?)(?: \| starter: .*)?$")
+_TODO = re.compile(r"^\s*#\s*(?:>>> )?(?:TODO|Step) (\d+): (.*?)(?: \| starter: .*)?$")
 
 
 def _wrap(label: str, text: str) -> list:
@@ -93,9 +93,10 @@ def intro(doc: str, args=None, live: str = "", replay: str = "", do: str = "", l
         lines += _wrap("Before TODOs:", before)
     todos = _todos(Path(sys.argv[0]).resolve())
     if todos:
-        lines.append(" Your tasks (TODOs in this file):")
+        demo = "TODO" not in Path(sys.argv[0]).read_text(encoding="utf-8")
+        lines.append(" Key steps in the code:" if demo else " Your tasks (TODOs in this file):")
         for n, d in todos:
-            lines += textwrap.wrap(d, WIDTH - 1, initial_indent=f"   TODO {n}: ", subsequent_indent=" " * 11)
+            lines += textwrap.wrap(d, WIDTH - 1, initial_indent=f"   {'Step' if demo else 'TODO'} {n}: ", subsequent_indent=" " * 11)
     lines.append(f" Stop: Ctrl+C    Options: python {Path(sys.argv[0]).name} --help")
     print("\n".join(lines))
     print("-" * WIDTH, flush=True)

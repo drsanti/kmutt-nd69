@@ -104,10 +104,11 @@ export function intro(args: Args | null, g: Guide): void {
   } else if (g.do) lines.push(...wrap(g.do, " Do now:       ", " ".repeat(15)));
   if (g.look) lines.push(...wrap(g.look, " Look for:     ", " ".repeat(15)));
   if (g.before) lines.push(...wrap(g.before, " Before TODOs: ", " ".repeat(15)));
-  const todos = [...src.matchAll(/^\s*\/\/\s*(?:>>> )?TODO (\d+): (.*?)(?: \| starter: .*)?$/gm)];
+  const todos = [...src.matchAll(/^\s*\/\/\s*(?:>>> )?(?:TODO|Step) (\d+): (.*?)(?: \| starter: .*)?$/gm)];
+  const demo = !src.includes("TODO");
   if (todos.length) {
-    lines.push(" Your tasks (TODOs in this file):");
-    for (const m of todos) lines.push(...wrap(m[2].split(/(?<=[a-z0-9)]): |; |\. /)[0].replace(/\.$/, ""), `   TODO ${m[1]}: `, " ".repeat(11)));
+    lines.push(demo ? " Key steps in the code:" : " Your tasks (TODOs in this file):");
+    for (const m of todos) lines.push(...wrap(m[2].split(/(?<=[a-z0-9)]): |; |\. /)[0].replace(/\.$/, ""), `   ${demo ? "Step" : "TODO"} ${m[1]}: `, " ".repeat(11)));
   }
   lines.push(` Stop: Ctrl+C    Options: npx tsx ${basename(file)} --help`);
   console.log(`${"=".repeat(WIDTH)}\n ${title}\n${"=".repeat(WIDTH)}\n${lines.join("\n")}\n${"-".repeat(WIDTH)}`);

@@ -8,7 +8,9 @@
 
 [Week 09 index](../README.md) · Lessons: [01 — Animation on a small screen](../lessons/01-animation-on-a-small-screen.md) · [02 — Robot arm kinematics](../lessons/02-robot-arm-kinematics.md)
 
-Five labs, 25–35 minutes each. Each script in `labs/python/` runs as-is and has **three `# TODO` tasks**; complete them in order. Every lab draws on the board's screen, so **a board is needed** (ws28p or es3c28p).
+Five labs, 25–35 minutes each. Each script in `labs/python/` is a **complete, working demo**: run it, follow what it prints, and read the code. The table under each lab explains the key parts, marked `# Step 1`–`# Step 3` in the code. Every lab
+
+> **Exercises (optional):** the same labs with parts of the code left for you to write are in a separate folder, [`python/exercises/`](python/exercises/README.md). The demos here are complete and unchanged. draws on the board's screen, so **a board is needed** (ws28p or es3c28p).
 
 | You have | Run labs with |
 |---|---|
@@ -127,10 +129,10 @@ python lab9_1_static_cell.py
 
 A **CELL** tab appears on the board's screen. Your drawing area is x 0–319, **y 46–221** (the tabs are above it). y grows **down**.
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Draw the conveyor: a belt top, a return belt and 3 rollers |
-| 2 | Put 3 boxes **on** the belt (which y puts a box's bottom on the belt top?) |
+| 2 | Put 3 boxes **on** the belt: a box's y = belt top − box height |
 | 3 | Add a stack light (red, yellow, green) and the robot arm with `d.line(x0, y0, x1, y1, color, width)` |
 
 **Observe:** the script prints how many drawing operations the picture needed. The board draws at most **32 operations per screen update** — keep that number in mind for animation.
@@ -148,13 +150,13 @@ python lab9_2_animation_loop.py
 python lab9_2_animation_loop.py --fps 5      # fewer frames: is the box slower?
 ```
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Move the box by `speed × dt`, not a fixed number of pixels |
 | 2 | Bounce at both ends of the track |
-| 3 | The starter **flickers** (it clears the track every frame). Erase only the old box and draw the new one |
+| 3 | Erase only the old box and draw the new one, so it never flickers |
 
-**Observe:** after TODO 1, the box crosses the track in the same time at 15 fps and at 5 fps — only smoother at 15. After TODO 3, the flicker is gone and the link sends far fewer commands (printed at the end).
+**Observe:** the box crosses the track in the same time at 15 fps and at 5 fps — only smoother at 15 — because it moves by `speed × dt`. It never flickers: each frame redraws only the old and the new box position.
 
 **Answer in your notes:** (1) Why does `x += 4` per frame make the speed depend on the computer? (2) Why does clearing and redrawing flicker, while erase-old + draw-new does not?
 
@@ -169,7 +171,7 @@ python lab9_3_conveyor.py            # ws28p: tilt it left / right
 python lab9_3_conveyor.py --replay   # es3c28p: recorded motion
 ```
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Belt speed from tilt: `ax / g` (about −1…1) × `V_MAX` |
 | 2 | Spawn a box every 2 s, move all boxes, remove the ones that leave the belt |
@@ -189,10 +191,10 @@ python lab9_3_conveyor.py --replay   # es3c28p: recorded motion
 python lab9_4_robot_arm.py           # tap a point on the screen; the arm reaches for it
 ```
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Forward kinematics: joint angles → elbow and gripper positions |
-| 2 | The starter leaves a **trail** of arms. Move a `Sprite` instead: `arm.move(arm_shapes(pose))` |
+| 2 | Move the arm as a `Sprite` (`arm.move(arm_shapes(pose))`): no trail and no blink |
 | 3 | Inverse kinematics: a tapped point → joint angles (law of cosines), or `None` if it is out of reach |
 
 **Observe:** without taps the arm visits four preset targets. Tap far away from the base: the screen says *out of reach!*. The two joints turn at a limited speed, so the arm moves smoothly, like a real one.
@@ -212,7 +214,7 @@ python lab9_5_digital_twin.py --replay --auto-reset   # es3c28p: recorded motion
 
 Boxes ride the conveyor; the arm picks each one at the end of the belt and drops it in the bin; the stack light shows the state.
 
-| TODO | Task |
+| Step | What the code does |
 |---|---|
 | 1 | Emergency stop: a shake in any state → `ESTOP`; a tap (or `--auto-reset` after 3 s of calm) resumes the state it stopped |
 | 2 | The arm's state machine: RUN → PICK → CARRY → RETURN → RUN |

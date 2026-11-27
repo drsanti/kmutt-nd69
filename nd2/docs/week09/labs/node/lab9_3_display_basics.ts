@@ -19,15 +19,18 @@ run(async () => {
   intro(args, {
     live: "Look at the board: a METER tab appears. Move and shake the board - the bar shows how hard.",
     replay: "Look at the board: a METER tab appears and the recorded motion drives the bar.",
-    look: "Before TODO 3 the bar flickers; after it, it moves smoothly. At the end, compare 'commands' in the printed link stats before and after your fix.",
-    before: "no title or frame on the screen (TODO 1) and an empty bar (TODO 2). Once the bar moves, it flickers until TODO 3.",
+    look: "The bar moves smoothly without flicker: each update redraws only the part of the bar that changed. The link stats printed at the end show how few commands that needs.",
   });
   const d = await rk.Display.open({ port: args.port, name: "METER" });
   onExit(() => d.close());
   const src = imuSource(args, d.session);
 
-  // TODO 1: draw the static parts once: clear the page, a title, and a white frame (d.rect) just around the meter
+  // Step 1: draw the static parts once: clear the page, a title, and a white frame (d.rect) just around the meter
   d.clear();
+  d.text(10, 56, "Lab 9.3  |a| meter", rk.Color.WHITE);
+  d.rect(BAR_X - 2, BAR_Y - 2, BAR_W + 4, BAR_H + 4, rk.Color.WHITE);
+  d.text(BAR_X, BAR_Y + BAR_H + 6, "0", rk.Color.GRAY);
+  d.text(BAR_X + BAR_W - 24, BAR_Y + BAR_H + 6, A_MAX.toFixed(0), rk.Color.GRAY);
   await d.flush();
 
   let shown = 0, shownColor: number | null = null;           // what the bar on screen looks like now
@@ -35,11 +38,17 @@ run(async () => {
   const tEnd = Date.now() + args.seconds * 1000;
   for await (const s of src) {
     if (++n % 5) continue;                                    // 50 Hz IMU -> redraw at 10 Hz
-    // TODO 2: convert |a| (0..A_MAX) to a bar width in pixels (0..BAR_W), clipped to that range
-    const width = 0;
+    // Step 2: convert |a| (0..A_MAX) to a bar width in pixels (0..BAR_W), clipped to that range
+    const width = Math.round(Math.min(Math.max(s.aMag / A_MAX, 0), 1) * BAR_W);
     const color = s.aMag < 15 ? rk.Color.GREEN : s.aMag < 22 ? rk.Color.YELLOW : rk.Color.RED;
-    // TODO 3: the starter repaints the whole bar every frame and FLICKERS. Draw only what changed: grow -> paint the new part, shrink -> erase the extra part, new colour -> repaint the bar
-    d.fillRect(BAR_X, BAR_Y, BAR_W, BAR_H, rk.Color.BLACK); await d.flush(); d.fillRect(BAR_X, BAR_Y, width, BAR_H, color);
+    // Step 3: a simpler version repaints the whole bar every frame and FLICKERS. Draw only what changed: grow -> paint the new part, shrink -> erase the extra part, new colour -> repaint the bar
+    if (color !== shownColor) {
+      d.fillRect(BAR_X, BAR_Y, width, BAR_H, color);
+      if (width < shown) d.fillRect(BAR_X + width, BAR_Y, shown - width, BAR_H, rk.Color.BLACK);
+    } else if (width > shown) d.fillRect(BAR_X + shown, BAR_Y, width - shown, BAR_H, color);
+    else if (width < shown) d.fillRect(BAR_X + width, BAR_Y, shown - width, BAR_H, rk.Color.BLACK);
+    shown = width;
+    shownColor = color;
     d.text(10, 160, `|a| = ${s.aMag.toFixed(2).padStart(5)} m/s^2  `, rk.Color.WHITE);
     await d.flush();
     if (Date.now() > tEnd) break;

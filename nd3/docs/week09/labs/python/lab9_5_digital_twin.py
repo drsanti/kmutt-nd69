@@ -32,8 +32,7 @@ def main():
     intro(__doc__, args,
           live='Watch the cell work. Then shake the board hard: EMERGENCY STOP (red light, belt stops). Tap the screen to resume.',
           replay='Watch the cell work; the recording contains a shake that triggers the EMERGENCY STOP. Add --auto-reset so it resumes by itself (nobody taps during a replay).',
-          look="Stack light: green = running, yellow = arm busy, red = stopped. The 'placed' counter grows; after a stop the arm carries on from where it stopped.",
-          before='the arm never moves and the boxes queue at the end of the belt (TODO 2), shaking does nothing (TODO 1), and the light stays green (TODO 3).')
+          look="Stack light: green = running, yellow = arm busy, red = stopped. The 'placed' counter grows; after a stop the arm carries on from where it stopped.")
     d = rk.Display.open(args.port, name="CELL")
     imu = imu_source(args, d.session, default=["idle"] * 4 + ["shake"])
     belt, arm, light = Conveyor(), Arm(), StackLight()
@@ -64,8 +63,13 @@ def main():
         g_max = max((math.sqrt(s.gx ** 2 + s.gy ** 2 + s.gz ** 2) for s in samples), default=0.0)
         tapped = any(t.event == TOUCH_DOWN for t in d.touches())
 
-        # TODO 1: emergency stop: a shake (a_max > SHAKE_MS2 and g_max > SHAKE_RAD_S) in any state -> "ESTOP" (remember the state to resume). In ESTOP, a tap (or --auto-reset after 3 s of calm) goes back to that state
-        pass
+        # Step 1: emergency stop: a shake (a_max > SHAKE_MS2 and g_max > SHAKE_RAD_S) in any state -> "ESTOP" (remember the state to resume). In ESTOP, a tap (or --auto-reset after 3 s of calm) goes back to that state
+        if state != "ESTOP" and a_max > SHAKE_MS2 and g_max > SHAKE_RAD_S:
+            resume, state = state, "ESTOP"
+        elif state == "ESTOP":
+            calm_since = (calm_since or now) if a_max < 11.5 else None
+            if tapped or (args.auto_reset and calm_since and now - calm_since > 3.0):
+                state, calm_since = resume, None
 
         if state != "ESTOP":
             if now - last_spawn > SPAWN_S and len(belt.boxes) < 4:
@@ -73,11 +77,25 @@ def main():
                 last_spawn = now
             belt.step(dt)
             step = TURN_RAD_S * dt
-            # TODO 2: the arm's state machine: RUN -> (box at the end) PICK -> CARRY -> RETURN -> RUN. In PICK/CARRY/RETURN move toward PICK/PLACE/HOME with arm.move_toward(arm.ik(x, y), step); on arrival: PICK takes the box off the belt (arm.holding), CARRY drops it (placed += 1)
-            pass
+            # Step 2: the arm's state machine: RUN -> (box at the end) PICK -> CARRY -> RETURN -> RUN. In PICK/CARRY/RETURN move toward PICK/PLACE/HOME with arm.move_toward(arm.ik(x, y), step); on arrival: PICK takes the box off the belt (arm.holding), CARRY drops it (placed += 1)
+            if state == "RUN" and belt.at_end():
+                state = "PICK"
+            elif state == "PICK" and arm.move_toward(arm.ik(*PICK), step):
+                box = belt.at_end()
+                if box:
+                    belt.remove(d, box)
+                    arm.holding = box
+                state = "CARRY"
+            elif state == "CARRY" and arm.move_toward(arm.ik(*PLACE), step):
+                arm.holding = None
+                placed += 1
+                state = "RETURN"
+            elif state == "RETURN" and arm.move_toward(home_q, step):
+                state = "RUN"
 
-        # TODO 3: stack light: green = RUN, yellow = arm busy (PICK/CARRY/RETURN), red = ESTOP; and stop the belt (speed 0) while in ESTOP
-        light.set("green")
+        # Step 3: stack light: green = RUN, yellow = arm busy (PICK/CARRY/RETURN), red = ESTOP; and stop the belt (speed 0) while in ESTOP
+        light.set("red" if state == "ESTOP" else "green" if state == "RUN" else "yellow")
+        belt.speed = 0.0 if state == "ESTOP" else 40.0
 
         belt.draw(d)
         arm.draw(d, under=lambda: belt.shapes() + bin_shapes)   # repaint what the arm uncovers

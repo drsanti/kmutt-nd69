@@ -53,7 +53,9 @@ Every stage of an Edge AI pipeline should be something you can **see**: the raw 
 
 ## How the labs work
 
-Each lab is one short TypeScript file in `labs/node/` with **three `// TODO` tasks**. Every file already runs before you change anything. Until you complete the TODOs, the plot or screen just shows zeros, a flicker or a trail. Work through them in order; each TODO says exactly what to compute or draw.
+Each lab is one short, **complete and working** TypeScript file in `labs/node/`. Run it and it does the whole job: a page of plots in your browser, or live drawing on the board's screen. When it starts, it prints what it does, what to do now and what to look for. In the code, comments `// Step 1`, `// Step 2`, `// Step 3` mark the key parts, which the [labs guide](labs/README.md) explains.
+
+**Exercises (optional, separate):** the same labs with parts of the code left for you to write are in [`labs/node/exercises/`](labs/node/exercises/README.md). They do not change the demos.
 
 ```bash
 cd nd2/docs/week09/labs/node
