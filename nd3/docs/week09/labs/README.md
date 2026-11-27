@@ -47,12 +47,12 @@ pip install -U --no-index -f ../../../week08/labs/dist robotos_edge
 python -c "import robotos_edge as rk; from robotos_edge import scene; print(rk.__version__)"   # 0.2.2
 ```
 
-### 1b. Board firmware: update to 0.3.1
+### 1b. Board firmware: update to 0.3.2
 
-Week 09 needs board firmware **0.3.1**: it draws the robot arm's thick links on the board itself, so the arm moves without blinking. Check what your board has:
+Week 09 needs board firmware **0.3.2** (0.3.1 also works): it draws the robot arm's thick links on the board itself, so the arm moves without blinking. Check what your board has:
 
 ```bash
-robotos detect          # look for:  Firmware: robotos-fw/0.3.1 (protocol 3)
+robotos detect          # look for:  Firmware: robotos-fw/0.3.2 (protocol 3)
 ```
 
 If it shows an older version (or says *older firmware; update*), flash the new one — **always pass your board**:
@@ -61,7 +61,7 @@ If it shows an older version (or says *older firmware; update*), flash the new o
 robotos flash-firmware --board ws28p        # or: --board es3c28p
 ```
 
-It downloads the newest firmware, flashes it (about 1 minute), and checks the board. Run `robotos detect` again and confirm `robotos-fw/0.3.1`.
+It downloads the newest firmware, flashes it (about 1 minute), and checks the board. Run `robotos detect` again and confirm `robotos-fw/0.3.2`.
 
 > All Week 09 labs use one screen page called **CELL**, so you can run them in any order and stop them with Ctrl+C at any time.
 
@@ -183,5 +183,6 @@ Boxes ride the conveyor; the arm picks each one at the end of the belt and drops
 | The robot arm **blinks** while it moves | Board firmware older than 0.3.1: Setup 1b |
 | `could not create page … (rc=-12)` | The screen's page slots are full (old pages from other weeks): press RESET on the board |
 | `no IMU samples …` | Not a ws28p: use `--replay` |
+| The screen shows `?` instead of a symbol | The board's font has plain ASCII only. `d.text()` converts common symbols (`° → deg`, `² → 2`, `— → -`); avoid others (including Thai) in screen text |
 | Nothing appears on the screen | Tap the **CELL** tab at the top of the screen |
 | The board restarts again and again | Unplug it, close every other program that uses the port (Serial Monitor, another lab), plug it back in |
