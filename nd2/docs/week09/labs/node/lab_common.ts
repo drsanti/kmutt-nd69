@@ -83,7 +83,7 @@ function wrap(text: string, first: string, rest: string): string[] {
   return out;
 }
 
-export interface Guide { live?: string; replay?: string; do?: string; look?: string }
+export interface Guide { live?: string; replay?: string; do?: string; look?: string; before?: string }
 
 /** Print what this lab is (from the comment at the top of the lab file), what it does, what to
  *  do now (live board or --replay), what to look for, and the TODO tasks in the file. */
@@ -103,6 +103,7 @@ export function intro(args: Args | null, g: Guide): void {
     lines.push(...wrap((replay ? g.replay : g.live) ?? "", " Do now:       ", " ".repeat(15)));
   } else if (g.do) lines.push(...wrap(g.do, " Do now:       ", " ".repeat(15)));
   if (g.look) lines.push(...wrap(g.look, " Look for:     ", " ".repeat(15)));
+  if (g.before) lines.push(...wrap(g.before, " Before TODOs: ", " ".repeat(15)));
   const todos = [...src.matchAll(/^\s*\/\/\s*(?:>>> )?TODO (\d+): (.*?)(?: \| starter: .*)?$/gm)];
   if (todos.length) {
     lines.push(" Your tasks (TODOs in this file):");

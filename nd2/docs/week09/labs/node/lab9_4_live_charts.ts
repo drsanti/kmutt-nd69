@@ -20,6 +20,7 @@ run(async () => {
     live: "Look at the board: a CHARTS tab appears. Tilt the board in all directions, then shake it.",
     replay: "Look at the board: a CHARTS tab appears; the recorded motion drives the chart and the bubble.",
     look: "Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).",
+    before: "only the red ax line (TODO 1) and a bubble that stays in the centre (TODO 2). Once the bubble moves, it leaves a trail until TODO 3.",
   });
   const d = await rk.Display.open({ port: args.port, name: "CHARTS" });
   onExit(() => d.close());

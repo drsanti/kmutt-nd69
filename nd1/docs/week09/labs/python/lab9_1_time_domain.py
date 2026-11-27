@@ -44,7 +44,8 @@ def main():
     intro(__doc__, args,
           live='Move the board around for a few seconds, then hold it still until recording ends (8 s; change with --seconds). A plot window opens at the end.',
           replay='Nothing to do: the recorded idle, shake, circle and lift motions are used. A plot window opens at the end.',
-          look='|a| stays near 9.81 m/s^2 when the board is still, whatever its tilt; during a lift it dips below, then rises above. The script prints the sample rate, lost samples and the axis along gravity.')
+          look='|a| stays near 9.81 m/s^2 when the board is still, whatever its tilt; during a lift it dips below, then rises above. The script prints the sample rate, lost samples and the axis along gravity.',
+          before='|a| is all zeros (TODO 1), the rate prints 0.0 Hz (TODO 2) and the axis along gravity always says x (TODO 3).')
     t, acc, gyr, lost = record(args)
 
     # TODO 1: compute |a| for every sample (N values) from the 3 accel axes

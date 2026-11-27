@@ -25,7 +25,8 @@ def main():
     intro(__doc__, args,
           live='Tilt the board left and right: the belt runs that way; hold it level to stop it.',
           replay='Nothing to do: the recorded motion tilts the belt for you - just watch.',
-          look='A new box every 2 s rides the belt and leaves at the end; the dots on the rollers turn exactly as fast as the belt moves (TODO 3).')
+          look='A new box every 2 s rides the belt and leaves at the end; the dots on the rollers turn exactly as fast as the belt moves (TODO 3).',
+          before='the belt speed stays at +30 px/s whatever the tilt (TODO 1), no boxes appear (TODO 2), and the rollers have no turning dots (TODO 3).')
     d = rk.Display.open(args.port, name="CELL")
     imu = imu_source(args, d.session)
     d.clear()

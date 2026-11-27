@@ -26,7 +26,8 @@ def main():
     intro(__doc__, args,
           live='Look at the board: a MODEL tab appears. Perform shake, circle and lift. Tap high or low on the bars to move the yellow threshold line. (Needs imu_artifacts/model_int8.tflite - see Setup.)',
           replay='Look at the board: a MODEL tab appears and the recorded gestures play. Tap high or low on the bars to move the yellow threshold line. (Needs imu_artifacts/model_int8.tflite - see Setup.)',
-          look='Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right.')
+          look='Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right.',
+          before='all four bars stay at 0 (TODO 1), there is no yellow threshold line or orange highlight (TODO 2), and tapping the bars does nothing (TODO 3).')
     if not MODEL.exists():
         raise SystemExit(f"{MODEL} not found — train one first: robotos-kws train-imu --synthetic --out imu_artifacts")
     det = rk.GestureDetector(str(MODEL), threshold=0.7, verbose=False)

@@ -23,6 +23,7 @@ run(async () => {
     live: "First start the service in another terminal (cd ../service, activate .venv, python gesture_service.py). Then look at the board: a MODEL tab appears. Perform shake, circle and lift; tap high or low on the bars to move the yellow threshold line.",
     replay: "First start the service in another terminal (cd ../service, activate .venv, python gesture_service.py). Then look at the board: a MODEL tab appears and the recorded gestures play; tap high or low on the bars to move the yellow threshold line.",
     look: "Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right. The service terminal prints every detection.",
+    before: "all four bars stay at 0 (TODO 1), there is no yellow threshold line or orange highlight (TODO 2), and tapping the bars does nothing (TODO 3).",
   });
   const model = await rk.GestureClient.connect();             // ws://127.0.0.1:8765/ws
   onExit(() => model.close());

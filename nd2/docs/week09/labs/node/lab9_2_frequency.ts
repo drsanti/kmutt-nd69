@@ -30,6 +30,7 @@ run(async () => {
   intro(args, {
     "do": "Nothing to do: it analyses the 4 recordings in samples/ (or the files after --replay) and opens a page of plots in your browser.",
     look: "The dominant frequency of each gesture (printed, and a red dashed line in the plot): shake peaks near 11.5 Hz. The heat maps at the bottom are exactly what the gesture model receives (100 samples x 6 channels).",
+    before: "every dominant frequency is 0.00 Hz and the spectra are flat (TODO 1), and the axis is wrong: resolution 1.00 Hz, Nyquist 50.0 Hz instead of 0.50 and 25.0 (TODO 2).",
   });
   if (args.replay === null) args.replay = [];
   const files = replayFiles(args);

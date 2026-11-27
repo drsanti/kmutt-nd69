@@ -24,7 +24,8 @@ def main():
     args = parse_args(__doc__, seconds=10)
     intro(__doc__, args,
           do='Look at the board: a CELL tab appears with your drawing (it stays for 10 s).',
-          look='The conveyor, three boxes sitting ON the belt, a stack light and the robot arm. The script prints how many drawing operations the picture needed (the board draws up to 32 per screen update).')
+          look='The conveyor, three boxes sitting ON the belt, a stack light and the robot arm. The script prints how many drawing operations the picture needed (the board draws up to 32 per screen update).',
+          before="only the grey text 'TODO 1: conveyor' (TODO 1), no boxes (TODO 2), no stack light or arm (TODO 3).")
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(44, 50, "Lab 9.1 static cell", rk.Color.GRAY)

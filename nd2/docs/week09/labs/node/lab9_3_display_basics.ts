@@ -20,6 +20,7 @@ run(async () => {
     live: "Look at the board: a METER tab appears. Move and shake the board - the bar shows how hard.",
     replay: "Look at the board: a METER tab appears and the recorded motion drives the bar.",
     look: "Before TODO 3 the bar flickers; after it, it moves smoothly. At the end, compare 'commands' in the printed link stats before and after your fix.",
+    before: "no title or frame on the screen (TODO 1) and an empty bar (TODO 2). Once the bar moves, it flickers until TODO 3.",
   });
   const d = await rk.Display.open({ port: args.port, name: "METER" });
   onExit(() => d.close());

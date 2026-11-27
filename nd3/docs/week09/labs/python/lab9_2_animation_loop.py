@@ -21,7 +21,8 @@ def main():
                       extra=lambda ap: ap.add_argument("--fps", type=float, default=15.0))
     intro(__doc__, args,
           do='Look at the board: a box moves along a track and bounces at both ends. Then run it again with --fps 5.',
-          look='After TODO 1 the box crosses the track in the same time at any --fps (only less smoothly); after TODO 3 the flicker is gone.')
+          look='After TODO 1 the box crosses the track in the same time at any --fps (only less smoothly); after TODO 3 the flicker is gone.',
+          before='the box moves 4 px per frame, so --fps 5 makes it slower (TODO 1); it jumps back to the start instead of bouncing (TODO 2); and it flickers (TODO 3).')
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(10, 50, f"Lab 9.2 animation loop @ {args.fps:.0f} fps", rk.Color.GRAY)

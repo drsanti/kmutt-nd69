@@ -45,7 +45,8 @@ def main():
     args = parse_args(__doc__, seconds=40)
     intro(__doc__, args,
           do='Tap a point on the screen: the arm reaches for it. Without taps it visits four preset targets in turn.',
-          look="Smooth joint motion with no trail (TODO 2), and 'out of reach!' when you tap too far from the shoulder (TODO 3).")
+          look="Smooth joint motion with no trail (TODO 2), and 'out of reach!' when you tap too far from the shoulder (TODO 3).",
+          before="the arm stands straight up and does not move (TODO 1), every target, tapped or preset, says 'out of reach!' (TODO 3), and once it moves it leaves a trail until TODO 2.")
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(10, 50, "Lab 9.4 robot arm: tap a target", rk.Color.GRAY)

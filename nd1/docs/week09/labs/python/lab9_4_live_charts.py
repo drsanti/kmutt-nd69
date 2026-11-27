@@ -21,7 +21,8 @@ def main():
     intro(__doc__, args,
           live='Look at the board: a CHARTS tab appears. Tilt the board in all directions, then shake it.',
           replay='Look at the board: a CHARTS tab appears; the recorded motion drives the chart and the bubble.',
-          look='Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).')
+          look='Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).',
+          before='only the red ax line (TODO 1) and a bubble that stays in the centre (TODO 2). Once the bubble moves, it leaves a trail until TODO 3.')
     d = rk.Display.open(args.port, name="CHARTS")
     src = imu_source(args, d.session)
 

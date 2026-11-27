@@ -32,7 +32,8 @@ def main():
     intro(__doc__, args,
           live='Watch the cell work. Then shake the board hard: EMERGENCY STOP (red light, belt stops). Tap the screen to resume.',
           replay='Watch the cell work; the recording contains a shake that triggers the EMERGENCY STOP. Add --auto-reset so it resumes by itself (nobody taps during a replay).',
-          look="Stack light: green = running, yellow = arm busy, red = stopped. The 'placed' counter grows; after a stop the arm carries on from where it stopped.")
+          look="Stack light: green = running, yellow = arm busy, red = stopped. The 'placed' counter grows; after a stop the arm carries on from where it stopped.",
+          before='the arm never moves and the boxes queue at the end of the belt (TODO 2), shaking does nothing (TODO 1), and the light stays green (TODO 3).')
     d = rk.Display.open(args.port, name="CELL")
     imu = imu_source(args, d.session, default=["idle"] * 4 + ["shake"])
     belt, arm, light = Conveyor(), Arm(), StackLight()

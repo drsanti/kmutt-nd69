@@ -64,11 +64,13 @@ def _todos(script: Path) -> list:
     return out
 
 
-def intro(doc: str, args=None, live: str = "", replay: str = "", do: str = "", look: str = "") -> None:
+def intro(doc: str, args=None, live: str = "", replay: str = "", do: str = "", look: str = "",
+          before: str = "") -> None:
     """Print what this lab is, what it does, what to do now and what to look for.
 
     ``live``/``replay``: what to do with a live board / with recorded motion (labs that use the IMU);
-    ``do``: what to do (labs that do not use the IMU); ``look``: what to watch for."""
+    ``do``: what to do (labs that do not use the IMU); ``look``: what to watch for when the lab is done;
+    ``before``: what the unchanged starter shows instead (so an unfinished lab does not look broken)."""
     paras = [p.strip() for p in (doc or "").strip().split("\n\n")]
     title = paras[0].splitlines()[0] if paras else Path(sys.argv[0]).stem
     what = " ".join(paras[1].split()) if len(paras) > 1 else ""
@@ -87,6 +89,8 @@ def intro(doc: str, args=None, live: str = "", replay: str = "", do: str = "", l
         lines += _wrap("Do now:      ", do)
     if look:
         lines += _wrap("Look for:    ", look)
+    if before:
+        lines += _wrap("Before TODOs:", before)
     todos = _todos(Path(sys.argv[0]).resolve())
     if todos:
         lines.append(" Your tasks (TODOs in this file):")
