@@ -77,11 +77,10 @@ cd nd2/docs/week09/labs/service
   source .venv/Scripts/activate
   ```
 
-Then, in any shell:
+Then install everything with **one line** (copy the whole line). It first downloads the libraries (TensorFlow, FastAPI, pyserial; a few minutes the first time), then installs the course SDK `robotos_edge` from `labs/dist`. The second part only works after the first:
 
 ```bash
-pip install -r requirements.txt                       # TensorFlow, FastAPI, pyserial (a few minutes the first time)
-pip install -U --no-index -f ../dist robotos_edge     # the course SDK, from labs/dist
+pip install -r requirements.txt; pip install -U --no-index -f ../dist robotos_edge
 robotos-kws train-imu --synthetic --out imu_artifacts # the gesture model for Lab 9.5, about 1 minute
 ```
 
@@ -233,6 +232,7 @@ A **MODEL** tab: four probability bars (idle, shake, circle, lift), a yellow thr
 
 | Symptom | Fix |
 |---|---|
+| `No matching distribution found for numpy>=1.26` (or tensorflow) when installing `robotos_edge` | The libraries were not installed first. Run the whole line from Setup: `pip install -r requirements.txt; pip install -U --no-index -f ../dist robotos_edge` |
 | `Cannot find module 'robotos-board'` | Run `npm install` in `labs/node` |
 | `This needs Node.js 22 or newer` | Update Node.js (Setup 1a) |
 | `No board found` | Plug in the board (USB-C **data** cable); check with `robotos detect` |

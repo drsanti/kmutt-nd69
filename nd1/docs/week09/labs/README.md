@@ -51,11 +51,10 @@ cd nd1/docs/week09/labs/python
   source .venv/Scripts/activate
   ```
 
-Your prompt now starts with `(.venv)`. Then, in any shell:
+Your prompt now starts with `(.venv)`. Then install everything with **one line** (copy the whole line). It first downloads the libraries (numpy, TensorFlow, pyserial, matplotlib; a few minutes the first time), then installs the course SDK `robotos_edge` from `labs/dist`. The second part only works after the first:
 
 ```bash
-pip install -r requirements.txt                       # numpy, TensorFlow, pyserial, matplotlib (a few minutes the first time)
-pip install -U --no-index -f ../dist robotos_edge     # the course SDK, from labs/dist
+pip install -r requirements.txt; pip install -U --no-index -f ../dist robotos_edge
 python -c "import robotos_edge as rk; print(rk.__version__)"   # 0.2.2 or newer
 ```
 
@@ -199,6 +198,7 @@ A **MODEL** tab: four probability bars (idle, shake, circle, lift), a yellow thr
 
 | Symptom | Fix |
 |---|---|
+| `No matching distribution found for numpy>=1.26` (or tensorflow) when installing `robotos_edge` | The libraries were not installed first. Run the whole line from Setup: `pip install -r requirements.txt; pip install -U --no-index -f ../dist robotos_edge` |
 | `ModuleNotFoundError: robotos_edge` | Activate the `.venv` in `labs/python` first (Setup) |
 | `AttributeError: … has no attribute 'Display'` / `'ImuStream'` | Old wheel: `pip install -U --no-index -f ../dist robotos_edge` |
 | `could not create page … (rc=-12)` | The screen's 3 page slots are full: re-run a lab (it reuses its page) or press RESET on the board |
