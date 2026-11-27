@@ -13,7 +13,7 @@ Put the int8 model into firmware as a C array, run it with TensorFlow Lite Micro
 >
 > - While `kws-inference` is on the board, the workshop protocol is gone: `robotos-kws collect-board`, `robotos-kws live-board`, and the workshop browser demos will not connect.
 > - When you are done, **reflash the prebuilt firmware**: `cd hardware-interface-workshop/firmware-prebuilt/es3c28p` → `python -m esptool -p <PORT> write-flash "@flash_args"`.
-> - In class the instructor demonstrates this step; students with ESP-IDF set up can follow along. It is also the starting point for **Mini-Project 2** (5 December).
+> - In class the instructor demonstrates this step; students with ESP-IDF set up can follow along. It is also part of the optional [mini challenge](../mini-challenge.md).
 
 ## Host inference vs device inference
 
@@ -148,7 +148,7 @@ So the board may hear the same word **louder or quieter, and slightly brighter**
 1. Each log line ends with the **dBFS level** of the newest 500 ms.
 2. Say a keyword at the same distance you used for collection and compare with the `rms` that `robotos-kws collect-board` printed for your clips.
 3. Change `KWS_MIC_GAIN_DB` until the two are within a few dB, rebuild, and test again.
-4. Better still (Mini-Project 2): record a few clips **through `kws-inference`** itself, or add the same 40 Hz / 6.5 kHz filters to the capture task, and check the confusion matrix again.
+4. Better still (mini challenge): record a few clips **through `kws-inference`** itself, or add the same 40 Hz / 6.5 kHz filters to the capture task, and check the confusion matrix again.
 
 ```c
 #define KWS_MIC_GAIN_DB  30.0f   // (!) match the level of your training clips (see the dBFS column)

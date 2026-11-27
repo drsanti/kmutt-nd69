@@ -19,7 +19,7 @@ Listens continuously to the onboard microphone, runs a TensorFlow Lite Micro int
 > # Or: robotos-flash --board es3c28p
 > ```
 >
-> In class this is an **instructor demo / advanced lab** (it needs ESP-IDF v6.1) and the starting point for Mini-Project 2 (5 December).
+> In class this is an **instructor demo / advanced lab** (it needs ESP-IDF v6.1) and part of the optional [mini challenge](../../../mini-challenge.md).
 
 ## Build and flash
 

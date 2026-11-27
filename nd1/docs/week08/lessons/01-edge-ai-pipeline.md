@@ -38,7 +38,7 @@ Rules work when you can describe the difference in one sentence. "Was the word *
 | Train | PC / Colab | `robotos-kws train`, `robotos-kws train-imu` (Keras) | `model.keras`, `model_float.tflite` |
 | Test | PC / Colab | `robotos-kws evaluate`; live: `robotos-kws live-board`, `robotos-kws live-pc`, `robotos-kws live-imu` | `report.md`, confusion matrix |
 | Quantize | PC / Colab | `robotos-kws train` (TFLite converter) | `model_int8.tflite` |
-| Deploy | ESP32-S3 (demo / advanced, Mini-Project 2) | `robotos-kws export` + `kws-inference` | firmware with the model in flash |
+| Deploy | ESP32-S3 (demo / advanced, mini challenge) | `robotos-kws export` + `kws-inference` | firmware with the model in flash |
 | Monitor | ESP32-S3 | serial log: scores, latency, drops | the next round of data |
 
 Stage 6 is where real projects spend most of their time. The first deployed model is never the last one: you record the cases where it fails on the board and add them to the dataset.
