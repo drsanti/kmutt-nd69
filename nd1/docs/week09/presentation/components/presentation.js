@@ -27,4 +27,22 @@
   if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
     window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
   }
+  // Desktop custom borderless titlebar controls (Claude Desktop / Cursor / Codex style)
+  if(typeof Neutralino!=='undefined'||window.NL_PORT){
+    const winControls=$('window-controls');if(winControls)winControls.hidden=false;
+    const topbar=$('topbar');
+    if(topbar){
+      topbar.addEventListener('mousedown',e=>{
+        if(e.target.closest('button, select, input, a, dialog'))return;
+        if(window.Neutralino?.window?.beginDrag)Neutralino.window.beginDrag(e.screenX,e.screenY);
+      });
+    }
+    $('win-min')?.addEventListener('click',()=>{window.Neutralino?.window?.minimize();});
+    $('win-max')?.addEventListener('click',async()=>{
+      if(!window.Neutralino?.window)return;
+      const isMax=await Neutralino.window.isMaximized();
+      if(isMax)await Neutralino.window.unmaximize();else await Neutralino.window.maximize();
+    });
+    $('win-close')?.addEventListener('click',()=>{window.Neutralino?.app?.exit();});
+  }
 })();
