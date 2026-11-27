@@ -72,7 +72,7 @@ Rules carried over from Lesson 02:
 - **Split by person.** `robotos-kws train-imu` holds out whole people for the test set, so the score says how the model does on someone it has never seen. Two windows of the same person are near-copies; mixing them across train and test inflates the score.
 - `idle` must include the boring things people really do (looking at the screen, walking with the board), or the model will call them gestures.
 
-The four gesture slots (`idle`, `shake`, `circle`, `lift`) are fixed in `robotos_edge` 0.2.0. To use your own gesture, perform it while collecting one of the three motion slots (for example `--labels circle`) and rename that slot in your application.
+The four gesture slots (`idle`, `shake`, `circle`, `lift`) are fixed in `robotos_edge`. To use your own gesture, perform it while collecting one of the three motion slots (for example `--labels circle`) and rename that slot in your application.
 
 ## 4. Windowing and resampling
 

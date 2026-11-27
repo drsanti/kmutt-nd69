@@ -141,7 +141,7 @@ Every subcommand has `--help`. Both `robotos-kws collect-board` and `robotos-kws
 
 ## Formats
 
-- **Keyword clips:** 16 kHz, mono, 16-bit PCM WAV, exactly 16,000 samples (1.0 s, `CLIP_SAMPLES` in `robotos_edge.audio.features`, fixed in the 0.2.0 wheel). File name `<session>_<speaker>_<device>_<index>.wav`, with `device` = `board`, `pc`, or `synth`. Automatic quality filters discard and retry any take that clips (peak ≥ 32,000) or is too quiet (speech RMS < −40 dBFS).
+- **Keyword clips:** 16 kHz, mono, 16-bit PCM WAV, exactly 16,000 samples (1.0 s, `CLIP_SAMPLES` in `robotos_edge.audio.features`, fixed in the `robotos_edge` wheel). File name `<session>_<speaker>_<device>_<index>.wav`, with `device` = `board`, `pc`, or `synth`. Automatic quality filters discard and retry any take that clips (peak ≥ 32,000) or is too quiet (speech RMS < −40 dBFS).
 - **IMU windows:** CSV with `t_s, ax, ay, az, gx, gy, gz` (m/s², rad/s), 100 rows at 50 Hz. File name `<session>_<person>_ws28p_<index>.csv`.
 
 ## Board protocol in one paragraph (`robotos_edge.hardware.wire`)
@@ -150,7 +150,9 @@ Frame = `0x00 | COBS(msg_type u8, seq u16 LE, len u16 LE, protobuf payload, CRC-
 
 ## Verified
 
-**27 November 2026 — `robotos_edge` 0.2.0, macOS, real ES3C28P:** `robotos detect`, `check-board`, `collect-board`, `live-board`, `collect-pc`, `train`, `evaluate`, `live-pc`, `verify-c` (MATCH), `export`, examples 01–04, and IMU `train-imu --synthetic` + `live-imu --replay`. Not yet re-checked: Windows, and IMU commands on a real ws28p.
+**27 November 2026 — `robotos_edge` 0.2.2, Windows 11, real ES3C28P and ws28p (firmware 0.3.2):** setup from an empty `.venv` as above, `check-board` (0 lost chunks), `synth-data`, `train`, `evaluate`, `verify-c` (MATCH), `export`, `live-pc --wav`, examples 02–06, and IMU `check-imu` (50 Hz, 0 lost), `train-imu --synthetic`, `live-imu --replay`.
+
+**27 November 2026 — `robotos_edge` 0.2.0, macOS, real ES3C28P:** `robotos detect`, `check-board`, `collect-board`, `live-board`, `collect-pc`, `train`, `evaluate`, `live-pc`, `verify-c` (MATCH), `export`, examples 01–04, and IMU `train-imu --synthetic` + `live-imu --replay`. Windows and the real ws28p were checked afterwards (entry above).
 
 **20 November 2026 — the scripts before packaging, on simulated boards (no real microphone or board):**
 

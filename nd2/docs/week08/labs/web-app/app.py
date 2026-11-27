@@ -1,4 +1,4 @@
-"""FastAPI Edge AI Audio Service with robotos_kws.
+"""FastAPI Edge AI Audio Service with robotos_edge.
 
 Exposes:
 - GET  /api/v1/model/info   : Model metadata and labels
@@ -25,16 +25,12 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-try:
-    from robotos_edge.audio import features as kc
-    import robotos_edge as rk
-except ImportError:
-    import kws_common as kc
-    import robotos_kws as rk
+from robotos_edge.audio import features as kc
+import robotos_edge as rk
 
 app = FastAPI(
     title="RobotOS KWS Edge AI Microservice",
-    description="Full-stack speech detection API and real-time WebSocket broadcaster powered by robotos_kws",
+    description="Full-stack speech detection API and real-time WebSocket broadcaster powered by robotos_edge",
     version="0.1.0",
 )
 

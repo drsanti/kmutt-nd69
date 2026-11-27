@@ -1,12 +1,9 @@
-"""Example 04: Programmatic training and evaluation using robotos_kws.Trainer."""
-try:
-    import robotos_edge as rk
-except ImportError:
-    import robotos_kws as rk
+"""Example 04: Programmatic training and evaluation using robotos_edge.Trainer."""
+import robotos_edge as rk
 
 
 def main():
-    print("[robotos_kws] Starting training pipeline...")
+    print("[robotos_edge] Starting training pipeline...")
     trainer = rk.Trainer(data_dir="dataset", out_dir="artifacts")
 
     # 1. Train model

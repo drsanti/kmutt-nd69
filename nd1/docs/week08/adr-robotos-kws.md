@@ -2,6 +2,10 @@
 
 Status: accepted
 
+> **Renamed (2026-11-27):** the package is now **`robotos_edge`** (0.2.x, source `sdk/python-edge`).
+> `import robotos_kws` no longer exists; use `import robotos_edge as rk`. The `robotos-kws` command
+> stays as an alias of `robotos`. The decision below is unchanged; only the names are.
+
 ## Context
 
 In Week 08 of the curriculum (Edge AI on Microcontrollers), students learn the end-to-end pipeline of audio data collection, spectrogram feature extraction, deep neural network training (DS-CNN), int8 post-training quantization, and microcontroller deployment (ESP32-S3).

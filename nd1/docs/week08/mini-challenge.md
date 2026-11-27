@@ -16,7 +16,7 @@ Build a keyword spotter on the ES3C28P (or an IMU gesture classifier on the ws28
 
 ### Minimum (everyone, PC-only is fine)
 
-1. Choose 3–4 command words that suit a device you care about (for example `play`, `stop`, `next` for a music box, or `fan`, `light`, `off`). In `robotos_edge` 0.2.0 the four keyword slots are named `red`, `green`, `blue`, `off`: record **your** word into a slot (say "play" while collecting `--labels red`), then rename the slots in your app and in `show_label()` of the `kws-inference` firmware. Write your slot mapping in your report.
+1. Choose 3–4 command words that suit a device you care about (for example `play`, `stop`, `next` for a music box, or `fan`, `light`, `off`). In `robotos_edge` the four keyword slots are named `red`, `green`, `blue`, `off`: record **your** word into a slot (say "play" while collecting `--labels red`), then rename the slots in your app and in `show_label()` of the `kws-inference` firmware. Write your slot mapping in your report.
 2. Record at least **50 clips per word** from **at least 3 sessions**, plus `_silence_` and `_unknown_` (include words that sound like your commands).
 3. Train, then report from `robotos-kws evaluate`:
    - float32 and int8 test accuracy and the drop in percentage points

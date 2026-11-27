@@ -1,13 +1,10 @@
-"""Example 01: Live voice control loop using robotos_kws.
+"""Example 01: Live voice control loop using robotos_edge.
 
 Listens to your computer microphone and triggers actions when target keywords
 ('red', 'green', 'blue', 'off') are detected.
 """
 import sys
-try:
-    import robotos_edge as rk
-except ImportError:
-    import robotos_kws as rk
+import robotos_edge as rk
 
 
 def main():
@@ -19,7 +16,7 @@ def main():
         print(f"[error] {model_path} not found. Run training first: robotos-kws train")
         return 1
 
-    print("\n[robotos_kws] Detector active! Speak keywords into your microphone:")
+    print("\n[robotos_edge] Detector active! Speak keywords into your microphone:")
     print("  'red'   -> STOP")
     print("  'green' -> FORWARD")
     print("  'blue'  -> TURN LEFT")

@@ -375,7 +375,7 @@ Run the included robot controller script:
 
 > [!TIP]
 > **Check Your Python Command (`python`, `py`, or `python3`):**
-> If running `python robot_fsm.py` fails with `ModuleNotFoundError: No module named 'robotos_kws'`, your terminal's `python` command is resolving to the global system Python instead of your `.venv`!
+> If running `python robot_fsm.py` fails with `ModuleNotFoundError: No module named 'robotos_edge'`, your terminal's `python` command is resolving to the global system Python instead of your `.venv`!
 > - **If `python` fails, use `py`:** `py robot_fsm.py` (or `py air_drum.py`)
 > - **Or call the virtual environment directly:** `.\.venv\Scripts\py.exe robot_fsm.py` (or `.\.venv\Scripts\python.exe robot_fsm.py`)
 > - **macOS / Linux:** `python3 robot_fsm.py` (or `./.venv/bin/python robot_fsm.py`)
@@ -520,13 +520,13 @@ python air_drum.py --replay samples/lift.csv
 
 ## Troubleshooting
 
-- **`ModuleNotFoundError: No module named 'robotos_kws'`:**
+- **`ModuleNotFoundError: No module named 'robotos_edge'`:**
   - **Symptom:** You installed the wheel, but running `python air_drum.py` or `python robot_fsm.py` crashes with:
     ```text
     Traceback (most recent call last):
       File "air_drum.py", line 27, in <module>
-        from robotos_kws import DrumPolySynth, render_drum_kit, run_sound_check_demo
-    ModuleNotFoundError: No module named 'robotos_kws'
+        from robotos_edge.audio.drum_synth import DrumPolySynth, render_drum_kit, run_sound_check_demo, ASCII_BANNER
+    ModuleNotFoundError: No module named 'robotos_edge'
     ```
   - **Root Cause:** On Windows or macOS, running `python` or `python3` may resolve to a global system interpreter rather than your virtual environment where the wheel is installed.
   - **Fix 1 (Windows - Recommended):** Use **`py`**:

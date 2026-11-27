@@ -115,7 +115,7 @@ Symptoms for `robotos-kws collect-board`, `robotos-kws collect-imu`, `robotos-kw
 | `[retry] … chunk(s) lost on USB (seq gap)` now and then | `MicPcm.seq` jumped: USB dropped a frame. The take is re-recorded automatically. If it happens on every take: close heavy programs, avoid USB hubs, do not run two board scripts at once |
 | `[retry] … samples lost (timestamp gaps)` on every IMU take | Same cause for IMU frames. Raise `--max-lost` a little (the window is interpolated), or fix the USB path |
 | `mic stream stalled` / no audio | The stream was not started (no `CmdAck`), the board reset (opening USB can reset it — the scripts wait 2.5 s), or another program reads the port |
-| Board restarts every few seconds while a command runs | Should not happen: `robotos_edge` 0.2.0 opens the port with DTR high and RTS low so the ESP32-S3 does not reset. Close other serial programs, unplug and replug the board, and tell your instructor which OS you use |
+| Board restarts every few seconds while a command runs | Should not happen: `robotos_edge` opens the port with DTR high and RTS low so the ESP32-S3 does not reset. Close other serial programs, unplug and replug the board, and tell your instructor which OS you use |
 | `--info` level stays near −90 dBFS | Microphone muted or gain 0: run with `--gain 60`. If still silent, check the mic in workshop lab ex11/ex28 (browser) |
 | Clips are clipped (peak 32767) | Lower `--gain` (for example 40) and re-record that session; keep the same gain for all sessions |
 | `esptool` cannot find the port | Close everything that holds the port (see first row). Set it explicitly: `-p COMx` or `-p /dev/ttyACM0` |

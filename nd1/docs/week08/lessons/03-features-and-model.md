@@ -106,7 +106,7 @@ int8 ops (register these in the firmware op resolver): ['CONV_2D', 'DEPTHWISE_CO
 Open [`labs/python/train_colab.ipynb`](../labs/python/train_colab.ipynb) in Colab (File → Open notebook → GitHub, or upload the file). Zip your `dataset` folder, upload it when the notebook asks, and run all cells. The notebook trains, evaluates, checks the C features, and downloads `week08_export.zip` with `model_data.cc` and `kws_labels.h`.
 
 > [!NOTE]
-> Colab runs Linux, and `robotos_edge` 0.2.0 is published only for Windows and macOS, so the notebook cannot install it yet. Train on your laptop until a Linux wheel is added to `labs/dist/`.
+> Colab runs Linux, and `robotos_edge` is published only for Windows and macOS, so the notebook cannot install it yet. Train on your laptop until a Linux wheel is added to `labs/dist/`.
 
 ### Knobs worth trying
 

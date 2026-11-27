@@ -18,7 +18,7 @@ Read the board's microphone stream from Python using the hardware-interface-work
 
 Without `_silence_` and `_unknown_`, a classifier always picks one of the four keywords — even for a cough. Choose `_unknown_` words that **sound similar** to the keywords; those are the hard negatives that teach the model where the boundary is.
 
-The four keyword slots are fixed in `robotos_edge` 0.2.0 (`red`, `green`, `blue`, `off`). To use your own words, record each word into one slot (say "play" while collecting `--labels red`) and rename the slots in your application (and in `show_label()` of the `kws-inference` firmware if you run the model on the board).
+The four keyword slots are fixed in `robotos_edge` (`red`, `green`, `blue`, `off`). To use your own words, record each word into one slot (say "play" while collecting `--labels red`) and rename the slots in your application (and in `show_label()` of the `kws-inference` firmware if you run the model on the board).
 
 ## One dataset layout for every source
 
@@ -38,7 +38,7 @@ file name = <session>_<speaker>_<device>_<index>.wav     (16 kHz, mono, 16-bit, 
 > **Clip Length & Quality Checks:**
 > - Every saved clip is trimmed to exactly **1.0 s** (`CLIP_SAMPLES = 16000` in `robotos_edge.audio.features`), centered on speech energy from a 1.5 s raw record window (`--seconds 1.5`).
 > - Takes that are too quiet (speech RMS < −40 dBFS) or clip (peak ≥ 32,000) are automatically discarded and retried.
-> - The 1.0 s clip length is built into the `robotos_edge` 0.2.0 wheel and the firmware (`kws_features.h`); keep it as is.
+> - The 1.0 s clip length is built into the `robotos_edge` wheel and the firmware (`kws_features.h`); keep it as is.
 
 The file name carries the metadata that `robotos-kws train` and `robotos-kws evaluate` need:
 

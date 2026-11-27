@@ -1,10 +1,7 @@
 """Example 03: Classify an existing audio file or in-memory PCM array."""
 import sys
 from pathlib import Path
-try:
-    import robotos_edge as rk
-except ImportError:
-    import robotos_kws as rk
+import robotos_edge as rk
 
 
 def main():
