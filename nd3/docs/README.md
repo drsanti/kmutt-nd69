@@ -15,4 +15,5 @@ Course documents for the automation track.
 - [Week 06 — Self-learning and Mini-Project #1](week06/README.md)
 - [Week 07 — Edge AI Theory](week07/README.md)
 - [Week 08 — Practical Edge AI Labs](week08/labs/README.md)
+- [Week 09 — A Living Factory Cell](week09/README.md)
 - [Track index](../README.md)
