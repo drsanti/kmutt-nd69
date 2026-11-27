@@ -108,6 +108,11 @@ It downloads the newest firmware, flashes it (about 1 minute), and checks the bo
 | `--fps N` | Lab 9.2 only: frames per second of the animation (default 15) | `python lab9_2_animation_loop.py --fps 5` |
 | `--auto-reset` | Lab 9.5 only: after an emergency stop, resume by itself after 3 s of calm (useful with `--replay`, where nobody taps) | `python lab9_5_digital_twin.py --replay --auto-reset` |
 
+**What `--replay` does.** `samples/` holds four example motions: `idle`, `shake`, `circle` and `lift`, each 2 seconds at 50 Hz (100 rows). They are *simulated* (generated from simple motion formulas with sensor noise, like the synthetic model's data), not recorded on a board. Each row has the same six values the board sends: `t_s,ax,ay,az,gx,gy,gz` (time in s, acceleration in m/s², rotation in rad/s). With `--replay` the lab reads these rows instead of the board's motion sensor. Everything after that step is the same code as with a live board.
+
+- Only **Labs 9.3 (conveyor) and 9.5 (digital twin)** use motion. With `--replay` they play the files at real speed, 50 samples per second, and loop until the lab ends. The motion comes from the files; the drawing still goes to the board's screen, so an es3c28p can run them.
+- Labs 9.1, 9.2 and 9.4 do not use motion; `--replay` changes nothing there.
+
 Stop any lab with **Ctrl+C**.
 
 ---

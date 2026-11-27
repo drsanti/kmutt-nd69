@@ -157,6 +157,12 @@ robotos-kws train-imu --data imu_dataset --out imu_artifacts
 | `--port PORT` | use this serial port instead of finding the board automatically (two boards plugged in, or detection fails; see `robotos detect`) | `… --port COM5` · `… --port /dev/cu.usbmodem101` |
 | `--help` | print the lab's options and exit | `… --help` |
 
+**What `--replay` does.** `samples/` holds four example motions: `idle`, `shake`, `circle` and `lift`, each 2 seconds at 50 Hz (100 rows). They are *simulated* (generated from simple motion formulas with sensor noise, like the synthetic model's data), not recorded on a board. Each row has the same six values the board sends: `t_s,ax,ay,az,gx,gy,gz` (time in s, acceleration in m/s², rotation in rad/s). With `--replay` the lab reads these rows instead of the board's motion sensor. Everything after that step is the same code as with a live board. For real motion, record your own with `robotos-kws collect-imu` and pass the files after `--replay`.
+
+- **Labs 9.1 and 9.2 (PC plots)** read the files at once; there is no need to wait. Lab 9.1 takes `--seconds` × 50 samples (8 s = the four files once; ask for more and they repeat). Lab 9.2 analyses the first 2 s of each file.
+- **Labs 9.3–9.5 (board screen)** play the files at real speed, 50 samples per second, and loop until the lab ends. The motion comes from the files; the drawing still goes to the board's screen. That is why an es3c28p can run them.
+- `lost` is always 0 with `--replay`: files cannot drop samples the way USB can.
+
 Stop any lab with **Ctrl+C** (it also removes the lab's page from the screen).
 
 ---

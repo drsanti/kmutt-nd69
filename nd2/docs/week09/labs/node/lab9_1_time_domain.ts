@@ -17,7 +17,11 @@ async function record(args: ReturnType<typeof parseArgs>): Promise<{ samples: rk
   const want = Math.round(args.seconds * rk.RATE_HZ);
   if (args.replay !== null) {                          // replay: no need to wait in real time
     const all = replayFiles(args).flatMap((f) => rk.loadCsv(f));
-    return { samples: all.slice(0, want).map((s, i) => new rk.Sample(i / rk.RATE_HZ, s.ax, s.ay, s.az, s.gx, s.gy, s.gz)), lost: 0 };
+    const samples = Array.from({ length: want }, (_, i) => {   // repeat the files if --seconds asks for more
+      const s = all[i % all.length];
+      return new rk.Sample(i / rk.RATE_HZ, s.ax, s.ay, s.az, s.gx, s.gy, s.gz);
+    });
+    return { samples, lost: 0 };
   }
   const session = await rk.connect({ port: args.port, needCap: rk.CAP_IMU });
   try {
