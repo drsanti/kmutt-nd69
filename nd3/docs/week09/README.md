@@ -20,7 +20,7 @@ An HMI, a SCADA mimic and a digital twin all do the same thing: they **draw the 
 
 - [Labs Guide](labs/README.md)
 - Lessons: [01 — Animation on a small screen](lessons/01-animation-on-a-small-screen.md) · [02 — Robot arm kinematics](lessons/02-robot-arm-kinematics.md)
-- [Checkpoint Quiz](checkpoint.md)
+- [Self-Check](checkpoint.md) (with answers)
 - [Mini Challenge](mini-challenge.md)
 - Previous week: [Week 08](../week08/labs/README.md) · [Track Index](../README.md)
 

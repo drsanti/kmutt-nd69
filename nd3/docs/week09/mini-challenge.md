@@ -6,7 +6,9 @@
 
 [Week 09 index](README.md) · [Labs Guide](labs/README.md)
 
-Start from your finished `lab9_5_digital_twin.py` (save a copy as `my_cell.py`). Pick **at least two** of the tasks below.
+> **Optional.** Try it during the session or afterwards, at your own pace. Nothing is handed in or scored; it is a way to practise what the labs showed.
+
+Start from the demo `lab9_5_digital_twin.py` (copy it as `my_cell.py`, so the demo stays as it is). Pick any of the tasks below, one or several.
 
 | # | Task | Hint |
 |---|---|---|
@@ -16,4 +18,4 @@ Start from your finished `lab9_5_digital_twin.py` (save a copy as `my_cell.py`).
 | 4 | **Belt jam fault.** If a box waits at the end of the belt for more than 5 s (the arm is too slow), go to a `FAULT` state with a flashing yellow light. | A flashing light = toggle every 0.5 s using `time.monotonic()`. |
 | 5 | **Touch HMI buttons.** Draw START and STOP buttons on the screen; tapping them starts and stops the cell. | Check whether the tap's (x, y) lies inside the button's rectangle. |
 
-**Submit:** your script and a short video (phone is fine) of the board's screen showing each feature. In 3–5 sentences, explain how your state machine handles an emergency stop that happens in the middle of each state.
+**Check your result:** trigger an emergency stop in the middle of each state (RUN, PICK, CARRY, RETURN, and any state you added). Does the cell stop safely, and carry on correctly after the reset? Want to share it? A short phone video of the board's screen shows each feature well.

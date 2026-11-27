@@ -1,10 +1,12 @@
-# Week 09 Checkpoint Quiz
+# Week 09 Self-Check
 
 ![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
 ![week](https://img.shields.io/badge/week-09-334155?style=flat-square)
-![kind](https://img.shields.io/badge/kind-quiz-2e8b57?style=flat-square)
+![kind](https://img.shields.io/badge/kind-self--check-2e8b57?style=flat-square)
 
 [Week 09 index](README.md)
+
+For you, not for a grade: try each question in your head or on paper, then open **Answer** to check.
 
 **1.** The ws28p lies still at an angle. ax = 4.1, ay = 0.0, az = −8.9 m/s². What is |a|, and is the board moving?
 <details><summary>Answer</summary>|a| = √(4.1² + 8.9²) ≈ 9.80 m/s² ≈ 1 g, so it is still — the tilt only moves gravity between axes.</details>

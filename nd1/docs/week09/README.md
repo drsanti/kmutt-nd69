@@ -20,7 +20,7 @@ Every stage of an Edge AI pipeline should be something you can **see**: the raw 
 
 - [Labs Guide](labs/README.md)
 - Lessons: [01 — Time and frequency](lessons/01-time-and-frequency.md) · [02 — Drawing on a device](lessons/02-drawing-on-a-device.md)
-- [Checkpoint Quiz](checkpoint.md)
+- [Self-Check](checkpoint.md) (with answers)
 - [Mini Challenge](mini-challenge.md)
 - Previous week: [Week 08](../week08/README.md) · [Track Index](../README.md)
 
