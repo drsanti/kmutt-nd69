@@ -15,4 +15,5 @@ Course documents for the application track.
 - [Week 06 — Self-learning and Mini-Project #1](week06/README.md)
 - [Week 07 — Edge AI Theory](week07/README.md)
 - [Week 08 — Practical Edge AI Labs](week08/labs/README.md)
+- [Week 09 — Seeing the Signal, from Node.js](week09/README.md)
 - [Track index](../README.md)

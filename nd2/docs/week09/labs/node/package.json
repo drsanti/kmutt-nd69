@@ -1,0 +1,18 @@
+{
+  "name": "nd2-week09-labs",
+  "private": true,
+  "type": "module",
+  "description": "KMUTT ND69 ND02 Week 09 labs: seeing the signal, from Node.js",
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "robotos-board": "file:../dist/robotos-board-0.1.0.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "scripts": {
+    "check": "tsc --noEmit"
+  }
+}
