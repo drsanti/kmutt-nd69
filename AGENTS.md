@@ -2,7 +2,7 @@
 
 This repository (`robotos/kmutt-nd69`) houses the curriculum, documentation, and student lab packages for the KMUTT ND69 course. It is a separate Git repository nested within the root `robotos` workspace.
 
-> **Windows continuation (2026-11-27):** there is no working Windows `robotos_edge` wheel yet: week 08 `dist/` folders hold only the broken 0.2.0 Windows wheel, week 09 `dist/` folders only the macOS 0.2.2 wheel, so Windows participants cannot install the Python SDK. In `drsanti/robotos` (branch `feat/pyo3-binary-wheel`) follow `docs/WINDOWS-HANDOFF.md`: build, test with the boards, run the week 09 labs, deploy here. These labs are for public training (no grades); lab code must be complete working demos (exercises only in a separate `exercises/` folder); every week is self-contained. Ask the owner before pushing this repo: `main` is what participants clone.
+> **Windows continuation (2026-11-27):** there is no working Windows `robotos_edge` wheel yet: week 08 `dist/` folders hold only the broken 0.2.0 Windows wheel, week 09 `dist/` folders only the macOS 0.2.2 wheel, so Windows participants cannot install the Python SDK. In `drsanti/robotos` (branch `master`) follow `docs/WINDOWS-HANDOFF.md`: build, test with the boards, run the week 09 labs, deploy here. These labs are for public training (no grades); lab code must be complete working demos (exercises only in a separate `exercises/` folder); every week is self-contained. Ask the owner before pushing this repo: `main` is what participants clone.
 
 ---
 
@@ -23,7 +23,7 @@ The course is divided into three distinct specialized student tracks:
 The `robotos_edge` package (CLI aliases `robotos`, `robotos-kws`, `robotos-edge`) provides keyword spotting, audio feature extraction, IMU motion streaming, and model training utilities. It replaced `robotos_kws` in 0.2.0.
 
 ### Rule 1: Canonical Source of Truth
-- The single source of truth is `robotos/sdk/python-edge/` on branch `feat/pyo3-binary-wheel` of `drsanti/robotos` (not yet merged to `master`; `sdk/python-kws` is the obsolete pre-0.2 layout).
+- The single source of truth is `robotos/sdk/python-edge/` on branch `master` of `drsanti/robotos` (not yet merged to `master`; `sdk/python-kws` is the obsolete pre-0.2 layout).
 - **NEVER** hand-copy wheels into the student tracks' `dist/` or edit `.venv/` folders — use the pipeline.
 - **NEVER** copy raw `.py` source code or internal package modules (`wire.py`, `kws_common.py`, `robotos_edge/`) into any student directory. Only compiled wheels and student-facing examples belong in `kmutt-nd69`.
 

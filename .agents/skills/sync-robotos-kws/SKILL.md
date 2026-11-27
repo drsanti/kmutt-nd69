@@ -10,11 +10,11 @@ description: >-
 # robotos_edge multi-track sync (Windows & macOS)
 
 **Windows continuation pending (2026-11-27):** the Windows `robotos_edge` 0.2.2 wheel is missing. Follow
-`docs/WINDOWS-HANDOFF.md` in `drsanti/robotos` (branch `feat/pyo3-binary-wheel`) first.
+`docs/WINDOWS-HANDOFF.md` in `drsanti/robotos` (branch `master`) first.
 
 ## Layout
 
-- SDK source: `robotos/sdk/python-edge/` on branch `feat/pyo3-binary-wheel` (`sdk/python-kws` is obsolete).
+- SDK source: `robotos/sdk/python-edge/` on branch `master` (`sdk/python-kws` is obsolete).
 - Tracks: `robotos/kmutt-nd69/nd{1,2,3}/docs/week08/labs/` and `…/week09/labs/` (every week is self-contained;
   `publish_to_students.py` deploys to all six) — each `dist/` holds **one wheel per
   platform**, same version: `robotos_edge-<V>-cp311-cp311-win_amd64.whl` and
@@ -36,7 +36,7 @@ description: >-
 ## Workflow
 
 ```bash
-# 1. In robotos (branch feat/pyo3-binary-wheel), Python 3.11 venv with cython, wheel, setuptools
+# 1. In robotos (branch master), Python 3.11 venv with cython, wheel, setuptools
 #    (Windows also needs MSVC Build Tools). Bump the version if the SDK changed.
 
 # 2. Build for this OS and deploy to all tracks:
