@@ -33,6 +33,9 @@ def main():
     imu = imu_source(args, d.session, default=["idle"] * 4 + ["shake"])
     belt, arm, light = Conveyor(), Arm(), StackLight()
     state, resume, placed, last_spawn, calm_since = "RUN", "RUN", 0, -SPAWN_S, None
+    bx, by, bw, bh = BIN
+    bin_shapes = [rk.rect_shape(bx, by, bw, 1, rk.Color.GRAY), rk.rect_shape(bx, by + bh - 1, bw, 1, rk.Color.GRAY),
+                  rk.rect_shape(bx, by, 1, bh, rk.Color.GRAY), rk.rect_shape(bx + bw - 1, by, 1, bh, rk.Color.GRAY)]
     home_q = arm.ik(*HOME)
     arm.q = list(home_q)
 
@@ -72,9 +75,7 @@ def main():
         light.set("green")
 
         belt.draw(d)
-        arm.draw(d)
-        if arm.holding is None and state == "RETURN":
-            d.rect(*BIN, rk.Color.GRAY)                       # the arm may have crossed the bin outline
+        arm.draw(d, under=lambda: belt.shapes() + bin_shapes)   # repaint what the arm uncovers
         light.draw(d)
         status = (state, placed)
         if status != shown:
