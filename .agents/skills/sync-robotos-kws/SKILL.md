@@ -9,13 +9,14 @@ description: >-
 
 # robotos_edge multi-track sync (Windows & macOS)
 
-**Windows continuation pending (2026-11-27):** the Windows 0.2.1 wheel is missing. Follow
-`docs/WINDOWS-HANDOFF-WEEK08.md` in `drsanti/robotos` (branch `feat/pyo3-binary-wheel`) first.
+**Windows continuation pending (2026-11-27):** the Windows `robotos_edge` 0.2.2 wheel is missing. Follow
+`docs/WINDOWS-HANDOFF.md` in `drsanti/robotos` (branch `feat/pyo3-binary-wheel`) first.
 
 ## Layout
 
 - SDK source: `robotos/sdk/python-edge/` on branch `feat/pyo3-binary-wheel` (`sdk/python-kws` is obsolete).
-- Tracks: `robotos/kmutt-nd69/nd{1,2,3}/docs/week08/labs/` — each `dist/` holds **one wheel per
+- Tracks: `robotos/kmutt-nd69/nd{1,2,3}/docs/week08/labs/` and `…/week09/labs/` (every week is self-contained;
+  `publish_to_students.py` deploys to all six) — each `dist/` holds **one wheel per
   platform**, same version: `robotos_edge-<V>-cp311-cp311-win_amd64.whl` and
   `robotos_edge-<V>-cp311-cp311-macosx_11_0_arm64.whl`.
 - Students install by name: `pip install -U --no-index -f ../dist robotos_edge`.

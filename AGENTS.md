@@ -2,7 +2,7 @@
 
 This repository (`robotos/kmutt-nd69`) houses the curriculum, documentation, and student lab packages for the KMUTT ND69 course. It is a separate Git repository nested within the root `robotos` workspace.
 
-> **Windows continuation (2026-11-27):** the Windows `robotos_edge` 0.2.1 wheel is still missing — every track's `dist/` has only the broken 0.2.0 Windows wheel, so Windows students are blocked. In `drsanti/robotos`, check out `feat/pyo3-binary-wheel` and follow `docs/WINDOWS-HANDOFF-WEEK08.md` (build, test with the boards, deploy here). Ask the owner before pushing this repo: `main` is what students clone.
+> **Windows continuation (2026-11-27):** there is no working Windows `robotos_edge` wheel yet: week 08 `dist/` folders hold only the broken 0.2.0 Windows wheel, week 09 `dist/` folders only the macOS 0.2.2 wheel, so Windows participants cannot install the Python SDK. In `drsanti/robotos` (branch `feat/pyo3-binary-wheel`) follow `docs/WINDOWS-HANDOFF.md`: build, test with the boards, run the week 09 labs, deploy here. These labs are for public training (no grades); lab code must be complete working demos (exercises only in a separate `exercises/` folder); every week is self-contained. Ask the owner before pushing this repo: `main` is what participants clone.
 
 ---
 
