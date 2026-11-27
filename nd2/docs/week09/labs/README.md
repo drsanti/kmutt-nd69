@@ -176,6 +176,8 @@ python gesture_service.py                                               # ws://1
 
 Have your own IMU model from Week 08? Use it: `python gesture_service.py --model path/to/model_int8.tflite`.
 
+> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. Use your own Week 08 model (trained on your recordings) when you have one. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
+
 **Terminal 2 — the lab:**
 
 ```bash

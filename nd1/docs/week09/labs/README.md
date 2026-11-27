@@ -52,11 +52,13 @@ robotos check-imu                  # ws28p only: ~150 samples at 50 Hz, |a| abou
 
 If `robotos detect` says the board needs flashing: `robotos flash-firmware --board ws28p` (or `--board es3c28p`). Always pass `--board`.
 
-**Gesture model for Lab 9.5** — copy yours from Week 08, or train one now (about 1 minute):
+**Gesture model for Lab 9.5** — copy yours from Week 08 into `imu_artifacts/model_int8.tflite`, or train one now (about 1 minute):
 
 ```bash
 robotos-kws train-imu --synthetic --out imu_artifacts
 ```
+
+> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. Use your own Week 08 model (trained on your recordings) when you have one. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
 
 > The board's screen holds **3 pages** of your own (plus its built-in HOST tab). Each lab reuses its page name (METER, CHARTS, MODEL), so re-running a lab never adds pages.
 
