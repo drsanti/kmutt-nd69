@@ -28,21 +28,60 @@
     window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
   }
   // Desktop custom borderless titlebar controls (Claude Desktop / Cursor / Codex style)
-  if(typeof Neutralino!=='undefined'||window.NL_PORT){
-    const winControls=$('window-controls');if(winControls)winControls.hidden=false;
-    const topbar=$('topbar');
-    if(topbar){
-      topbar.addEventListener('mousedown',e=>{
-        if(e.target.closest('button, select, input, a, dialog'))return;
-        if(window.Neutralino?.window?.beginDrag)Neutralino.window.beginDrag(e.screenX,e.screenY);
-      });
-    }
-    $('win-min')?.addEventListener('click',()=>{window.Neutralino?.window?.minimize();});
-    $('win-max')?.addEventListener('click',async()=>{
+  function setupDesktopTitlebar(){
+    const titlebar=$('desktop-titlebar');
+    if(!titlebar)return;
+    titlebar.style.display='flex';
+    document.body.classList.add('has-desktop-titlebar');
+
+    // Drag region
+    titlebar.onpointerdown=e=>{
+      if(e.button!==0||e.target.closest('button, select, input, a, dialog'))return;
+      if(window.Neutralino?.window?.beginDrag)Neutralino.window.beginDrag(e.screenX,e.screenY);
+    };
+
+    // Double-click to Maximize / Restore
+    titlebar.ondblclick=e=>{
+      if(e.target.closest('button, select, input, a, dialog'))return;
+      toggleMaximize();
+    };
+
+    const iconMax=$('icon-max'),iconRestore=$('icon-restore'),btnMax=$('win-max');
+    async function toggleMaximize(){
       if(!window.Neutralino?.window)return;
-      const isMax=await Neutralino.window.isMaximized();
-      if(isMax)await Neutralino.window.unmaximize();else await Neutralino.window.maximize();
-    });
-    $('win-close')?.addEventListener('click',()=>{window.Neutralino?.app?.exit();});
+      try{
+        const isMax=await Neutralino.window.isMaximized();
+        if(isMax){
+          await Neutralino.window.unmaximize();
+          if(iconMax)iconMax.style.display='block';
+          if(iconRestore)iconRestore.style.display='none';
+          if(btnMax)btnMax.title='Maximize';
+        }else{
+          await Neutralino.window.maximize();
+          if(iconMax)iconMax.style.display='none';
+          if(iconRestore)iconRestore.style.display='block';
+          if(btnMax)btnMax.title='Restore';
+        }
+      }catch(err){}
+    }
+
+    $('win-min')?.addEventListener('click',()=>window.Neutralino?.window?.minimize());
+    $('win-max')?.addEventListener('click',toggleMaximize);
+    $('win-close')?.addEventListener('click',()=>window.Neutralino?.app?.exit());
+
+    function syncTitle(){
+      const t=$('slide-title'),st=$('titlebar-slide-title');
+      if(t&&st)st.textContent=t.textContent;
+    }
+    window.addEventListener('hashchange',()=>setTimeout(syncTitle,40));
+    setTimeout(syncTitle,100);
+  }
+
+  window.setupDesktopTitlebar=setupDesktopTitlebar;
+  if(typeof Neutralino!=='undefined'||window.NL_PORT){
+    setupDesktopTitlebar();
+    if(window.Neutralino?.events){
+      Neutralino.events.on('ready',setupDesktopTitlebar);
+    }
   }
 })();

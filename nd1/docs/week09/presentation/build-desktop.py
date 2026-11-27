@@ -21,6 +21,12 @@ def build_desktop():
     Neutralino.events.on('windowClose', () => {
       Neutralino.app.exit();
     });
+    Neutralino.events.on('ready', () => {
+      if (window.setupDesktopTitlebar) window.setupDesktopTitlebar();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.setupDesktopTitlebar) window.setupDesktopTitlebar();
+    });
   }
 </script>"""
     html = html.replace("</body>", neu_init + "\n</body>")
@@ -30,6 +36,11 @@ def build_desktop():
     if icon.exists():
         (RES / "icons").mkdir(parents=True, exist_ok=True)
         shutil.copy2(icon, RES / "icons/appIcon.png")
+
+    icon_svg = ROOT / "assets/icons/icon.svg"
+    if icon_svg.exists():
+        (RES / "assets/icons").mkdir(parents=True, exist_ok=True)
+        shutil.copy2(icon_svg, RES / "assets/icons/icon.svg")
 
     print("3. Building standalone executable binaries with embedded resources...")
     subprocess.run(
