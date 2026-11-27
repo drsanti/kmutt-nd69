@@ -19,7 +19,18 @@ Five labs, 25–35 minutes each. Each script in `labs/python/` runs as-is and ha
 
 ## 1. Setup (20 min)
 
-### 1a. Python: reuse your Week 08 environment
+### 1a. Python environment
+
+Week 09 is **self-contained**: you need nothing from earlier weeks. Do this setup **before class** if you can: the first install downloads about 600 MB (TensorFlow).
+
+**Python 3.11 is required** (the `robotos_edge` wheel is built for 3.11). Check, and install it if missing:
+
+| | Check | Install |
+|---|---|---|
+| macOS | `python3.11 --version` | `brew install python@3.11` |
+| Windows | `py -3.11 --version` | `winget install Python.Python.3.11` |
+
+**Create the environment** (once):
 
 ```bash
 cd nd3/docs/week09/labs/python
@@ -27,25 +38,31 @@ cd nd3/docs/week09/labs/python
 
 - **macOS / Linux:**
   ```bash
-  source ../../../week08/labs/.venv/bin/activate
+  python3.11 -m venv .venv
+  source .venv/bin/activate
   ```
 - **Windows (PowerShell):**
   ```powershell
-  ..\..\..\week08\labs\.venv\Scripts\Activate.ps1
+  py -3.11 -m venv .venv
+  .\.venv\Scripts\Activate.ps1
   ```
 - **Windows (Git Bash):**
   ```bash
-  source ../../../week08/labs/.venv/Scripts/activate
+  py -3.11 -m venv .venv
+  source .venv/Scripts/activate
   ```
 
-> Set up ND1 or ND2 instead? Their Week 08 `.venv` works too, e.g. `source ../../../../nd1/docs/week08/labs/python/.venv/bin/activate`.
-
-Then upgrade the `robotos_edge` wheel (Week 09 needs **0.2.2** or newer):
+Your prompt now starts with `(.venv)`. Then, in any shell:
 
 ```bash
-pip install -U --no-index -f ../../../week08/labs/dist robotos_edge
-python -c "import robotos_edge as rk; from robotos_edge import scene; print(rk.__version__)"   # 0.2.2
+pip install -r requirements.txt                       # numpy, TensorFlow, pyserial (a few minutes the first time)
+pip install -U --no-index -f ../dist robotos_edge     # the course SDK, from labs/dist
+python -c "import robotos_edge as rk; from robotos_edge import scene; print(rk.__version__)"   # 0.2.2 or newer
 ```
+
+Next time, only activate it again (`source .venv/bin/activate`, or `.\.venv\Scripts\Activate.ps1` on Windows).
+
+> **Windows:** if the second `pip install` says *No matching distribution found for robotos_edge*, the Windows wheel is not in `labs/dist` yet: run `git pull` in the course folder and try again.
 
 ### 1b. Board firmware: update to 0.3.2
 
@@ -178,7 +195,7 @@ Boxes ride the conveyor; the arm picks each one at the end of the belt and drops
 
 | Symptom | Fix |
 |---|---|
-| `ModuleNotFoundError: robotos_edge` | Activate the Week 08 `.venv` first (Setup 1a) |
+| `ModuleNotFoundError: robotos_edge` | Activate the `.venv` in `labs/python` first (Setup 1a) |
 | `ImportError: … 'scene'` / `AttributeError: … 'Sprite'` | Old wheel: run the `pip install -U …` line in Setup 1a |
 | The robot arm **blinks** while it moves | Board firmware older than 0.3.1: Setup 1b |
 | `could not create page … (rc=-12)` | The screen's page slots are full (old pages from other weeks): press RESET on the board |

@@ -19,8 +19,8 @@ Five labs, about 30 minutes each. Each file in `labs/node/` runs as-is and has *
 | Folder | What is in it |
 |---|---|
 | `labs/node/` | the five labs (TypeScript), `lab_common.ts`, recorded motion in `samples/` |
-| `labs/service/` | `gesture_service.py`: your IMU model behind a WebSocket (Lab 9.5) |
-| `labs/dist/` | `robotos-board-0.1.0.tgz`: the board library (installed by `npm install`) |
+| `labs/service/` | `gesture_service.py` (your IMU model behind a WebSocket, Lab 9.5) and the Python environment for the board tools |
+| `labs/dist/` | `robotos-board-0.1.0.tgz` (the Node board library, installed by `npm install`) and the `robotos_edge` Python wheel |
 
 ---
 
@@ -44,18 +44,50 @@ npx tsx lab9_2_frequency.ts      # quick check: prints 4 lines and opens a page 
 
 Open the `labs/node` folder in VS Code: the `robotos-board` API has full type hints (hover a function to see what it does).
 
-### 1b. Board check (skip without a board)
+### 1b. Python environment (board tools + the Lab 9.5 model service)
 
-The `robotos` tools come with your Week 08 Python environment. In a **second terminal**:
+The board tools (`robotos detect`, firmware flashing) and the model service in Lab 9.5 are Python. Week 09 is **self-contained**: you need nothing from earlier weeks. Do this **before class** if you can: the first install downloads about 600 MB (TensorFlow).
+
+**Python 3.11 is required** (the `robotos_edge` wheel is built for 3.11):
+
+| | Check | Install |
+|---|---|---|
+| macOS | `python3.11 --version` | `brew install python@3.11` |
+| Windows | `py -3.11 --version` | `winget install Python.Python.3.11` |
+
+In a **second terminal**, create the environment (once):
+
+```bash
+cd nd2/docs/week09/labs/service
+```
 
 - **macOS / Linux:**
   ```bash
-  source nd2/docs/week08/labs/web-app/.venv/bin/activate
+  python3.11 -m venv .venv
+  source .venv/bin/activate
   ```
 - **Windows (PowerShell):**
   ```powershell
-  nd2\docs\week08\labs\web-app\.venv\Scripts\Activate.ps1
+  py -3.11 -m venv .venv
+  .\.venv\Scripts\Activate.ps1
   ```
+- **Windows (Git Bash):**
+  ```bash
+  py -3.11 -m venv .venv
+  source .venv/Scripts/activate
+  ```
+
+Then, in any shell:
+
+```bash
+pip install -r requirements.txt                       # TensorFlow, FastAPI, pyserial (a few minutes the first time)
+pip install -U --no-index -f ../dist robotos_edge     # the course SDK, from labs/dist
+robotos-kws train-imu --synthetic --out imu_artifacts # the gesture model for Lab 9.5, about 1 minute
+```
+
+> **Windows:** if the second `pip install` says *No matching distribution found for robotos_edge*, the Windows wheel is not in `labs/dist` yet: run `git pull` in the course folder and try again.
+
+**Board check** (skip without a board), in the same terminal:
 
 ```bash
 robotos detect             # ws28p: caps 0x3c (IMU) · es3c28p: caps 0x33 (MIC)
@@ -63,7 +95,7 @@ robotos detect             # ws28p: caps 0x3c (IMU) · es3c28p: caps 0x33 (MIC)
 
 If it says the board needs flashing: `robotos flash-firmware --board ws28p` (or `--board es3c28p`). Always pass `--board`.
 
-> **One program per board.** Only one program can open the board's USB port at a time. Close `robotos check-imu`, the Week 08 web app, browser tabs using Web Serial and any other lab before you run the next one.
+> **One program per board.** Only one program can open the board's USB port at a time. Close `robotos check-imu`, other web apps or browser tabs using Web Serial and any other lab before you run the next one.
 
 > The board's screen holds **3 pages** of your own (plus its built-in HOST tab). Each lab reuses its page name (METER, CHARTS, MODEL), and Ctrl+C removes the page, so re-running a lab never adds pages.
 
@@ -163,20 +195,18 @@ A **CHARTS** tab: a scrolling 3-axis chart on top, a bubble level bottom right.
 
 **Files:** `lab9_5_model_view.ts` and `../service/gesture_service.py`
 
-The model runs in Python (TensorFlow Lite, as in Week 08). `gesture_service.py` puts it behind a WebSocket; your Node script streams samples to it and draws what it decides.
+The model runs in Python (TensorFlow Lite). `gesture_service.py` puts it behind a WebSocket; your Node script streams samples to it and draws what it decides.
 
-**Terminal 1 — the service** (Week 08 Python environment, activated as in Setup 1b):
+**Terminal 1 — the service** (the Python environment from Setup 1b, activated):
 
 ```bash
 cd nd2/docs/week09/labs/service
-pip install -U --no-index -f ../../../week08/labs/dist robotos_edge     # 0.2.2 or newer
-robotos-kws train-imu --synthetic --out imu_artifacts                   # a model, about 1 minute
-python gesture_service.py                                               # ws://127.0.0.1:8765/ws
+python gesture_service.py                          # ws://127.0.0.1:8765/ws  (uses imu_artifacts/ from Setup 1b)
 ```
 
-Have your own IMU model from Week 08? Use it: `python gesture_service.py --model path/to/model_int8.tflite`.
+Trained your own IMU model? Use it: `python gesture_service.py --model path/to/model_int8.tflite`.
 
-> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. Use your own Week 08 model (trained on your recordings) when you have one. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
+> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. A model trained on your own recordings (`robotos-kws collect-imu`, then `train-imu`) does better. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
 
 **Terminal 2 — the lab:**
 
@@ -211,5 +241,6 @@ A **MODEL** tab: four probability bars (idle, shake, circle, lift), a yellow thr
 | `could not create page … (rc=-12)` | The screen's page slots are full: re-run a lab (it reuses its page) or press RESET on the board |
 | Nothing appears on the screen | Tap the lab's tab (METER / CHARTS / MODEL) at the top of the screen |
 | `gesture service not reachable` | Start `python gesture_service.py` first (Lab 9.5, terminal 1) |
-| `imu_artifacts/model_int8.tflite not found` | `robotos-kws train-imu --synthetic --out imu_artifacts` in `labs/service` |
+| `imu_artifacts/model_int8.tflite not found` | `robotos-kws train-imu --synthetic --out imu_artifacts` in `labs/service` (Setup 1b) |
+| `robotos: command not found` / `No module named robotos_edge` | Activate the `.venv` in `labs/service` (Setup 1b) |
 | The plot page does not open | Open the `.html` file it printed in your browser yourself |

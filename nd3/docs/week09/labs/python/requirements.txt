@@ -1,0 +1,10 @@
+# ND03 Week 09 labs - Python 3.11. Setup: see ../README.md (section 1)
+#   python3.11 -m venv .venv && source .venv/bin/activate      (Windows: py -3.11 -m venv .venv; .venv\Scripts\Activate.ps1)
+#   pip install -r requirements.txt
+#   pip install -U --no-index -f ../dist robotos_edge
+numpy>=1.26
+tensorflow>=2.16          # needed by the robotos_edge wheel
+pyserial>=3.5             # the board over USB
+scipy>=1.10
+sounddevice>=0.4.6
+esptool>=4.7              # robotos flash-firmware

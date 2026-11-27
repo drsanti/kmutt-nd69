@@ -1,6 +1,6 @@
 # ND02 — Week 09: Seeing the Signal, from Node.js — Visualization for Edge AI
 
-> **Before the practical:** finish [Week 08](../week08/labs/README.md) (your Python environment). Lab 9.5 reuses it for the model service.
+> **Before the practical:** do the [Setup](labs/README.md#1-setup-20-min) (Node.js 22+ and a Python 3.11 environment, about 20 minutes). Week 09 is self-contained: it needs nothing from earlier weeks.
 
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
@@ -23,7 +23,7 @@ Every stage of an Edge AI pipeline should be something you can **see**: the raw 
 - Lessons: [01 — Time and frequency](lessons/01-time-and-frequency.md) · [02 — Drawing on a device](lessons/02-drawing-on-a-device.md)
 - [Checkpoint Quiz](checkpoint.md)
 - [Mini Challenge](mini-challenge.md)
-- [Week 08](../week08/labs/README.md) · [Track Index](../README.md)
+- Previous week: [Week 08](../week08/labs/README.md) · [Track Index](../README.md)
 
 ---
 

@@ -18,9 +18,18 @@ Five labs, about 30 minutes each. Each script in `labs/python/` runs as-is and h
 
 ---
 
-## 1. Setup (15 min)
+## 1. Setup (20 min)
 
-Reuse your **Week 08** environment and upgrade the `robotos_edge` wheel (Week 09 needs **0.2.2** or newer for the screen API).
+Week 09 is **self-contained**: you need nothing from earlier weeks. Do this setup **before class** if you can: the first install downloads about 600 MB (TensorFlow).
+
+**Python 3.11 is required** (the `robotos_edge` wheel is built for 3.11). Check, and install it if missing:
+
+| | Check | Install |
+|---|---|---|
+| macOS | `python3.11 --version` | `brew install python@3.11` |
+| Windows | `py -3.11 --version` | `winget install Python.Python.3.11` |
+
+**Create the environment** (once):
 
 ```bash
 cd nd1/docs/week09/labs/python
@@ -28,20 +37,31 @@ cd nd1/docs/week09/labs/python
 
 - **macOS / Linux:**
   ```bash
-  source ../../../week08/labs/python/.venv/bin/activate
+  python3.11 -m venv .venv
+  source .venv/bin/activate
   ```
 - **Windows (PowerShell):**
   ```powershell
-  ..\..\..\week08\labs\python\.venv\Scripts\Activate.ps1
+  py -3.11 -m venv .venv
+  .\.venv\Scripts\Activate.ps1
+  ```
+- **Windows (Git Bash):**
+  ```bash
+  py -3.11 -m venv .venv
+  source .venv/Scripts/activate
   ```
 
-Then, in any shell:
+Your prompt now starts with `(.venv)`. Then, in any shell:
 
 ```bash
-pip install -r requirements.txt                                  # adds matplotlib for the PC plots
-pip install -U --no-index -f ../../../week08/labs/dist robotos_edge
-python -c "import robotos_edge as rk; print(rk.__version__)"      # 0.2.2 or newer
+pip install -r requirements.txt                       # numpy, TensorFlow, pyserial, matplotlib (a few minutes the first time)
+pip install -U --no-index -f ../dist robotos_edge     # the course SDK, from labs/dist
+python -c "import robotos_edge as rk; print(rk.__version__)"   # 0.2.2 or newer
 ```
+
+Next time, only activate it again (`source .venv/bin/activate`, or `.\.venv\Scripts\Activate.ps1` on Windows).
+
+> **Windows:** if the second `pip install` says *No matching distribution found for robotos_edge*, the Windows wheel is not in `labs/dist` yet: run `git pull` in the course folder and try again.
 
 **Board check** (skip without a board):
 
@@ -52,13 +72,13 @@ robotos check-imu                  # ws28p only: ~150 samples at 50 Hz, |a| abou
 
 If `robotos detect` says the board needs flashing: `robotos flash-firmware --board ws28p` (or `--board es3c28p`). Always pass `--board`.
 
-**Gesture model for Lab 9.5** — copy yours from Week 08 into `imu_artifacts/model_int8.tflite`, or train one now (about 1 minute):
+**Gesture model for Lab 9.5** — train one now (about 1 minute), or copy a model you already trained into `imu_artifacts/model_int8.tflite`:
 
 ```bash
 robotos-kws train-imu --synthetic --out imu_artifacts
 ```
 
-> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. Use your own Week 08 model (trained on your recordings) when you have one. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
+> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. A model trained on your own recordings (`robotos-kws collect-imu`, then `train-imu`) does better. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
 
 > The board's screen holds **3 pages** of your own (plus its built-in HOST tab). Each lab reuses its page name (METER, CHARTS, MODEL), so re-running a lab never adds pages.
 
@@ -179,8 +199,8 @@ A **MODEL** tab: four probability bars (idle, shake, circle, lift), a yellow thr
 
 | Symptom | Fix |
 |---|---|
-| `ModuleNotFoundError: robotos_edge` | Activate the Week 08 `.venv` first (Setup) |
-| `AttributeError: … has no attribute 'Display'` / `'ImuStream'` | Old wheel: `pip install -U --no-index -f ../../../week08/labs/dist robotos_edge` |
+| `ModuleNotFoundError: robotos_edge` | Activate the `.venv` in `labs/python` first (Setup) |
+| `AttributeError: … has no attribute 'Display'` / `'ImuStream'` | Old wheel: `pip install -U --no-index -f ../dist robotos_edge` |
 | `could not create page … (rc=-12)` | The screen's 3 page slots are full: re-run a lab (it reuses its page) or press RESET on the board |
 | `no IMU samples …` | Not a ws28p (or wrong firmware): use `--replay`, or `robotos flash-firmware --board ws28p` |
 | Nothing appears on the screen | Tap the lab's tab (METER / CHARTS / MODEL) at the top of the screen |

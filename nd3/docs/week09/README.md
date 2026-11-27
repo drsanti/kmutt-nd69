@@ -1,6 +1,6 @@
 # ND03 — Week 09: A Living Factory Cell — Drawing and Animating Automation on a Device
 
-> **Before the practical:** finish [Week 08](../week08/labs/README.md) (your Python environment). Week 09 reuses it.
+> **Before the practical:** do the [Setup](labs/README.md#1-setup-20-min) (Python 3.11 environment and board firmware, about 20 minutes). Week 09 is self-contained: it needs nothing from earlier weeks.
 
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND03-6d28d9?style=flat-square)
@@ -22,7 +22,7 @@ An HMI, a SCADA mimic and a digital twin all do the same thing: they **draw the 
 - Lessons: [01 — Animation on a small screen](lessons/01-animation-on-a-small-screen.md) · [02 — Robot arm kinematics](lessons/02-robot-arm-kinematics.md)
 - [Checkpoint Quiz](checkpoint.md)
 - [Mini Challenge](mini-challenge.md)
-- [Week 08](../week08/labs/README.md) · [Track Index](../README.md)
+- Previous week: [Week 08](../week08/labs/README.md) · [Track Index](../README.md)
 
 ---
 
@@ -40,7 +40,7 @@ An HMI, a SCADA mimic and a digital twin all do the same thing: they **draw the 
 
 | Time | Block | Topic | Lab |
 | :--- | :--- | :--- | :--- |
-| **09:00–09:20** | Setup | Upgrade the wheel and the board firmware | [Setup](labs/README.md#1-setup-20-min) |
+| **09:00–09:20** | Setup | Python environment and board firmware | [Setup](labs/README.md#1-setup-20-min) |
 | **09:20–09:50** | Block 1 | Shapes and coordinates: a still factory cell | [Lab 9.1](labs/README.md#lab-91--a-static-cell-30-min) |
 | **09:50–10:15** | Block 2 | The animation loop | [Lab 9.2](labs/README.md#lab-92--the-animation-loop-25-min) |
 | **10:15–10:25** | Break | | |

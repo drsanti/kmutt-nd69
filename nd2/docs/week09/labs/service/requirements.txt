@@ -1,0 +1,12 @@
+# ND02 Week 09: Python side (gesture service for Lab 9.5 + the robotos board tools) - Python 3.11
+#   python3.11 -m venv .venv && source .venv/bin/activate      (Windows: py -3.11 -m venv .venv; .venv\Scripts\Activate.ps1)
+#   pip install -r requirements.txt
+#   pip install -U --no-index -f ../dist robotos_edge
+numpy>=1.26
+tensorflow>=2.16          # the gesture model
+pyserial>=3.5
+scipy>=1.10
+sounddevice>=0.4.6
+esptool>=4.7              # robotos flash-firmware
+fastapi>=0.110            # the WebSocket service
+uvicorn[standard]>=0.28
