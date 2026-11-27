@@ -24,3 +24,5 @@ __pycache__/
 test-results/
 .storage/
 *.log
+
+**/.tmp/
