@@ -1,10 +1,10 @@
-# Week 08 Pre-Flight Readiness Quiz: Computer & Developer Skills
+# Week 08 Pre-Flight Self-Check: Computer & Developer Skills
 
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
 ![week](https://img.shields.io/badge/week-08-334155?style=flat-square)
 ![lang](https://img.shields.io/badge/lang-EN-2563eb?style=flat-square)
-![kind](https://img.shields.io/badge/kind-quiz-2e8b57?style=flat-square)
+![kind](https://img.shields.io/badge/kind-self--check-2e8b57?style=flat-square)
 
 [Week 08 index](README.md) · [Labs Guide](labs/README.md)
 
@@ -197,6 +197,6 @@ Why do all probabilities sum to $1.0$, and why must a production system apply a 
 
 ## What to Do Next
 
-If you scored:
-* **9–10 / 10:** You are fully equipped to move smoothly through the Week 08 hands-on Edge AI blocks!
-* **< 9 / 10:** Review the questions you missed and consult with an instructor before starting your lab exercises.
+For you, not for a grade. If you got:
+* **9–10 of 10 right:** You are fully equipped to move smoothly through the Week 08 hands-on Edge AI blocks!
+* **fewer than 9:** Review the questions you missed and consult with an instructor before starting your lab exercises.

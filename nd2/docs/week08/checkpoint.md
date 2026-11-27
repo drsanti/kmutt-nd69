@@ -1,9 +1,9 @@
-# Week 08 Checkpoint Quiz: Edge AI Software Architecture
+# Week 08 Self-Check: Edge AI Software Architecture
 
 ![track](https://img.shields.io/badge/track-ND02-1d4ed8?style=flat-square)
-![kind](https://img.shields.io/badge/kind-checkpoint-2e8b57?style=flat-square)
+![kind](https://img.shields.io/badge/kind-self--check-2e8b57?style=flat-square)
 
-Test your understanding of consuming Edge AI models, designing real-time audio microservices, and reactive full-stack integration.
+For you, not for a grade: check your understanding of consuming Edge AI models, designing real-time audio microservices, and reactive full-stack integration.
 
 ---
 

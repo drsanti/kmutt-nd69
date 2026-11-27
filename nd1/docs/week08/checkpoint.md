@@ -1,14 +1,14 @@
-# Week 08 checkpoint quiz
+# Week 08 Self-Check
 
 ![course](https://img.shields.io/badge/course-KMUTT%20ND69-1a2f5a?style=flat-square)
 ![track](https://img.shields.io/badge/track-ND01-0e7490?style=flat-square)
 ![week](https://img.shields.io/badge/week-08-334155?style=flat-square)
 ![lang](https://img.shields.io/badge/lang-EN-2563eb?style=flat-square)
-![kind](https://img.shields.io/badge/kind-quiz-2e8b57?style=flat-square)
+![kind](https://img.shields.io/badge/kind-self--check-2e8b57?style=flat-square)
 
 [Week 08 index](README.md) · [Lessons](lessons/README.md)
 
-Twelve questions, about 12 minutes. Answers are at the bottom; try first.
+For you, not for a grade: twelve questions, about 12 minutes. Try each one first, then open **Answers** at the bottom to check.
 
 1. Put these stages in order: quantize, collect, deploy, train, test.
 2. A dataset has 400 `red` clips and 40 clips for each other label. What will a naive model learn, and name two fixes.

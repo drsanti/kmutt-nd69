@@ -1,9 +1,9 @@
-# Week 08 Checkpoint Quiz: IMU Perception & Robotic Control
+# Week 08 Self-Check: IMU Perception & Robotic Control
 
 ![track](https://img.shields.io/badge/track-ND03-6d28d9?style=flat-square)
-![kind](https://img.shields.io/badge/kind-checkpoint-2e8b57?style=flat-square)
+![kind](https://img.shields.io/badge/kind-self--check-2e8b57?style=flat-square)
 
-Test your understanding of IMU physics, sensor telemetry, temporal windowing, and robotic safety interlocks.
+For you, not for a grade: check your understanding of IMU physics, sensor telemetry, temporal windowing, and robotic safety interlocks.
 
 ---
 
@@ -30,7 +30,7 @@ Why does `robotos-kws collect-imu` calculate timestamp delta ($dt = t_k - t_{k-1
 ---
 
 ### Question 3: Fixed Physical Scaling vs Per-Window Z-Score Normalization
-In `imu_common.normalise()`, acceleration is divided by $9.80665\text{ m/s}^2$ and gyro by $4.0\text{ rad/s}$. Why do we use **fixed physical scaling** rather than standard per-window z-score normalization ($\frac{x - \mu}{\sigma}$)?
+In `robotos_edge.imu.features.normalise()`, acceleration is divided by $9.80665\text{ m/s}^2$ and gyro by $4.0\text{ rad/s}$. Why do we use **fixed physical scaling** rather than standard per-window z-score normalization ($\frac{x - \mu}{\sigma}$)?
 - A) Fixed scaling is faster to compute on microcontrollers.
 - B) Z-score normalization removes the absolute magnitude ("how hard") of the movement, making a tiny subtle vibration look mathematically identical to a violent collision shake.
 - C) Z-score normalization causes division by zero when the board is held still.
