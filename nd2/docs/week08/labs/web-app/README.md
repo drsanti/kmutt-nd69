@@ -20,14 +20,14 @@ From this directory (`nd2/docs/week08/labs/web-app`):
   py -3.11 -m venv .venv
   .\.venv\Scripts\Activate.ps1
   pip install -r requirements.txt
-  pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+  pip install --no-index -f ../dist robotos_edge
   ```
 - **macOS / Linux:**
   ```bash
   python3.11 -m venv .venv
   source .venv/bin/activate
   pip install -r requirements.txt
-  pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+  pip install --no-index -f ../dist robotos_edge
   ```
 
 > [!TIP]
@@ -108,9 +108,11 @@ web-app/
 ├── app.py                     # FastAPI backend application & WebSocket broadcaster
 ├── sample_audio.wav           # Reference 16 kHz mono test clip
 ├── requirements.txt           # Python package dependencies
-├── artifacts/
+├── artifacts/                 # copied from ND1 (Labs §1.3), not shipped
 │   └── model_int8.tflite      # Quantized DS-CNN model weights (18.8 KiB)
 ├── examples/
+│   ├── 01_live_voice_control.py     # Live PC-mic detection loop
+│   ├── 02_board_voice_control.py    # Live detection from the ES3C28P board mic
 │   ├── 03_classify_audio_file.py    # Python SDK batch inference example
 │   └── 04_programmatic_train.py     # Automated MLOps retraining script
 └── static/

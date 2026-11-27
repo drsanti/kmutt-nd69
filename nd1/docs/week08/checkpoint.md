@@ -20,8 +20,8 @@ Twelve questions, about 12 minutes. Answers are at the bottom; try first.
 8. A model trained only on laptop-microphone clips scores 95% on PC test clips and 60% on board clips. What is this effect called, and give two ways to reduce it.
 9. In `kws-inference`, why is the capture task's priority higher than the inference task's, and why does it call `xQueueSend` with a timeout of 0?
 10. Secure boot is enabled but flash encryption is not. Can someone copy your model from the board? Can they run their own modified firmware?
-11. `collect.py` receives `MicPcm` frames with `seq` 200, 201, 203. What happened, and what does the script do with that take? Why is `seq` compared modulo 256?
-12. You plug a ws28p into `collect.py`. How does the script know it is the wrong board, and what does `0x3c` mean?
+11. `robotos-kws collect-board` receives `MicPcm` frames with `seq` 200, 201, 203. What happened, and what does the script do with that take? Why is `seq` compared modulo 256?
+12. You plug a ws28p into `robotos-kws collect-board`. How does the script know it is the wrong board, and what does `0x3c` mean?
 
 ---
 
@@ -29,7 +29,7 @@ Twelve questions, about 12 minutes. Answers are at the bottom; try first.
 <summary>Answers</summary>
 
 1. Collect → train → test → quantize → (re-test) → deploy.
-2. It learns to favour `red` (high accuracy, poor recall for the other labels). Fixes: record more of the small classes, use class weights (as `train.py` does), downsample `red`, augment the small classes.
+2. It learns to favour `red` (high accuracy, poor recall for the other labels). Fixes: record more of the small classes, use class weights (as `robotos-kws train` does), downsample `red`, augment the small classes.
 3. Clips from the same speaker and session are near-duplicates. Some end up in training and some in test, so the test measures memorisation. Split by speaker or session.
 4. Without them, every sound is forced into a keyword: noise and other words cause false triggers. `_silence_` = nothing happened, `_unknown_` = speech that is not a command.
 5. 1 + (16000 − 480) / 320 = 1 + 48.5 → **49** (the last partial frame is dropped).
@@ -38,7 +38,7 @@ Twelve questions, about 12 minutes. Answers are at the bottom; try first.
 8. Domain shift. Mix PC and board clips, augment gain/noise, turn off OS audio processing, and always test on board-recorded clips.
 9. Audio arrives in real time and DMA buffers are small; capture must never be delayed by the heavy FFT/inference work. A zero timeout means that if the consumer falls behind, the block is counted as dropped instead of blocking the capture loop (and losing even more audio).
 10. **Yes**, they can read the flash and copy the model, because nothing hides it. **No**, they cannot run modified firmware, because its signature would fail verification.
-11. One chunk (seq 202, up to 240 samples = 15 ms) was lost on USB. The take would contain a hole, so `collect.py` discards it and records it again (`live_infer_board.py` fills the gap with silence instead, to keep timing). The prebuilt firmware counts `MicPcm.seq` with an 8-bit counter, so after 255 comes 0.
+11. One chunk (seq 202, up to 240 samples = 15 ms) was lost on USB. The take would contain a hole, so `robotos-kws collect-board` discards it and records it again (`robotos-kws live-board` fills the gap with silence instead, to keep timing). The prebuilt firmware counts `MicPcm.seq` with an 8-bit counter, so after 255 comes 0.
 12. It reads `BoardInfo.caps`: `0x3c` = IMU (0x04) + RTC (0x08) + BATT (0x10) + BTN (0x20) — no MIC bit (0x02). (If `BoardInfo` has not arrived yet, a stream of `Imu` frames also gives it away.) The ES3C28P reports `0x33` = LED + MIC + BATT + BTN.
 
 </details>

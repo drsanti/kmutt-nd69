@@ -8,3 +8,4 @@ sounddevice>=0.4.6
 pyserial>=3.5
 scipy>=1.10
 tensorflow>=2.16
+esptool>=4.7

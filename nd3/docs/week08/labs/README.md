@@ -91,16 +91,16 @@ cd nd3/docs/week08/labs
 > [!TIP]
 > **Already set up ND1 or ND2? Reuse your existing `.venv`!**
 > If you already configured the virtual environment in `nd1` (or `nd2`), you do not need to download or install dependencies again (~1.5 GB). You can simply activate the existing environment:
-> - **Git Bash:** `source ../../../nd1/docs/week08/labs/python/.venv/Scripts/activate`
-> - **PowerShell:** `..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\Activate.ps1`
-> - **CMD:** `..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\activate.bat`
-> - **Linux / macOS:** `source ../../../nd1/docs/week08/labs/python/.venv/bin/activate`
+> - **Git Bash:** `source ../../../../nd1/docs/week08/labs/python/.venv/Scripts/activate`
+> - **PowerShell:** `..\..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\Activate.ps1`
+> - **CMD:** `..\..\..\..\nd1\docs\week08\labs\python\.venv\Scripts\activate.bat`
+> - **Linux / macOS:** `source ../../../../nd1/docs/week08/labs/python/.venv/bin/activate`
 
 ### 1.2 Install Requirements & Wheel
 
 ```bash
 pip install -r requirements.txt
-pip install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+pip install --no-index -f ./dist robotos_edge
 ```
 
 > [!TIP]
@@ -117,16 +117,16 @@ pip install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 > You can run whichever alias matches your machine, or even invoke them directly by path:
 > ```bash
 > # Direct invocations if your shell PATH is confused:
-> .\.venv\Scripts\pip.exe install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+> .\.venv\Scripts\pip.exe install --no-index -f ./dist robotos_edge
 > # or using pip3 / pip3.11:
-> .\.venv\Scripts\pip3.exe install ./dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+> .\.venv\Scripts\pip3.exe install --no-index -f ./dist robotos_edge
 > ```
 
 Verify that the CLI is ready:
 ```bash
 robotos-kws --help
 ```
-*(Or use `python -m robotos_kws --help` / `py -m robotos_kws --help`)*
+*(Or use `python -m robotos_edge --help` / `py -m robotos_edge --help`)*
 
 You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed under Available Subcommands.
 
@@ -138,7 +138,7 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
 > ### ⚡ MANDATORY STEP: Flash Your Board Before Starting Lab 3.1!
 > Fresh ESP32-S3 boards (**ws28p**) or boards flashed in other courses do **not** have the RobotOS 50 Hz IMU telemetry firmware. If you skip this step and try to run `check-imu` or `collect-imu`, your terminal will hang or report:
 > ```text
-> WireError: Serial timeout waiting for BoardInfo on COM...
+> No BoardInfo frame received. Check: right port? workshop prebuilt firmware flashed ...?
 > ```
 > You must flash the workshop firmware first using the automated flasher.
 
@@ -156,7 +156,7 @@ You should see `check-imu`, `collect-imu`, `train-imu`, and `live-imu` listed un
 With your virtual environment active (`(.venv)`), run:
 
 ```bash
-robotos flash-firmware
+robotos flash-firmware --board ws28p
 ```
 *(Or use any alias: `robotos flash`, `robotos-flash`, or `robotos-kws flash-firmware`)*.
 
@@ -215,14 +215,14 @@ If you have multiple boards connected, or need to flash offline:
 
 ```bash
 # Explicit serial port (if multiple USB devices are connected):
-robotos flash-firmware --port COM17                     # Windows
-robotos flash-firmware --port /dev/cu.usbmodem1101      # macOS
+robotos flash-firmware --board ws28p --port COM17                     # Windows
+robotos flash-firmware --board ws28p --port /dev/cu.usbmodem1101      # macOS
 
 # Use pre-downloaded local folder (offline mode):
-robotos flash-firmware --from-dir ~/Downloads/ws28p
+robotos flash-firmware --board ws28p --from-dir ~/Downloads/ws28p
 
 # Specify custom remote repository:
-robotos flash-firmware --source robotos-workshop
+robotos flash-firmware --board ws28p --source robotos-workshop
 
 # Manual guide and raw files:
 # https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md
@@ -238,7 +238,7 @@ robotos flash-firmware --source robotos-workshop
   1. Hold down the physical **BOOT** button.
   2. Press and release the **RESET** button.
   3. Release the **BOOT** button.
-  4. Run `robotos flash-firmware`.
+  4. Run `robotos flash-firmware --board ws28p`.
 
 ---
 
@@ -250,7 +250,7 @@ Test the board connection and verify the 50 Hz IMU telemetry stream:
 # 1. One-click Auto-Detection (Recommended):
 robotos check-imu
 
-# 2. Specify port manually:
+# 2. Specify port manually (use the port `robotos detect` prints):
 robotos check-imu --port COM17                # Windows
 robotos check-imu --port /dev/cu.usbmodem1101 # macOS
 ```
@@ -290,7 +290,7 @@ Collect labelled motion windows from the physical board:
 # 1. One-click Auto-Detection (Recommended):
 robotos-kws collect-imu --person student_a --session s01 --takes 20
 
-# 2. Specify port manually:
+# 2. Specify port manually (use the port `robotos detect` prints):
 robotos-kws collect-imu --port COM17 --person student_a --session s01 --takes 20
 ```
 
@@ -303,8 +303,8 @@ robotos-kws collect-imu --port COM17 --person student_a --session s01 --takes 20
 | **`lift`** | Lift board vertically up ~20 cm and put down | Robot picked up off ground / payload lift |
 
 ### Data Recording Protocol:
-1. The terminal prompts: `Press Enter for <gesture> take N/20...`
-2. Press Enter $\to$ Countdown $1.0\text{ s}$ $\to$ **GO!**
+1. The terminal prompts: `[N/20] Enter = record, q = quit >`
+2. Press Enter $\to$ countdown $1.0\text{ s}$ $\to$ **GO**
 3. Perform the gesture within the $2.0\text{ s}$ window.
 4. Gaps check: If USB packet loss drops more than 3 samples, the CLI automatically discards the take and prompts for a clean retry.
 
@@ -339,11 +339,11 @@ robotos-kws train-imu --data imu_dataset --out imu_artifacts --epochs 60
 
 Review the generated training artifacts in `imu_artifacts/`:
 - `model.keras`: Full float32 Keras model.
-- `model_float.tflite`: Float32 TFLite model (~10 KiB).
-- `model_int8.tflite`: Int8 quantized model (~3.2 KiB).
-- `meta.json`: Quantization loss, accuracy metrics, and confusion matrix.
+- `model_float.tflite`: Float32 TFLite model (~13 KiB).
+- `model_int8.tflite`: Int8 quantized model (~10 KiB).
+- `meta.json`: labels, window and normalisation settings, and the float32 / int8 test accuracy and file size. (The confusion matrix is printed in the terminal by `train-imu`.)
 
-Notice that the int8 model is only **~3.2 KiB**, small enough to run on any microcontroller with virtually zero quantization loss!
+The int8 model has only ~1,800 parameters and is about **10 KiB** (most of that is TFLite file overhead), small enough for the ESP32-S3, with little or no accuracy loss compared with float32.
 
 ---
 
@@ -358,7 +358,7 @@ Run real-time sliding-window inference on the live USB stream:
 # 1. One-click Auto-Detection (Recommended):
 robotos-kws live-imu --model imu_artifacts/model_int8.tflite
 
-# 2. Specify port manually:
+# 2. Specify port manually (use the port `robotos detect` prints):
 robotos-kws live-imu --port COM17 --model imu_artifacts/model_int8.tflite
 ```
 Move the board: perform `shake`, `circle`, `lift`. Watch the terminal print detections when confidence exceeds $0.70$.
@@ -388,7 +388,7 @@ Run the included robot controller script:
 python robot_fsm.py --model imu_artifacts/model_int8.tflite
 # (or if using py on Windows: py robot_fsm.py --model imu_artifacts/model_int8.tflite)
 
-# 2. Specify port manually:
+# 2. Specify port manually (use the port `robotos detect` prints):
 python robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite
 # (or: py robot_fsm.py --port COM17 --model imu_artifacts/model_int8.tflite)
 ```
@@ -405,8 +405,9 @@ python robot_fsm.py --replay samples/shake.csv --model imu_artifacts/model_int8.
 # Test 'lift' -> triggers TRANSPORT_MODE
 python robot_fsm.py --replay samples/lift.csv --model imu_artifacts/model_int8.tflite
 
-# Full FSM sequence simulation (works even without trained model)
-python robot_fsm.py --replay sample_gesture.csv
+# Full FSM demo: replays a longer recording. Without a trained model
+# (imu_artifacts/model_int8.tflite missing) it plays a built-in demo sequence instead.
+python robot_fsm.py --replay robotics/sample_gesture.csv
 ```
 *(On Windows machines using `py`, replace `python` with `py` in any of the above commands)*.
 
@@ -415,10 +416,14 @@ python robot_fsm.py --replay sample_gesture.csv
 stateDiagram-v2
     [*] --> STANDBY
     STANDBY --> ACTIVE_PATROL: circle (Start Routine)
+    TRANSPORT_MODE --> ACTIVE_PATROL: circle
+    STANDBY --> EMERGENCY_STOP: shake
     ACTIVE_PATROL --> EMERGENCY_STOP: shake (Collision Detected!)
+    TRANSPORT_MODE --> EMERGENCY_STOP: shake
+    STANDBY --> TRANSPORT_MODE: lift
     ACTIVE_PATROL --> TRANSPORT_MODE: lift (Robot Picked Up)
-    TRANSPORT_MODE --> STANDBY: Placed back on floor
-    EMERGENCY_STOP --> STANDBY: Reset command / Clear
+    TRANSPORT_MODE --> STANDBY: idle (placed back on floor)
+    EMERGENCY_STOP --> STANDBY: idle (motion stabilized)
 ```
 
 - When you **`shake`** the board $\to$ The controller immediately enters `EMERGENCY_STOP`, cutting virtual motor power.

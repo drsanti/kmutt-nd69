@@ -14,7 +14,7 @@ In this lab, you complete the end-to-end Edge AI development lifecycle using the
 ## Table of Contents
 
 - [1. Environment Setup & CLI Installation](#1-environment-setup--cli-installation)
-  - [1.5 Optional: Flash Workshop Firmware to ESP32-S3 Board](#15-optional-flash-workshop-firmware-to-esp32-s3-board)
+  - [1.5 Optional: Flash Workshop Firmware to ESP32-S3 Board](#15-optional-flash-workshop-firmware--board-auto-detection)
 - [2. Lab 1.1: Audio Sensing & Device Calibration](#2-lab-11-audio-sensing--device-calibration)
 - [3. Lab 1.2: Rigorous Multi-Class Audio Collection](#3-lab-12-rigorous-multi-class-audio-collection)
 - [4. Lab 1.3: Deep Learning Training & Int8 Quantization](#4-lab-13-deep-learning-training--int8-quantization)
@@ -89,7 +89,7 @@ Choose the section matching your shell:
 
 ```bash
 pip install -r requirements.txt
-pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+pip install --no-index -f ../dist robotos_edge
 ```
 
 > [!TIP]
@@ -97,7 +97,7 @@ pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
 > You can always run `pip` through Python directly:
 > ```bash
 > python -m pip install -r requirements.txt
-> python -m pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+> python -m pip install --no-index -f ../dist robotos_edge
 > ```
 
 ### 1.4 Verify CLI
@@ -109,7 +109,7 @@ robotos-kws --help
 Or use:
 
 ```bash
-python -m robotos_kws --help
+python -m robotos_edge --help
 ```
 
 > [!NOTE]
@@ -142,7 +142,7 @@ If you are using a physical ESP32-S3 board with microphone (`es3c28p`) or IMU (`
    # 1. One-click Auto-Detection (Recommended):
    robotos check-board
 
-   # 2. Specify port manually:
+   # 2. Specify port manually (use the port `robotos detect` prints):
    robotos check-board --port COM5               # Windows
    robotos check-board --port /dev/cu.usbmodem1101 # macOS
    ```
@@ -170,7 +170,7 @@ Record 20 takes for each of the target keywords (`red`, `green`, `blue`, `off`):
 ```bash
 robotos-kws collect-pc --speaker me --session s01 --labels red green blue off --takes 20
 ```
-> Press **Enter**, wait for the **GO** prompt, and speak clearly into your microphone.
+> Press **Enter**; when it prints `recording...`, say the word clearly into your microphone.
 
 ### 3.2 Collect Ambient Silence (Negative Class)
 Record background room noise (fans, keyboard typing, ambient stillness) without speech prompts:
@@ -218,7 +218,7 @@ robotos-kws evaluate --artifacts artifacts --data dataset
 
 Open and inspect `artifacts/report.md`:
 - Review the confusion matrix (checking for confusion between words).
-- Verify precision, recall, and F1-score across all classes.
+- Read each class's recall (right-hand column) and, for precision, read down each column of the matrix.
 - Measure quantization loss (comparing float32 vs int8 accuracy).
 
 ---
@@ -233,7 +233,7 @@ robotos-kws live-pc --model artifacts/model_int8.tflite --threshold 0.85
 
 - Speak keywords (`"red"`, `"green"`, `"blue"`, `"off"`) into your microphone.
 - Observe:
-  - **Sliding Window**: Step size ($200\text{ ms}$ hop) and $1.0\text{ s}$ window.
+  - **Sliding Window**: Step size ($250\text{ ms}$ hop, `--hop-ms`) and $1.0\text{ s}$ window.
   - **Refractory Window**: $1000\text{ ms}$ cooldown preventing duplicate triggers for a single utterance.
   - **Softmax Confidence**: Triggers only when probability exceeds $0.85$.
 
@@ -258,8 +258,8 @@ robotos-kws export --model artifacts/model_int8.tflite --out-dir ../firmware/kws
 ```
 
 Inspect the generated files:
-- `../firmware/kws-inference/main/model_data.cc`: Contains `alignas(16) const unsigned char g_model[]` mapped to flash memory (`.rodata`).
-- `../firmware/kws-inference/main/kws_labels.h`: Contains the label enum and string array.
+- `../firmware/kws-inference/main/model_data.cc`: Contains `alignas(16) const unsigned char g_kws_model[]` mapped to flash memory (`.rodata`).
+- `../firmware/kws-inference/main/kws_labels.h`: Contains the label count and indices (`KWS_NUM_LABELS`, `KWS_LABEL_SILENCE`, `KWS_LABEL_UNKNOWN`) and the label string array `kKwsLabels`.
 
 ---
 

@@ -39,12 +39,12 @@ int16 PCM, 16 kHz, 16000 samples
 | Log | Loudness is perceived logarithmically; it also compresses the range for int8 |
 | Upper edge 7600 Hz | Stays below the 8 kHz Nyquist limit, where filters are poorly defined |
 
-This exact definition lives in `labs/python/kws_common.py` (`log_mel()`) and in `labs/firmware/kws-inference/main/kws_features.c`. **MFCC** would add one more step (a DCT that decorrelates the 40 bands into ~10–13 coefficients). MFCCs suit classic models; CNNs work well on log-mel directly, so we skip the DCT and keep the firmware simpler.
+This exact definition lives in the wheel's `robotos_edge.audio.features` (`log_mel()`) and in `labs/firmware/kws-inference/main/kws_features.c`. **MFCC** would add one more step (a DCT that decorrelates the 40 bands into ~10–13 coefficients). MFCCs suit classic models; CNNs work well on log-mel directly, so we skip the DCT and keep the firmware simpler.
 
 ### Verify the C twin
 
 ```bash
-python verify_c_features.py --data dataset --max-clips 50
+robotos-kws verify-c --data dataset --max-clips 50
 ```
 
 This compiles the firmware's C code on your PC (gcc or clang), runs it on your clips, and compares every value. On the course test data the largest difference was 0.00008 (float rounding). A large difference means the board would see different inputs from the ones the model learned — fix it **before** deploying.
@@ -73,23 +73,23 @@ Batch normalisation is folded into the convolutions during TFLite conversion, so
 ## Training
 
 ```bash
-python train.py --data dataset --out artifacts --epochs 40
+robotos-kws train --data dataset --out artifacts --epochs 40
 ```
 
-What `train.py` does:
+What `robotos-kws train` does:
 
 1. Scans `dataset/`, prints clips per label and per device, refuses to train if a label is empty.
 2. Splits by speaker (or speaker + session) and saves `splits.json`.
 3. Augments each training clip twice: time shift ±100 ms, gain ±6 dB, and `_silence_` noise mixed in at 5–25 dB SNR.
-4. Computes log-mel features with `kws_common.log_mel()`.
+4. Computes log-mel features with `robotos_edge.audio.features.log_mel()`.
 5. Trains with class weights, early stopping on validation accuracy, and learning-rate reduction.
 6. Saves `model.keras`, `model_float.tflite`, `model_int8.tflite`, and `meta.json`, and prints the list of ops the firmware must register.
 
 A synthetic dry run (no microphone) shows the expected output:
 
 ```bash
-python make_synthetic_dataset.py --out synth_dataset --per-class 64
-python train.py --data synth_dataset --out synth_artifacts --epochs 40
+robotos-kws synth-data --out synth_dataset --per-class 64
+robotos-kws train --data synth_dataset --out synth_artifacts --epochs 40
 ```
 
 ```text
@@ -105,13 +105,15 @@ int8 ops (register these in the firmware op resolver): ['CONV_2D', 'DEPTHWISE_CO
 
 Open [`labs/python/train_colab.ipynb`](../labs/python/train_colab.ipynb) in Colab (File → Open notebook → GitHub, or upload the file). Zip your `dataset` folder, upload it when the notebook asks, and run all cells. The notebook trains, evaluates, checks the C features, and downloads `week08_export.zip` with `model_data.cc` and `kws_labels.h`.
 
+> [!NOTE]
+> Colab runs Linux, and `robotos_edge` 0.2.0 is published only for Windows and macOS, so the notebook cannot install it yet. Train on your laptop until a Linux wheel is added to `labs/dist/`.
+
 ### Knobs worth trying
 
 | Knob | Where | Effect |
 |---|---|---|
-| `--width 16` / `--width 48` | `train.py` | Fewer / more channels → smaller / larger and usually less / more accurate |
-| `--augment 0` vs `4` | `train.py` | Shows how much augmentation helps on the test speakers |
-| `NUM_MEL = 32` | `kws_common.py` **and** `kws_features.h` | Smaller input; change both and re-run `verify_c_features.py` |
+| `--width 16` / `--width 48` | `robotos-kws train` | Fewer / more channels → smaller / larger and usually less / more accurate |
+| `--augment 0` vs `4` | `robotos-kws train` | Shows how much augmentation helps on the test speakers |
 
 ## Check your understanding
 

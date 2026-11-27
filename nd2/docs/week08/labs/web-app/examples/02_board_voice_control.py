@@ -11,13 +11,13 @@ except ImportError:
 
 
 def main():
-    port = sys.argv[1] if len(sys.argv) > 1 else "COM5"
+    port = sys.argv[1] if len(sys.argv) > 1 else None   # None = auto-detect
     model_path = "artifacts/model_int8.tflite"
 
-    print(f"Connecting to board on {port} (gain=80%)...")
+    print(f"Connecting to board on {port or 'auto-detect'} (gain=80%)...")
     detector = rk.Detector(model_path, threshold=0.80)
 
-    print(f"[robotos_kws] Listening to board MEMS mic on {port}...")
+    print("[robotos_edge] Listening to board MEMS mic...")
     print("Press Ctrl+C to exit.\n")
 
     try:

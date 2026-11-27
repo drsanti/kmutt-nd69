@@ -30,14 +30,14 @@
 ## One rule for the whole week
 
 > [!IMPORTANT]
-> **Inference must compute exactly the same numbers the model was trained on.** Sample rate, gain, filters, trimming, framing, window, FFT size, mel filters, log, and quantization are all part of the model (for the IMU track: rate, window length, axis order, and scaling). `kws_common.py` (Python) and `kws_features.c` (firmware) implement one specification, and `verify_c_features.py` checks that they agree.
+> **Inference must compute exactly the same numbers the model was trained on.** Sample rate, gain, filters, trimming, framing, window, FFT size, mel filters, log, and quantization are all part of the model (for the IMU track: rate, window length, axis order, and scaling). `robotos_edge.audio.features` (Python) and `kws_features.c` (firmware) implement one specification, and `robotos-kws verify-c` checks that they agree.
 
 ## Paths used in these lessons
 
 | Name | What it is |
 |---|---|
 | Python labs | `nd1/docs/week08/labs/python` — run every `python ...` command from here |
-| Board protocol (Python) | `nd1/docs/week08/labs/python/wire.py` — same frames as the workshop's `demos/src/lib/wire/*.ts` |
+| Board protocol (Python) | `robotos_edge.hardware.wire` (inside the wheel) — same frames as the workshop's `demos/src/lib/wire/*.ts` |
 | Board firmware for collection and live tests | hardware-interface-workshop [`firmware-prebuilt/`](https://github.com/drsanti/hardware-interface-workshop/tree/main/firmware-prebuilt) (flashed with `esptool`) |
 | On-device inference firmware | `nd1/docs/week08/labs/firmware/kws-inference` (ESP-IDF; replaces the prebuilt firmware while flashed) |
 | Audio driver used by `kws-inference` | `nd1/docs/week08/labs/firmware/components/es3c28p_audio` |

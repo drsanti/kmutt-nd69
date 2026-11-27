@@ -31,8 +31,8 @@ Close the workshop browser tab first (only one program can own the port), then:
 
 ```bash
 cd nd1/docs/week08/labs/python
-python collect_imu.py --port COM7 --check                                  # 3 s of live values
-python collect_imu.py --port COM7 --person alice --session s01 --takes 20
+robotos-kws check-imu --port COM7                                  # 3 s of live values
+robotos-kws collect-imu --port COM7 --person alice --session s01 --takes 20
 ```
 
 `--check` prints the measured rate, lost samples, the mean acceleration (|a| should be about 9.8 when still), and the gyro noise.
@@ -54,7 +54,7 @@ imu_dataset/
 CSV columns: t_s, ax, ay, az (m/s²), gx, gy, gz (rad/s) — 100 rows = 2.0 s at 50 Hz
 ```
 
-Pack all windows into one array file for Colab or your own notebook: `python imu_common.py pack --data imu_dataset` → `imu_dataset.npz` (`x` = N × 100 × 6, `y`, `person`, `session`, `labels`).
+Pack all windows into one array file for Colab or your own notebook: `python -c "from robotos_edge.imu import features as f; f.main(['pack', '--data', 'imu_dataset'])"` → `imu_dataset.npz` (`x` = N × 100 × 6, `y`, `person`, `session`, `labels`).
 
 ## 3. Design the dataset
 
@@ -69,20 +69,20 @@ Rules carried over from Lesson 02:
 
 - **Balanced classes**, at least 30 windows per gesture per person to start.
 - **Many people.** Everybody moves differently: speed, size, and grip. Swap windows with classmates (with consent).
-- **Split by person.** `train_imu.py` holds out whole people for the test set, so the score says how the model does on someone it has never seen. Two windows of the same person are near-copies; mixing them across train and test inflates the score.
+- **Split by person.** `robotos-kws train-imu` holds out whole people for the test set, so the score says how the model does on someone it has never seen. Two windows of the same person are near-copies; mixing them across train and test inflates the score.
 - `idle` must include the boring things people really do (looking at the screen, walking with the board), or the model will call them gestures.
 
-To add your own gesture, add it to `GESTURES` in `imu_common.py` and a hint in `HOW` in `collect_imu.py`.
+The four gesture slots (`idle`, `shake`, `circle`, `lift`) are fixed in `robotos_edge` 0.2.0. To use your own gesture, perform it while collecting one of the three motion slots (for example `--labels circle`) and rename that slot in your application.
 
 ## 4. Windowing and resampling
 
 The model sees a fixed **window**: 2.0 s = 100 time steps × 6 channels. Why fixed and why resample?
 
 - A neural network needs a fixed input shape.
-- USB delivery is bursty and a frame can be lost; interpolating onto an exact 20 ms grid (`imu_common.to_grid()`) gives the model evenly spaced samples, using the board's timestamps rather than the arrival time.
+- USB delivery is bursty and a frame can be lost; interpolating onto an exact 20 ms grid (`robotos_edge.imu.features.to_grid()`) gives the model evenly spaced samples, using the board's timestamps rather than the arrival time.
 - 2 s holds a whole gesture plus a little context. Shorter windows react faster but can cut a circle in half; longer windows delay detection.
 
-Live, the same window **slides**: `live_infer_imu.py` keeps the newest 2 s and runs the model every 200 ms (`--hop-ms`).
+Live, the same window **slides**: `robotos-kws live-imu` keeps the newest 2 s and runs the model every 200 ms (`--hop-ms`).
 
 ```text
 time ─────────────────────────────────────────────►
@@ -93,7 +93,7 @@ time ─────────────────────────
 
 ## 5. Normalisation, orientation, and axes
 
-`imu_common.normalise()` divides acceleration by 9.80665 (→ units of g) and angular velocity by 4 rad/s, then clips to ±4. It uses **fixed** scales, not a per-window z-score, on purpose: a gentle tilt and a hard shake must not look the same.
+`robotos_edge.imu.features.normalise()` divides acceleration by 9.80665 (→ units of g) and angular velocity by 4 rad/s, then clips to ±4. It uses **fixed** scales, not a per-window z-score, on purpose: a gentle tilt and a hard shake must not look the same.
 
 **Orientation is the hard part.** The IMU measures in the **board's** axes. Gravity (1 g) appears on whichever axis points down:
 
@@ -107,17 +107,17 @@ The same "lift" made with the board held flat or held upright therefore produces
 | Approach | Effect | Cost |
 |---|---|---|
 | Agree on a grip ("screen up, USB to the right") | Consistent data | Users must follow the rule |
-| **Rotation augmentation** (`imu_common.augment`, ±20° random rotation of accel and gyro together) | Model tolerates a sloppy grip | More training time |
+| **Rotation augmentation** (`robotos_edge.imu.features.augment`, ±20° random rotation of accel and gyro together) | Model tolerates a sloppy grip | More training time |
 | Remove gravity (subtract the window mean of acceleration) | Ignores how the board is held | Loses tilt information (cannot tell "turn over" from "idle") |
 | Use magnitudes (|a|, |ω|) | Fully orientation-independent | Loses direction: `lift` and `shake` may blur |
 
-`train_imu.py` uses fixed scaling plus augmentation: random rotation, time shift (±10 samples = ±0.2 s), motion strength ×0.8–1.2, and sensor noise. Check the axis directions on your board first with workshop lab ex20 or `collect_imu.py --check`.
+`robotos-kws train-imu` uses fixed scaling plus augmentation: random rotation, time shift (±10 samples = ±0.2 s), motion strength ×0.8–1.2, and sensor noise. Check the axis directions on your board first with workshop lab ex20 or `robotos-kws collect-imu --check`.
 
 ## 6. Train, test, quantize
 
 ```bash
-python train_imu.py --data imu_dataset --out imu_artifacts
-python train_imu.py --synthetic --out imu_artifacts       # no board: generated gestures, plumbing test only
+robotos-kws train-imu --data imu_dataset --out imu_artifacts
+robotos-kws train-imu --synthetic --out imu_artifacts       # no board: generated gestures, plumbing test only
 ```
 
 ```text
@@ -147,8 +147,8 @@ Notes:
 ## 7. Live test with the board
 
 ```bash
-python live_infer_imu.py --port COM7 --model imu_artifacts/model_int8.tflite
-python live_infer_imu.py --replay imu_dataset/circle/s01_alice_ws28p_0003.csv --model imu_artifacts/model_int8.tflite   # no board
+robotos-kws live-imu --port COM7 --model imu_artifacts/model_int8.tflite
+robotos-kws live-imu --replay imu_dataset/circle/s01_alice_ws28p_0003.csv --model imu_artifacts/model_int8.tflite   # no board
 ```
 
 ```text
@@ -169,7 +169,7 @@ Try:
 
 ## Check your understanding
 
-1. Why does `collect_imu.py` resample on the board's timestamps instead of using the samples as they arrive?
+1. Why does `robotos-kws collect-imu` resample on the board's timestamps instead of using the samples as they arrive?
 2. A model trained with the board flat fails when the board is held upright. Give two fixes and their costs.
-3. Why does `train_imu.py` split by person, and what would a random split report instead?
+3. Why does `robotos-kws train-imu` split by person, and what would a random split report instead?
 4. Why are fixed scales better than per-window standardisation for telling `idle` from `shake`?

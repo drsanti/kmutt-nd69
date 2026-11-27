@@ -16,7 +16,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 
 > [!NOTE]
 > - **ND01 (Embedded Track):** Embedded Systems & IoT — Focus on CLI-only pipeline using PC microphone, model quantization, and C firmware generation.
-> - **ND02 (App Track):** Backend & Frontend — Focus on Python SDK (`import robotos_kws`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
+> - **ND02 (App Track):** Backend & Frontend — Focus on Python SDK (`import robotos_edge`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
 > - **ND03 (This Track):** Automation & Robotics — Focus on real board hardware and 50 Hz IMU motion gestures.
 >
 > 💡 *Note: While **KWS** originally stands for **Keyword Spotting** (acoustic wake-words), `robotos-kws` is designed as a unified Edge AI toolkit: ND1/ND2 perform audio keyword spotting, while ND3 applies the exact same TinyML sliding-window pipeline to **Motion Gesture Spotting** using 6-DOF IMU sensors.*
@@ -56,7 +56,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 > Simply connect your board via USB-C and run:
 > ```bash
 > # Automated firmware flasher (auto-detects port, downloads binaries, flashes, and verifies):
-> robotos flash-firmware
+> robotos flash-firmware --board ws28p
 > # (or: robotos-kws flash-firmware / robotos-flash)
 > ```
 > *(Prebuilt binaries and manual flashing guide also available at [`hardware-interface-workshop/firmware-prebuilt`](https://github.com/drsanti/hardware-interface-workshop/blob/main/firmware-prebuilt/README.md))*.
@@ -67,7 +67,7 @@ In this session, you work with physical hardware: an **ESP32-S3 microcontroller 
 
 | Block | Topic | Hands-On CLI Command |
 | :--- | :--- | :--- |
-| **Prerequisite** | ⚡ **Flash Firmware First** (Auto-Detect, Flash & Verify) | `robotos flash-firmware` |
+| **Prerequisite** | ⚡ **Flash Firmware First** (Auto-Detect, Flash & Verify) | `robotos flash-firmware --board ws28p` |
 | **Block 1** | Physical Telemetry & Wire Protocol Inspection | `robotos check-imu` |
 | **Block 2** | Motion Gesture Dataset Collection (Physical Board) | `robotos-kws collect-imu --port COM7` |
 | **Block 3** | 6-DOF Signal Conditioning & 1D-CNN Training | `robotos-kws train-imu --data imu_dataset` |

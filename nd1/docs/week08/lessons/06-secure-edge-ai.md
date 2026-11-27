@@ -17,7 +17,7 @@ Identify what an attacker can do with physical access to an Edge AI device, and 
 | Data | Recorded audio or user data in flash/SD | Voice clips extracted from a lost device |
 | Decisions | Adversarial inputs | A sound pattern that triggers `off` |
 
-**Host inference is a privacy trade-off too.** With the workshop firmware, the board streams raw microphone audio to any program that opens its USB port — that is exactly what `collect.py` and `live_infer_board.py` use. Fine for a lab; in a product, raw sensor streams should be off by default, need an explicit command, and never leave the device unless the user agreed.
+**Host inference is a privacy trade-off too.** With the workshop firmware, the board streams raw microphone audio to any program that opens its USB port — that is exactly what `robotos-kws collect-board` and `robotos-kws live-board` use. Fine for a lab; in a product, raw sensor streams should be off by default, need an explicit command, and never leave the device unless the user agreed.
 
 On the board, the model is just bytes in flash: `g_kws_model` sits in the app image. Without protection, reading the flash over USB with `esptool` (`read-flash`) copies it in seconds.
 

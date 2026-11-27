@@ -11,7 +11,7 @@ Put the int8 model into firmware as a C array, run it with TensorFlow Lite Micro
 > [!IMPORTANT]
 > Until now the board ran the **workshop prebuilt firmware** and the model ran on your computer. In this lesson the model moves **onto the ESP32-S3**. That means flashing a different program, `kws-inference`, built with ESP-IDF v6.1:
 >
-> - While `kws-inference` is on the board, the workshop protocol is gone: `collect.py`, `live_infer_board.py`, and the workshop browser demos will not connect.
+> - While `kws-inference` is on the board, the workshop protocol is gone: `robotos-kws collect-board`, `robotos-kws live-board`, and the workshop browser demos will not connect.
 > - When you are done, **reflash the prebuilt firmware**: `cd hardware-interface-workshop/firmware-prebuilt/es3c28p` → `python -m esptool -p <PORT> write-flash "@flash_args"`.
 > - In class the instructor demonstrates this step; students with ESP-IDF set up can follow along. It is also the starting point for **Mini-Project 2** (5 December).
 
@@ -37,7 +37,7 @@ labs/firmware/
         ├── idf_component.yml      espressif/esp-tflite-micro ~1.4.3, espressif/led_strip ~3.1.1
         ├── kws_main.cc            tasks, queue, TFLM interpreter, decision logic, LED
         ├── kws_config.h           gain, mic slot, hop, threshold, arena size, priorities
-        ├── kws_features.c/.h      log-mel in C (twin of kws_common.py)
+        ├── kws_features.c/.h      log-mel in C (twin of robotos_edge.audio.features)
         ├── model_data.cc          the model as a C array (generated)
         └── kws_labels.h           label order (generated)
 ```
@@ -48,7 +48,7 @@ Dependencies come from the [ESP Component Registry](https://components.espressif
 
 ```bash
 cd nd1/docs/week08/labs/python
-python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
+robotos-kws export --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
 ```
 
 ```c
@@ -81,7 +81,7 @@ python -m esptool --chip esp32s3 -p <PORT> write-flash "@flash_args"
 # Windows: py -m esptool --chip esp32s3 -p COMx write-flash "@flash_args"
 ```
 
-Then `python collect.py --port <PORT> --info` should print the `BoardInfo` line again.
+Then `robotos-kws check-board --port <PORT>` should print the `BoardInfo` line again.
 
 > [!NOTE]
 > These projects were written against ESP-IDF v6.1 and the component versions above, and their API use was checked against those sources. They have **not** been built with `idf.py` or flashed for this course yet. Record your build result and your hardware result separately, as in Week 03.
@@ -128,25 +128,25 @@ ESP_LOGI(TAG, "arena used %u", (unsigned)interpreter.arena_used_bytes());
 ```
 
 - **Static arena:** all activations live in one array sized at compile time. No heap fragmentation, and the memory cost is visible in the map file.
-- **Op resolver:** registers only the ops `train.py` printed. A missing op makes `AllocateTensors()` fail with a clear log message; unused ops waste flash.
+- **Op resolver:** registers only the ops `robotos-kws train` printed. A missing op makes `AllocateTensors()` fail with a clear log message; unused ops waste flash.
 - **Arena size:** the TFLite Micro reference interpreter on a PC needed about 37 KB for the course model. The firmware reserves 64 KB and prints the real usage at boot. Shrink `KWS_ARENA_BYTES` to the printed value plus a margin.
 
 ### On-device features must match training
 
-`kws_features.c` implements the same steps as `kws_common.log_mel()`, with the same constants (`KWS_FRAME_LEN 480`, `KWS_FRAME_STEP 320`, `KWS_FFT_LEN 512`, `KWS_NUM_MEL 40`, 20–7600 Hz, `ln(x + 1e-6)`). It is plain C99 and builds on a PC, so `verify_c_features.py` can compare it with Python on your own clips.
+`kws_features.c` implements the same steps as `robotos_edge.audio.features.log_mel()`, with the same constants (`KWS_FRAME_LEN 480`, `KWS_FRAME_STEP 320`, `KWS_FFT_LEN 512`, `KWS_NUM_MEL 40`, 20–7600 Hz, `ln(x + 1e-6)`). It is plain C99 and builds on a PC, so `robotos-kws verify-c` can compare it with Python on your own clips.
 
 The **audio** feeding those features is a different story. Your training clips came through the workshop firmware's capture chain; `kws-inference` has its own, simpler one:
 
 | | Workshop prebuilt firmware (training clips) | `kws-inference` (on-device) |
 |---|---|---|
 | Channel | louder of the two I2S slots | `KWS_MIC_SLOT -1` does the same (or pick 0 / 1) |
-| Gain | `MicCmd.gain_pct` (`collect.py --gain`, default 60 %) spread over PGA + ADC scale + digital volume | `KWS_MIC_GAIN_DB` through `esp_codec_dev` |
+| Gain | `MicCmd.gain_pct` (`robotos-kws collect-board --gain`, default 60 %) spread over PGA + ADC scale + digital volume | `KWS_MIC_GAIN_DB` through `esp_codec_dev` |
 | Filters | 40 Hz high-pass, 6.5 kHz low-pass, soft limiter | none (the feature code removes the mean of each frame) |
 
 So the board may hear the same word **louder or quieter, and slightly brighter**, than the clips the model learned from. Log-mel features turn a level difference into a constant offset, and the training augmentation only covers about ±6 dB. To match:
 
 1. Each log line ends with the **dBFS level** of the newest 500 ms.
-2. Say a keyword at the same distance you used for collection and compare with the `rms` that `collect.py` printed for your clips.
+2. Say a keyword at the same distance you used for collection and compare with the `rms` that `robotos-kws collect-board` printed for your clips.
 3. Change `KWS_MIC_GAIN_DB` until the two are within a few dB, rebuild, and test again.
 4. Better still (Mini-Project 2): record a few clips **through `kws-inference`** itself, or add the same 40 Hz / 6.5 kHz filters to the capture task, and check the confusion matrix again.
 
@@ -196,12 +196,12 @@ Fill in this table from your board's log (no hardware numbers are given here bec
 3. Temporarily give the inference task a **higher** priority than capture, on the same core. What happens to `dropped`, and why?
 4. Print `interpreter.arena_used_bytes()` and reduce `KWS_ARENA_BYTES` to fit.
 5. Use `vTaskGetRunTimeStats()` (enabled in `sdkconfig.defaults`) to print CPU use per task every 10 s.
-6. Collect 20 board clips of a keyword the board misses (reflash the workshop firmware, `collect.py`), retrain, export, and flash `kws-inference` again. Did the confusion matrix and the board behaviour both improve?
-7. Match levels: compare the dBFS column with your `collect.py` clips and tune `KWS_MIC_GAIN_DB`.
+6. Collect 20 board clips of a keyword the board misses (reflash the workshop firmware, `robotos-kws collect-board`), retrain, export, and flash `kws-inference` again. Did the confusion matrix and the board behaviour both improve?
+7. Match levels: compare the dBFS column with your `robotos-kws collect-board` clips and tune `KWS_MIC_GAIN_DB`.
 
 ## Check your understanding
 
 1. Why does the capture task use a zero timeout in `xQueueSend`?
 2. What happens if you register `AddConv2D` but forget `AddMean`?
 3. Where do the model weights live at run time, and where do the activations live?
-4. After this lesson, `collect.py` reports "No BoardInfo frame received". Why, and what is the fix?
+4. After this lesson, `robotos-kws collect-board` reports "No BoardInfo frame received". Why, and what is the fix?

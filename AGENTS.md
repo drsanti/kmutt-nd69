@@ -57,31 +57,36 @@ This script automatically:
 ## 3. Hardware & Serial Communication Rules (ESP32-S3)
 
 ### ESP32-S3 USB Serial/JTAG Reset Prevention
-- The ws28p board uses the ESP32-S3 native USB Serial/JTAG controller (`USB VID:PID = 303A:1001`).
-- **Hardware behavior**: Pulsing `RTS=1, DTR=0` triggers a hardware reset into the bootloader or reboots the board.
-- When configuring or connecting via PySerial in `wire.py` or any script:
+- Both boards (ws28p, es3c28p) use the ESP32-S3 native USB Serial/JTAG controller (`USB VID:PID = 303A:1001`), which can reset the chip from the DTR/RTS line states.
+- **Measured on an es3c28p (fw `robotos-fw/0.3.0`, macOS, 2026-11-27)** — port open, no commands sent, 9 s:
+  | Lines while open | Result |
+  | :--- | :--- |
+  | DTR **low**, RTS low | Board reboots ~4 s after open (ROM prints `rst:0x15 (USB_UART_CHIP_RESET)`), then every command gets "No reply from board" |
+  | DTR high, RTS high (pyserial default) | Board resets at open (~5 s of silence), then streams |
+  | **DTR high, RTS low** | **Streams the whole time, no reset** |
+- **Rule:** open with `rts=False, dtr=True` set *before* `open()`; never assert RTS; on close only drop RTS and close:
   ```python
-  # ALWAYS disable DTR and RTS before opening:
   ser = serial.Serial()
   ser.port = port
-  ser.baudrate = baudrate
-  ser.dtr = False
-  ser.rts = False
+  ser.baudrate = 921600   # ignored by USB Serial/JTAG
+  ser.rts = False         # RTS = EN: never pull it
+  ser.dtr = True          # DTR low made the board reboot ~4 s after open
   ser.open()
-  ```
-- When closing the serial port:
-  ```python
-  # ALWAYS explicitly clear DTR and RTS before closing:
-  ser.dtr = False
+  ...
   ser.rts = False
   ser.close()
   ```
-- **Never** allow PySerial's default constructor (`serial.Serial(port, baudrate)`) to run without explicitly clearing RTS and DTR, as it will reset the microcontroller every time a command connects or exits.
+- **Do not change these line states without re-testing on a real board.** An earlier rule here ("always set DTR=False") caused exactly the reboot loop above. The 4 s delay is not explained by the documented `RTS=1, DTR=0` reset trigger, so treat the table as measured behavior, not theory, and re-check on Windows.
+- How to see a reset: data stops for ~4.5 s and the ROM banner `rst:0x15 (USB_UART_CHIP_RESET)` appears on the port.
+- Side effect: without the reboot, an idle board sends `BoardInfo` only every 10–30 s, so tools must not wait for BoardInfo alone (the SDK switches the mic on briefly to identify an es3c28p).
+- **Never** use PySerial's default constructor (`serial.Serial(port, baudrate)`): it raises both lines on open, which resets the board.
 
 ### Firmware Flashing Command (ND1, ND2, ND3)
 ```bash
-# Auto-detects port, downloads prebuilt binaries, flashes, and verifies:
-robotos flash-firmware
+# Auto-detects port, downloads prebuilt binaries, flashes, and verifies.
+# ALWAYS pass --board: it defaults to ws28p and flashes whatever ESP32-S3 is found,
+# so a bare command would put IMU firmware on an es3c28p (mic) board.
+robotos flash-firmware --board ws28p      # or --board es3c28p
 
 # Or specify board/port explicitly:
 robotos flash-firmware --board ws28p --port COM17
@@ -129,7 +134,7 @@ When working on **macOS (Apple Silicon / Intel)**:
   # Or from kmutt-nd69:
   python3 ../sdk/python-kws/publish_to_students.py
   ```
-- **Wheel Compatibility**: `robotos_edge-0.2.0-cp311-cp311-win_amd64.whl` is a pure-Python wheel (`py3-none-any`). It installs and executes natively on macOS (Apple Silicon arm64 & Intel x86_64), Linux, and Windows without recompilation.
+- **Wheel Compatibility**: `robotos_edge` 0.2.0 is a compiled (Cython) wheel for CPython 3.11, one file per platform: `…-win_amd64.whl` (build on Windows) and `…-macosx_11_0_arm64.whl` (build on macOS). There is no Linux wheel yet, so Google Colab cannot install it. Student docs install by name (`pip install --no-index -f ../dist robotos_edge`), so pip picks the right file per OS; keep one wheel per platform in each `dist/`.
 - The pipeline script automatically detects POSIX paths (`.venv/bin/python`), updates wheels in all 3 tracks, audits against code leaks, and runs smoke tests.
 
 ### 4.3 Serial Port Naming on macOS (`/dev/cu.*` vs `/dev/tty.*`)

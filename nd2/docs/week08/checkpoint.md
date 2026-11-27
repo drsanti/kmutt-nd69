@@ -8,7 +8,7 @@ Test your understanding of consuming Edge AI models, designing real-time audio m
 ---
 
 ### Question 1: Programmatic Model Inference
-When using `robotos_kws.Detector`, what is the primary difference between `.predict(wav_path)` and `.predict_proba(wav_path)`?
+When using `robotos_edge.Detector`, what is the primary difference between `.predict(wav_path)` and `.predict_proba(wav_path)`?
 - A) `.predict()` works on PC microphone only; `.predict_proba()` works on serial hardware boards.
 - B) `.predict()` returns the top predicted label and its confidence scalar; `.predict_proba()` returns a full dictionary mapping every class to its softmax probability.
 - C) `.predict()` requires float32 models; `.predict_proba()` requires int8 quantized models.
@@ -41,7 +41,7 @@ In a continuous sliding-window detector (e.g. $200\text{ ms}$ hop, $1.0\text{ s}
 ---
 
 ### Question 4: Hot-Reloading in Production MLOps
-When a background training worker (`robotos_kws.Trainer`) finishes training an updated int8 model, how should the backend service apply the update?
+When a background training worker (`robotos_edge.Trainer`) finishes training an updated int8 model, how should the backend service apply the update?
 - A) Restart the entire operating system.
 - B) Delete the database and clear all client browser cookies.
 - C) Atomically instantiate a new `Detector("artifacts/model_int8.tflite")` instance and replace the server's global reference without terminating active WebSocket connections.

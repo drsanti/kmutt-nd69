@@ -96,22 +96,23 @@ This grants permission **only to the current PowerShell process**, leaving your 
 ---
 
 ### Question 5: File System Paths (`.` vs `..`)
-**Q:** If your terminal is located in `nd3/docs/week08/labs/robotics` and you run:  
+**Q:** If your terminal is located in `nd3/docs/week08/labs` and you run:  
 ```bash
-python robot_fsm.py --model ../../../nd1/docs/week08/labs/python/artifacts/model_int8.tflite
+python robot_fsm.py --model ../../../../nd1/docs/week08/labs/python/imu_artifacts/model_int8.tflite
 ```
-What do the three sets of `../` represent, and how does path navigation work here?
+What do the four sets of `../` represent, and how does path navigation work here?
 
 <details>
 <summary>Answer & Explanation</summary>
 
 **Answer:**  
 Each `../` moves one directory up:
-1. `../` moves up to `nd3/docs/week08/labs`.
-2. `../../` moves up to `nd3/docs/week08`.
-3. `../../../` moves up to `nd3/docs`.
+1. `../` moves up to `nd3/docs/week08`.
+2. `../../` moves up to `nd3/docs`.
+3. `../../../` moves up to `nd3`.
+4. `../../../../` moves up to the repository root, which contains `nd1/`, `nd2/`, and `nd3/`.
 
-From there, it traverses down into `nd1/docs/week08/labs/python/artifacts/model_int8.tflite`. Understanding relative paths allows you to share trained artifacts across tracks without making duplicate copies.
+From there, it traverses down into `nd1/docs/week08/labs/python/imu_artifacts/model_int8.tflite` (an IMU model trained in ND1 Lesson 07; `robot_fsm.py` needs an IMU model, not the audio model in `artifacts/`). Understanding relative paths allows you to share trained artifacts across tracks without making duplicate copies.
 </details>
 
 ---

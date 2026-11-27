@@ -34,11 +34,11 @@ Rules work when you can describe the difference in one sentence. "Was the word *
 
 | Stage | Runs on | Tool in this week | Output |
 |---|---|---|---|
-| Collect | Board (workshop firmware streams to the PC) or PC mic | `collect.py`, `collect_pc_mic.py`, `collect_imu.py` | `dataset/<label>/*.wav`, `imu_dataset/<gesture>/*.csv` |
-| Train | PC / Colab | `train.py`, `train_imu.py` (Keras) | `model.keras`, `model_float.tflite` |
-| Test | PC / Colab | `evaluate.py`; live: `live_infer_board.py`, `live_infer_pc.py`, `live_infer_imu.py` | `report.md`, confusion matrix |
-| Quantize | PC / Colab | `train.py` (TFLite converter) | `model_int8.tflite` |
-| Deploy | ESP32-S3 (demo / advanced, Mini-Project 2) | `export_c_array.py` + `kws-inference` | firmware with the model in flash |
+| Collect | Board (workshop firmware streams to the PC) or PC mic | `robotos-kws collect-board`, `robotos-kws collect-pc`, `robotos-kws collect-imu` | `dataset/<label>/*.wav`, `imu_dataset/<gesture>/*.csv` |
+| Train | PC / Colab | `robotos-kws train`, `robotos-kws train-imu` (Keras) | `model.keras`, `model_float.tflite` |
+| Test | PC / Colab | `robotos-kws evaluate`; live: `robotos-kws live-board`, `robotos-kws live-pc`, `robotos-kws live-imu` | `report.md`, confusion matrix |
+| Quantize | PC / Colab | `robotos-kws train` (TFLite converter) | `model_int8.tflite` |
+| Deploy | ESP32-S3 (demo / advanced, Mini-Project 2) | `robotos-kws export` + `kws-inference` | firmware with the model in flash |
 | Monitor | ESP32-S3 | serial log: scores, latency, drops | the next round of data |
 
 Stage 6 is where real projects spend most of their time. The first deployed model is never the last one: you record the cases where it fails on the board and add them to the dataset.
@@ -87,7 +87,7 @@ A model that needs 2 MB of weights or 500 KB of activations does not fit, howeve
 1. **Signal processing (deterministic):** windowing, FFT, mel filters, log. Written in C. It must match training exactly.
 2. **Neural network (learned):** the TFLite model. Its weights come from training; TFLite Micro runs it.
 
-Around both sits **decision logic**: averaging scores over time, a threshold, and a refractory period so one word does not trigger three times. This logic is tuned on the PC with `live_infer_board.py` / `live_infer_pc.py` (same code) and copied into `kws_config.h`.
+Around both sits **decision logic**: averaging scores over time, a threshold, and a refractory period so one word does not trigger three times. This logic is tuned on the PC with `robotos-kws live-board` / `robotos-kws live-pc` (same code) and copied into `kws_config.h`.
 
 ## Check your understanding
 

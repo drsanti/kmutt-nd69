@@ -11,12 +11,12 @@ Measure a model honestly on held-out data, read a confusion matrix, quantize the
 ## Evaluate on the test split
 
 ```bash
-python evaluate.py --artifacts artifacts --data dataset
-python evaluate.py --artifacts artifacts --data dataset --device board     # board clips only
-python evaluate.py --artifacts artifacts --data board_session3 --all       # a fresh folder, every clip
+robotos-kws evaluate --artifacts artifacts --data dataset
+robotos-kws evaluate --artifacts artifacts --data dataset --device board     # board clips only
+robotos-kws evaluate --artifacts artifacts --data board_session3 --all       # a fresh folder, every clip
 ```
 
-`evaluate.py` runs **both** TFLite models (float32 and int8) through `kws_common.run_tflite()`, the same input quantization the firmware uses, and writes `artifacts/report.md`.
+`robotos-kws evaluate` runs **both** TFLite models (float32 and int8) through `robotos_edge.audio.features.run_tflite()`, the same input quantization the firmware uses, and writes `artifacts/report.md`.
 
 Example from the synthetic dry run (48 test clips from held-out speakers):
 
@@ -75,7 +75,7 @@ real_value ≈ scale × (q − zero_point)          q ∈ [−128, 127]
 
 ### The representative dataset
 
-To choose a scale for every activation tensor, the converter must see realistic inputs. `train.py` passes 300 random training feature matrices:
+To choose a scale for every activation tensor, the converter must see realistic inputs. `robotos-kws train` passes 300 random training feature matrices:
 
 ```python
 conv.optimizations = [tf.lite.Optimize.DEFAULT]
@@ -95,7 +95,7 @@ The converter stores the input scale and zero point in the model (`meta.json` sh
 q = clamp(round(x / scale) + zero_point, −128, 127)
 ```
 
-`kws_common.run_tflite()` does exactly the same, so the PC accuracy of the int8 model is what the board should achieve on the same audio.
+`robotos_edge.audio.features.run_tflite()` does exactly the same, so the PC accuracy of the int8 model is what the board should achieve on the same audio.
 
 ### Why is int8 not 4× smaller here?
 
@@ -106,11 +106,11 @@ The size ratio was 0.72, not 0.25. With only ~5.5 k weights, the FlatBuffer stru
 The board keeps the workshop firmware and streams its microphone; the model runs on your computer:
 
 ```bash
-python live_infer_board.py --port COM5 --model artifacts/model_float.tflite artifacts/model_int8.tflite
+robotos-kws live-board --port COM5 --model artifacts/model_float.tflite artifacts/model_int8.tflite
 ```
 
 ```text
-ES3C28P mic ─► workshop firmware ─USB MicPcm 16 kHz─► live_infer_board.py ─► log-mel ─► model ─► "red  0.91  <== DETECTED"
+ES3C28P mic ─► workshop firmware ─USB MicPcm 16 kHz─► robotos-kws live-board ─► log-mel ─► model ─► "red  0.91  <== DETECTED"
 ```
 
 This is the most honest test you can do without new firmware: it uses the **board microphone, the board's filter chain, and the board gain** — exactly what the data path A clips contain. If a USB chunk is lost (`MicPcm.seq` gap), the script inserts the same number of silent samples so the timing stays right, and prints the number of lost chunks at the end. A few in a minute is harmless; many means the computer is overloaded or another program is reading the port.
@@ -118,8 +118,8 @@ This is the most honest test you can do without new firmware: it uses the **boar
 No board? Use the computer microphone with the same detector code:
 
 ```bash
-python live_infer_pc.py --model artifacts/model_float.tflite artifacts/model_int8.tflite
-python live_infer_pc.py --model artifacts/model_int8.tflite --wav my_sentence.wav      # no microphone needed
+robotos-kws live-pc --model artifacts/model_float.tflite artifacts/model_int8.tflite
+robotos-kws live-pc --model artifacts/model_int8.tflite --wav my_sentence.wav      # no microphone needed
 ```
 
 Both scripts use the same streaming logic as the on-device firmware in Lesson 05:
@@ -138,14 +138,14 @@ Try:
 3. Change `--threshold` (0.5, 0.7, 0.9) and `--smooth` (1, 3, 5). Note the trade-off between misses and false triggers.
 4. Write down the best values. If you continue to Lesson 05, copy them into `kws_config.h` (`KWS_THRESHOLD`, `KWS_SMOOTH_WINDOW`). The firmware hop is 500 ms, so its smoothing window covers more time; adjust accordingly.
 
-Remember: a good live result on the **PC** microphone does not guarantee a good result with the **board** microphone. `live_infer_board.py` is the test that counts.
+Remember: a good live result on the **PC** microphone does not guarantee a good result with the **board** microphone. `robotos-kws live-board` is the test that counts.
 
 ## Lab checklist
 
 - [ ] `report.md` saved, with float32 and int8 accuracy and the drop in percentage points
 - [ ] Board-only accuracy reported (or "no board data")
 - [ ] One sentence on the worst row of the confusion matrix and what data would fix it
-- [ ] Live test done with `live_infer_board.py` (or `live_infer_pc.py` without a board): detections and false triggers noted
+- [ ] Live test done with `robotos-kws live-board` (or `robotos-kws live-pc` without a board): detections and false triggers noted
 - [ ] Threshold and smoothing chosen from the live test
 
 ## Check your understanding
@@ -153,4 +153,4 @@ Remember: a good live result on the **PC** microphone does not guarantee a good 
 1. In the matrix above, what is the recall of `_unknown_`, and what does a low value mean on the device?
 2. Why must the representative dataset include board clips if the model will run on the board?
 3. Float32 and int8 agree on 100% of test clips, but the board performs badly. Is quantization the cause? What would you check first?
-4. `live_infer_board.py` reports 40 lost chunks in one minute. What does each lost chunk do to the audio the model sees, and what would you check?
+4. `robotos-kws live-board` reports 40 lost chunks in one minute. What does each lost chunk do to the audio the model sees, and what would you check?

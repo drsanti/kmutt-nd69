@@ -12,11 +12,11 @@
 **Topic:** *Integrating Edge AI Models into APIs, Real-Time Streams, and Web Applications*  
 **Track Focus for ND2:** **Backend & Frontend (Full-Stack) — SDK Integration using Computer Microphone (No Board Required)**
 
-In this session, you learn how software engineers consume edge AI models programmatically. Using the **`robotos_kws` Python SDK**, you will load quantized deep learning models, build high-performance REST APIs with FastAPI, stream real-time speech events over WebSockets, build an interactive voice-reactive web dashboard, and establish an automated background MLOps retraining service.
+In this session, you learn how software engineers consume edge AI models programmatically. Using the **`robotos_edge` Python SDK**, you will load quantized deep learning models, build high-performance REST APIs with FastAPI, stream real-time speech events over WebSockets, build an interactive voice-reactive web dashboard, and establish an automated background MLOps retraining service.
 
 > [!NOTE]
 > - **ND01 (Embedded Track):** Embedded Systems & IoT — Focus on CLI-only pipeline, MCU resource limits, and C firmware export.
-> - **ND02 (This Track):** Backend & Frontend — Focus on Python SDK (`import robotos_kws`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
+> - **ND02 (This Track):** Backend & Frontend — Focus on Python SDK (`import robotos_edge`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
 > - **ND03 (Robotics Track):** Automation & Robotics — Focus on real board hardware and 50 Hz IMU motion gestures.
 
 ---
@@ -32,11 +32,11 @@ In this session, you learn how software engineers consume edge AI models program
 
 ## Learning Outcomes
 
-- **Consume Machine Learning via SDK**: Use `robotos_kws.Detector` to run single-clip predictions, extract softmax probability distributions, and consume continuous audio generators.
+- **Consume Machine Learning via SDK**: Use `robotos_edge.Detector` to run single-clip predictions, extract softmax probability distributions, and consume continuous audio generators.
 - **Microservice API Architecture**: Build asynchronous REST endpoints (`POST /api/v1/classify`, `GET /api/v1/model/info`) with FastAPI, Pydantic validation, and OpenAPI documentation.
 - **Real-Time Event Streaming**: Stream continuous speech classification events over WebSockets (`ws://localhost:8000/ws/kws`) with latency under $50\text{ ms}$.
 - **Reactive Voice Dashboard**: Build a modern web interface that updates UI theme, displays live probability bars, and dispatches UI actions on target keywords (`red`, `green`, `blue`, `off`).
-- **MLOps Automation**: Programmatically trigger model retraining with `robotos_kws.Trainer` and hot-reload active model instances without server restarts.
+- **MLOps Automation**: Programmatically trigger model retraining with `robotos_edge.Trainer` and load the new model into the running service (restart it, or add a reload endpoint as an extension).
 
 ---
 
@@ -48,7 +48,7 @@ In this session, you learn how software engineers consume edge AI models program
 | **09:30–10:15** | Block 2 | Building an Audio Inference Microservice | FastAPI REST API (`/api/v1/classify`) |
 | **10:15–11:00** | Block 3 | Real-Time Speech Streaming with WebSockets | WebSocket Endpoint (`/ws/kws`) |
 | **11:00–11:35** | Block 4 | Voice-Controlled Web Application (Dashboard) | Single-Page Reactive Web UI |
-| **11:35–12:00** | Block 5 | Automated MLOps & Retraining Pipeline | `robotos_kws.Trainer` Webhook |
+| **11:35–12:00** | Block 5 | Automated MLOps & Retraining Pipeline | `robotos_edge.Trainer` Webhook |
 
 ---
 
@@ -56,7 +56,7 @@ In this session, you learn how software engineers consume edge AI models program
 
 ```mermaid
 flowchart LR
-    MIC["Computer Microphone"] -->|"16 kHz PCM"| SDK["robotos_kws SDK\n(Detector & Trainer)"]
+    MIC["Computer Microphone"] -->|"16 kHz PCM"| SDK["robotos_edge SDK\n(Detector & Trainer)"]
     SDK -->|"Events / Softmax"| API["FastAPI Backend\nREST & WebSockets"]
     API -->|"HTTP JSON"| CLIENT1["REST API Clients"]
     API -->|"WebSocket Stream"| DASH["Voice-Reactive Web Dashboard\n(HTML5 / Tailwind / JS)"]

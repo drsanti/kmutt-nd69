@@ -3,3 +3,5 @@ numpy>=1.26
 tensorflow>=2.16
 pyserial>=3.5
 scipy>=1.10
+sounddevice>=0.4.6
+esptool>=4.7

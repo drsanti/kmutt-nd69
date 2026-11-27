@@ -11,7 +11,7 @@
 Listens continuously to the onboard microphone, runs a TensorFlow Lite Micro int8 model every 500 ms, and sets the WS2812 LED (GPIO42) for `red`, `green`, or `blue`, or turns it off for `off`.
 
 > [!IMPORTANT]
-> **This firmware replaces the hardware-interface-workshop prebuilt firmware while it is on the board.** It does not speak the workshop wire protocol, so `collect.py`, `live_infer_board.py`, and the workshop browser demos will not work until you put the prebuilt firmware back:
+> **This firmware replaces the hardware-interface-workshop prebuilt firmware while it is on the board.** It does not speak the workshop wire protocol, so `robotos-kws collect-board`, `robotos-kws live-board`, and the workshop browser demos will not work until you put the prebuilt firmware back:
 >
 > ```bash
 > # Restore workshop prebuilt firmware automatically (with port detection & handshake):
@@ -26,7 +26,7 @@ Listens continuously to the onboard microphone, runs a TensorFlow Lite Micro int
 ```bash
 # 1. put YOUR model in (the checked-in model is a synthetic placeholder)
 cd nd1/docs/week08/labs/python
-python export_c_array.py --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
+robotos-kws export --model artifacts/model_int8.tflite --out-dir ../firmware/kws-inference/main
 
 # 2. build, flash, watch
 cd ../firmware/kws-inference
@@ -50,7 +50,7 @@ inference_task (core 1, prio 4): 1 s ring buffer → every 500 ms: kws_features_
 |---|---|
 | `main/kws_main.cc` | Tasks, queue, interpreter, decision logic, LED, latency measurement |
 | `main/kws_config.h` | Gain/slot (match the level of your training clips), hop, smoothing, threshold, arena, priorities |
-| `main/kws_features.c/.h` | Log-mel features. Must match `labs/python/kws_common.py`; check with `verify_c_features.py` |
+| `main/kws_features.c/.h` | Log-mel features. Must match `robotos_edge.audio.features` in the wheel; check with `robotos-kws verify-c` |
 | `main/model_data.cc` | Model C array (generated, 16-byte aligned, in flash) |
 | `main/kws_labels.h` | Label order (generated) |
 

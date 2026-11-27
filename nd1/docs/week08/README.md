@@ -16,7 +16,7 @@ In this session, you build a complete Edge AI pipeline from raw audio signals to
 
 > [!NOTE]
 > - **ND01 (This Track):** Embedded Systems & IoT — Focus on CLI-only pipeline using PC microphone, model quantization, and C firmware generation.
-> - **ND02 (App Track):** Backend & Frontend — Focus on Python SDK (`import robotos_kws`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
+> - **ND02 (App Track):** Backend & Frontend — Focus on Python SDK (`import robotos_edge`), FastAPI inference APIs, WebSockets, and reactive web dashboards.
 > - **ND03 (Robotics Track):** Automation & Robotics — Focus on real board hardware and 50 Hz IMU motion gestures.
 
 ---
@@ -39,7 +39,7 @@ In this session, you build a complete Edge AI pipeline from raw audio signals to
 - **Microcontroller Resource Budgeting**: Understand why model memory footprint must fit in SRAM (< 25 KiB) and evaluate static tensor arena memory allocation in FreeRTOS.
 - **Acoustic Dataset Hygiene**: Collect balanced multi-class datasets using computer microphones, enforcing minimum SNR thresholds and negative classes (`_silence_`, `_unknown_`).
 - **Post-Training Quantization (PTQ)**: Quantize float32 models to int8 with representative calibration datasets and evaluate quantization loss.
-- **Real-Time Sliding-Window Inference**: Benchmark continuous detection latency, hop size ($200\text{ ms}$), refractory delay, and softmax confidence thresholds.
+- **Real-Time Sliding-Window Inference**: Benchmark continuous detection latency, hop size ($250\text{ ms}$), refractory delay, and softmax confidence thresholds.
 - **Embedded C Feature Parity**: Verify bit-level feature extraction equivalence between Python DSP and ESP-IDF C headers (`kws_features.c`).
 
 ---
@@ -78,7 +78,7 @@ source .venv/bin/activate
 
 # 2. Install dependencies & precompiled wheel
 pip install -r requirements.txt
-pip install ../dist/robotos_edge-0.2.0-cp311-cp311-win_amd64.whl
+pip install --no-index -f ../dist robotos_edge
 
 # 3. Verify CLI is ready
 robotos-kws --help
