@@ -15,4 +15,5 @@ Course documents for the embedded track.
 - [Week 06 — Self-learning and Mini-Project #1](week06/README.md)
 - [Week 07 — Edge AI Theory](week07/README.md)
 - [Week 08 — Edge AI Data, Training, Testing, and Firmware](week08/README.md)
+- [Week 09 — Seeing the Signal: Visualization for Edge AI](week09/README.md)
 - [Track index](../README.md)

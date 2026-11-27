@@ -1,0 +1,2 @@
+# Week 09 labs: install into your Week 08 virtual environment (see labs/README.md)
+matplotlib>=3.7          # PC plots in Labs 9.1 and 9.2

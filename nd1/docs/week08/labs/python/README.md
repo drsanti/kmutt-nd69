@@ -96,6 +96,8 @@ Students can use the `robotos_edge` SDK to integrate keyword spotting directly i
 - **`examples/02_board_voice_control.py`**: Live voice recognition streamed directly over USB from the ES3C28P microcontroller (`detector.stream_board()`).
 - **`examples/03_classify_audio_file.py`**: Single-clip classification and softmax probability breakdown (`detector.predict()` and `detector.predict_proba()`).
 - **`examples/04_programmatic_train.py`**: Programmatic model training and evaluation (`trainer.train()`, `trainer.evaluate()`). It writes to `artifacts/` and **replaces the model you trained in Lab 1.3**; copy `artifacts/` first if you want to keep it.
+- **`examples/05_board_display.py`**: Live spectrogram and keyword probabilities drawn on the ES3C28P screen (`rk.Display`); tap to set the threshold.
+- **`examples/06_board_waveform.py`**: Time-domain waveform and dBFS level meter on the board screen (`rk.WaveformSweep`); tap to zoom.
 
 Run any example with:
 ```bash
