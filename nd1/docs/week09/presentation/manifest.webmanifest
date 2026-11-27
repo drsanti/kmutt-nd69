@@ -1,0 +1,79 @@
+{
+  "name": "ND01 Week 09 — Seeing the Signal",
+  "short_name": "ND01 W09",
+  "description": "85 offline interactive lab slides for signal processing, DFT, RGB565 displays, sweep charts and CNN quantisation",
+  "id": "nd01-week09-seeing-the-signal",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#14243b",
+  "background_color": "#0a1729",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lab 9.1 — Sampling & SI Units",
+      "short_name": "Lab 9.1",
+      "description": "Jump to Lab 9.1 sampling and SI unit slides",
+      "url": "./index.html#slide-16",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lab 9.2 — Spectrum & DFT",
+      "short_name": "Lab 9.2",
+      "description": "Jump to Lab 9.2 waveform and DFT transform slides",
+      "url": "./index.html#slide-28",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lab 9.3 — Screen & RGB565",
+      "short_name": "Lab 9.3",
+      "description": "Jump to Lab 9.3 display ownership and RGB565 slides",
+      "url": "./index.html#slide-42",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lab 9.4 — Sweep Chart & Clocks",
+      "short_name": "Lab 9.4",
+      "description": "Jump to Lab 9.4 sweep chart and sample clocks",
+      "url": "./index.html#slide-55",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lab 9.5 — CNN & Quantisation",
+      "short_name": "Lab 9.5",
+      "description": "Jump to Lab 9.5 CNN input and quantisation slides",
+      "url": "./index.html#slide-67",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

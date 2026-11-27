@@ -12,6 +12,14 @@ Use arrows, Page Up/Down or Space to move; Home/End to jump; **F** for fullscree
 
 The layout stacks on narrow screens. Dense demonstrations can scroll vertically; navigation remains available at the end. Theme switches light/dark. Print produces an 85-page static **text reference**, including instructor notes and quiz answers. It does not freeze interactive plots or produce a tested PDF artifact.
 
+### Desktop Progressive Web App (PWA)
+
+To run the presentation in a distraction-free, dedicated desktop app window:
+1. Serve the presentation folder with any local static HTTP server (e.g., `python -m http.server 8000` or GitHub Pages).
+2. Open `http://localhost:8000` in Chrome, Edge, or Brave.
+3. Click the **"Install App"** button in the top navigation bar (or the install icon in the browser address bar).
+4. The presentation installs as a native desktop app with offline caching via Service Worker (`sw.js`), desktop app icons, and right-click desktop shortcuts jumping directly to Labs 9.1–9.5.
+
 ## Teaching route
 
 | Chapter | Slides | Focus |
