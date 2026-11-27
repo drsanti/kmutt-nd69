@@ -2,6 +2,8 @@
 
 This repository (`robotos/kmutt-nd69`) houses the curriculum, documentation, and student lab packages for the KMUTT ND69 course. It is a separate Git repository nested within the root `robotos` workspace.
 
+> **Windows continuation (2026-11-27):** the Windows `robotos_edge` 0.2.1 wheel is still missing — every track's `dist/` has only the broken 0.2.0 Windows wheel, so Windows students are blocked. In `drsanti/robotos`, check out `feat/pyo3-binary-wheel` and follow `docs/WINDOWS-HANDOFF-WEEK08.md` (build, test with the boards, deploy here). Ask the owner before pushing this repo: `main` is what students clone.
+
 ---
 
 ## 1. Multi-Track Curriculum Architecture
@@ -16,41 +18,29 @@ The course is divided into three distinct specialized student tracks:
 
 ---
 
-## 2. Python KWS SDK (`robotos_kws`) & Multi-Track Distribution Rules
+## 2. Python Edge AI SDK (`robotos_edge`) & Multi-Track Distribution Rules
 
-The `robotos_kws` package provides keyword spotting, audio feature extraction, IMU motion streaming, and model training utilities.
+The `robotos_edge` package (CLI aliases `robotos`, `robotos-kws`, `robotos-edge`) provides keyword spotting, audio feature extraction, IMU motion streaming, and model training utilities. It replaced `robotos_kws` in 0.2.0.
 
 ### Rule 1: Canonical Source of Truth
-- The single source of truth for the `robotos_kws` Python package is `robotos/sdk/python-kws/`.
-- **NEVER** edit files directly inside the student tracks' `dist/` or `.venv/` folders.
-- **NEVER** copy raw `.py` source code or internal package modules (`wire.py`, `kws_common.py`, `robotos_kws/`) into any student directory. Only compiled wheels and student-facing examples belong in `kmutt-nd69`.
+- The single source of truth is `robotos/sdk/python-edge/` on branch `feat/pyo3-binary-wheel` of `drsanti/robotos` (not yet merged to `master`; `sdk/python-kws` is the obsolete pre-0.2 layout).
+- **NEVER** hand-copy wheels into the student tracks' `dist/` or edit `.venv/` folders — use the pipeline.
+- **NEVER** copy raw `.py` source code or internal package modules (`wire.py`, `kws_common.py`, `robotos_edge/`) into any student directory. Only compiled wheels and student-facing examples belong in `kmutt-nd69`.
 
-### Rule 2: Strict Multi-Track Synchronization
-- All three tracks (`nd1`, `nd2`, `nd3`) **MUST** share the identical wheel package version:
-  - `nd1/docs/week08/labs/dist/robotos_kws-<VERSION>-py3-none-any.whl`
-  - `nd2/docs/week08/labs/dist/robotos_kws-<VERSION>-py3-none-any.whl`
-  - `nd3/docs/week08/labs/dist/robotos_kws-<VERSION>-py3-none-any.whl`
-- Whenever any code in `robotos/sdk/python-kws` is updated:
-  1. Bump the version in `pyproject.toml` and `robotos_kws/__init__.py`.
-  2. Run the automated multi-track build & deployment pipeline script.
-  3. Never leave one track on an older wheel version while updating another.
+### Rule 2: Multi-Track, Multi-Platform Synchronization
+- All three tracks (`nd1`, `nd2`, `nd3`) carry the same wheels: **one per platform**, same version:
+  - `…/labs/dist/robotos_edge-<VERSION>-cp311-cp311-win_amd64.whl` (built on Windows)
+  - `…/labs/dist/robotos_edge-<VERSION>-cp311-cp311-macosx_11_0_arm64.whl` (built on macOS)
+- Whenever `sdk/python-edge` changes: bump the version in `pyproject.toml` and `robotos_edge/__init__.py`, then build and deploy on **each** OS (or bring the other OS's wheel with `--from-wheel`).
+- Students install by name: `pip install -U --no-index -f ../dist robotos_edge` (`-U` is required, or a student keeps an older installed version).
 
 ### Rule 3: Automated Pipeline Execution
-Run the deployment script from `robotos/sdk/python-kws/` (or via Python):
 ```bash
-python robotos/sdk/python-kws/publish_to_students.py
+python robotos/sdk/python-edge/publish_to_students.py --binary                 # build for this OS + deploy
+python robotos/sdk/python-edge/publish_to_students.py --from-wheel <file.whl>  # deploy a wheel built elsewhere
+# add --course-root <kmutt-nd69 checkout> when it is not at robotos/kmutt-nd69
 ```
-*(On macOS/Linux, run `python3 robotos/sdk/python-kws/publish_to_students.py` or `python3 ../sdk/python-kws/publish_to_students.py`)*
-
-This script automatically:
-1. Verifies Python syntax across all package modules and examples (`py_compile`).
-2. Cleans build caches and builds the new `.whl`.
-3. Validates wheel archive integrity.
-4. Deploys the wheel to all 3 student tracks and deletes previous versions.
-5. Synchronizes track-specific examples to `nd1` and `nd2`.
-6. Enforces a security audit to ensure zero raw SDK source files have leaked.
-7. Reinstalls the wheel with `--force-reinstall` into active `.venv` environments across all tracks and executes smoke tests.
-8. Automatically updates markdown documentation references across `kmutt-nd69` to the new wheel filename.
+The script keeps one wheel per platform (replacing only the same platform), warns when platforms differ in version, syncs examples to `nd1`/`nd2`, fails if a track's `requirements.txt` lacks a wheel dependency, audits source leaks, reinstalls into existing track `.venv`s, and warns about docs that pin a wheel filename.
 
 ---
 
@@ -128,14 +118,13 @@ When working on **macOS (Apple Silicon / Intel)**:
 - Note: POSIX virtual environment binaries are under `.venv/bin/python`, not `.venv/Scripts/python.exe`.
 
 ### 4.2 Building and Deploying the Wheel on macOS
-- Run the multi-track pipeline script directly:
+- Run the multi-track pipeline script (see §2 Rule 3):
   ```bash
-  python3 robotos/sdk/python-kws/publish_to_students.py
+  python3 robotos/sdk/python-edge/publish_to_students.py --binary
   # Or from kmutt-nd69:
-  python3 ../sdk/python-kws/publish_to_students.py
+  python3 ../sdk/python-edge/publish_to_students.py --binary
   ```
-- **Wheel Compatibility**: `robotos_edge` 0.2.0 is a compiled (Cython) wheel for CPython 3.11, one file per platform: `…-win_amd64.whl` (build on Windows) and `…-macosx_11_0_arm64.whl` (build on macOS). There is no Linux wheel yet, so Google Colab cannot install it. Student docs install by name (`pip install -U --no-index -f ../dist robotos_edge`), so pip picks the right file per OS; keep one wheel per platform in each `dist/`.
-- The pipeline script automatically detects POSIX paths (`.venv/bin/python`), updates wheels in all 3 tracks, audits against code leaks, and runs smoke tests.
+- **Wheel Compatibility**: `robotos_edge` 0.2.x is a compiled (Cython) wheel for CPython 3.11, one file per platform: `…-win_amd64.whl` (build on Windows) and `…-macosx_11_0_arm64.whl` (build on macOS). There is no Linux wheel yet, so Google Colab cannot install it. Student docs install by name (`pip install -U --no-index -f ../dist robotos_edge`), so pip picks the right file per OS; keep one wheel per platform in each `dist/`.
 
 ### 4.3 Serial Port Naming on macOS (`/dev/cu.*` vs `/dev/tty.*`)
 - On macOS, the ESP32-S3 USB Serial device appears under `/dev/cu.usbmodem*`:
@@ -210,7 +199,7 @@ Interactive lab applications are standalone Python scripts that import `DrumPoly
 
 - Changes to student curriculum, documentation, wheels, and track examples belong to `kmutt-nd69` (branch `main`).
 - Always run `git status` and verify that no unwanted temporary files (`.pyc`, caches, raw sources) are staged.
-- Commit messages should clearly describe the track affected (e.g., `[week08] bump robotos_kws to 0.1.1 and sync across all student tracks`).
+- Commit messages should clearly describe the track affected (e.g., `[week08] ship robotos_edge 0.2.1 Windows wheel to all student tracks`).
 
 ---
 

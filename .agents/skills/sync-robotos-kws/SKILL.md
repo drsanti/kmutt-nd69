@@ -1,122 +1,65 @@
 ---
 name: sync-robotos-kws
 description: >-
-  Build robotos_kws wheel and synchronize compiled wheel, examples, and documentation
-  across all 3 student tracks (ND1, ND2, ND3) in kmutt-nd69 on Windows or macOS. Use whenever
-  modifying robotos/sdk/python-kws, fixing ESP32-S3 serial/IMU communication, bumping package version,
-  or ensuring student lab environments stay identical.
+  Build the robotos_edge wheel (formerly robotos_kws) for this OS and sync wheels and examples
+  across the 3 student tracks (ND1, ND2, ND3) in kmutt-nd69, on Windows or macOS. Use whenever
+  robotos/sdk/python-edge changes, a new version must reach students, a Windows or macOS wheel
+  is missing from a track's dist/, or ESP32-S3 serial/IMU behavior is being fixed.
 ---
 
-# robotos_kws Multi-Track Sync & Build Skill (Windows & macOS)
+# robotos_edge multi-track sync (Windows & macOS)
 
-Use this skill whenever modifying the Python SDK in `robotos/sdk/python-kws`, changing serial/IMU wire protocol, updating models, or keeping the KMUTT ND69 student tracks synchronized across Windows and macOS.
+**Windows continuation pending (2026-11-27):** the Windows 0.2.1 wheel is missing. Follow
+`docs/WINDOWS-HANDOFF-WEEK08.md` in `drsanti/robotos` (branch `feat/pyo3-binary-wheel`) first.
 
-## Repository Layout & Student Tracks
+## Layout
 
-- **Canonical SDK Source**: `robotos/sdk/python-kws/`
-- **Track 1 (ND1 Embedded & IoT)**: `robotos/kmutt-nd69/nd1/docs/week08/labs/`
-- **Track 2 (ND2 Backend & Frontend)**: `robotos/kmutt-nd69/nd2/docs/week08/labs/`
-- **Track 3 (ND3 Automation & Robotics)**: `robotos/kmutt-nd69/nd3/docs/week08/labs/`
+- SDK source: `robotos/sdk/python-edge/` on branch `feat/pyo3-binary-wheel` (`sdk/python-kws` is obsolete).
+- Tracks: `robotos/kmutt-nd69/nd{1,2,3}/docs/week08/labs/` — each `dist/` holds **one wheel per
+  platform**, same version: `robotos_edge-<V>-cp311-cp311-win_amd64.whl` and
+  `robotos_edge-<V>-cp311-cp311-macosx_11_0_arm64.whl`.
+- Students install by name: `pip install -U --no-index -f ../dist robotos_edge`.
 
-## Core Rules
+## Rules
 
-1. **Zero Source Leak Policy**: NEVER copy raw `.py` SDK files or internal package folders directly into student track directories. Students receive only the compiled wheel (`.whl`) and track-specific examples.
-2. **Version Parity**: All 3 tracks must always have the exact same version of `robotos_kws-<version>-py3-none-any.whl` in their `dist/` directories.
-3. **ESP32-S3 Serial Safety**: The ESP32-S3 native USB Serial/JTAG resets when `RTS=1, DTR=0`. Always ensure PySerial is initialized with `rts=False, dtr=False`, and that `ser.rts=False; ser.dtr=False` is set before `ser.close()`.
-4. **macOS Serial Device Rule**: On macOS, ALWAYS use the callout device `/dev/cu.usbmodem*` (never `/dev/tty.*`, which blocks on carrier detect).
+1. No SDK source in student folders — only wheels and `examples/`.
+2. The wheel is compiled per OS: build it on each OS, or deploy the other OS's wheel with `--from-wheel`.
+3. Bump the version (`pyproject.toml` + `robotos_edge/__init__.py`) for every change students get;
+   pip will not replace an installed wheel of the same version.
+4. **Serial lines:** `wire.py` opens the port with `rts=False, dtr=True` (set before `open()`), never
+   asserts RTS, and on close only drops RTS. Holding DTR low made the ES3C28P reboot ~4 s after every
+   open (measured on macOS). Do not change this without measuring on a real board (see the handoff doc).
+5. macOS: use `/dev/cu.usbmodem*`, never `/dev/tty.*`.
+6. Flashing: always pass `--board ws28p` or `--board es3c28p` — the default is ws28p for any ESP32-S3.
 
-## Automated Firmware Flashing (ND1, ND2, ND3)
+## Workflow
 
-Students across all tracks can flash and verify their boards using:
 ```bash
-# Auto-detects ESP32-S3 port, downloads prebuilt binaries, flashes, and verifies:
-robotos flash-firmware
+# 1. In robotos (branch feat/pyo3-binary-wheel), Python 3.11 venv with cython, wheel, setuptools
+#    (Windows also needs MSVC Build Tools). Bump the version if the SDK changed.
 
-# Specify board variant:
-robotos flash-firmware --board ws28p    # IMU & Robotics (ND3)
-robotos flash-firmware --board es3c28p  # Mic & LED (ND1/ND2)
-
-# Use local directory (downloaded firmware files):
-robotos flash-firmware --from-dir ~/Downloads/ws28p
-
-# Use specific remote repository preset or custom GitHub URL:
-robotos flash-firmware --source robotos-workshop
-robotos flash-firmware --source hardware-interface-workshop
-robotos flash-firmware --source https://github.com/drsanti/robotos-workshop/tree/main/fw
+# 2. Build for this OS and deploy to all tracks:
+python sdk/python-edge/publish_to_students.py --binary
+#    or deploy a wheel built on the other OS:
+python sdk/python-edge/publish_to_students.py --from-wheel <robotos_edge-…whl>
+#    add --course-root <path> if kmutt-nd69 is not at robotos/kmutt-nd69
 ```
 
-## Step-by-Step Workflow
+The pipeline must end with exit code 0: both platform wheels at the same version in every track
+(it warns otherwise), requirements checks ✓, "no doc pins a wheel filename".
 
-### 1. Update SDK Code & Bump Version
-If public behavior or APIs changed:
-1. Update `version` in `robotos/sdk/python-kws/pyproject.toml`
-2. Update `__version__` in `robotos/sdk/python-kws/robotos_kws/__init__.py`
-
-### 2. Run the Multi-Track Sync Pipeline
-Execute the automated sync script (works identically on Windows and macOS):
 ```bash
-# Windows:
-python robotos/sdk/python-kws/publish_to_students.py
+# 3. Check as a student (fresh venv in a track), then on hardware:
+robotos detect                 # x3, board must not restart
+robotos-edge check-board       # ES3C28P mic
+robotos check-imu              # ws28p IMU
 
-# macOS / Linux:
-python3 robotos/sdk/python-kws/publish_to_students.py
-```
-This script handles:
-- Python syntax compilation verification (`py_compile`) for all package modules and examples.
-- Cleaning build artifacts (`build/`, `*.egg-info`).
-- Building the wheel into `dist/` (`robotos_edge-0.2.0-cp311-cp311-win_amd64.whl`).
-- Copying the wheel to `robotos/dist/` and `nd{1,2,3}/docs/week08/labs/dist/`.
-- Deleting old wheel versions from all student tracks.
-- Synchronizing examples to ND1 and ND2.
-- Running a security audit to guarantee no raw source files leaked into student folders.
-- Force-reinstalling into active `.venv` environments in all 3 tracks (`.venv/bin/python` on macOS, `.venv/Scripts/python.exe` on Windows) and running smoke tests.
-- Updating wheel filename references across all student Markdown documentation.
-
-### 3. Verify Live Hardware (If physical board connected)
-Identify the serial port:
-- Windows: `COM17` (or auto-detected)
-- macOS: `/dev/cu.usbmodem*` (e.g., `/dev/cu.usbmodem1101` or auto-detected)
-
-Run hardware check:
-```bash
-# Auto-detection (Recommended on Windows & macOS):
-robotos check-imu
-
-# Or specify port explicitly:
-# Windows:
-robotos check-imu --port COM17
-
-# macOS (always use /dev/cu.usbmodem*):
-robotos check-imu --port /dev/cu.usbmodem1101
-```
-Confirm:
-- Connects without resetting the ESP32-S3 board (DTR/RTS safety).
-- Receives 150+ samples at 50 Hz with 0 lost packets.
-- Measures gravity $|\vec{a}| \approx 9.8\text{ m/s}^2$ on vertical axis.
-- Exits cleanly without rebooting the board.
-
-### 4. macOS Audio & Sound Setup (ND1, ND2 & Air Drum)
-- Ensure Terminal / IDE has microphone and audio output access in:
-  `System Settings -> Privacy & Security -> Microphone -> Enable for Terminal / iTerm / VS Code / Cursor / Antigravity`
-- If PortAudio is missing on macOS: `brew install portaudio`
-- Python sound dependencies: `pip install sounddevice numpy` (already included in `.whl`)
-
-### 5. Separation of Concerns on macOS
-- **Hardware & Board CLI**: `robotos` (`detect`, `flash-firmware`, `check-imu`, `check-board`, `devices`)
-- **Machine Learning & Edge AI Toolkit**: `robotos-kws` (`collect-imu`, `train-imu`, `live-imu`, `train`, `live-board`)
-- **Student Lab Applications**:
-  ```bash
-  # In nd3/docs/week08/labs:
-  python3 air_drum.py
-  python3 robot_fsm.py --model imu_artifacts/model_int8.tflite
-  ```
-
-### 6. Commit and Push
-Commit changes in `robotos/kmutt-nd69`:
-```bash
+# 4. Commit — stage by name, never `git add .` / `-A`:
 cd robotos/kmutt-nd69
 git status
-git add .
-git commit -m "[week08] sync robotos_kws <VERSION> across all student tracks"
-git push origin main
+git add nd1/docs/week08/labs/dist nd2/docs/week08/labs/dist nd3/docs/week08/labs/dist   # + any examples changed
+git commit -m "[week08] ship robotos_edge <V> <platform> wheel to all student tracks"
 ```
+
+**Ask the owner before `git push`** — `main` is what students clone. robotos commits carry no
+`Co-Authored-By` trailers.
