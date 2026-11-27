@@ -106,11 +106,11 @@ cd nd2/docs/week08/labs/web-app
 
 ```bash
 pip install -r requirements.txt
-pip install --no-index -f ../dist robotos_edge
+pip install -U --no-index -f ../dist robotos_edge
 ```
 
 > [!TIP]
-> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install --no-index -f ../dist robotos_edge`.
+> **Universal Fallback:** If `pip` says `command not found`, use `python -m pip install -r requirements.txt` and `python -m pip install -U --no-index -f ../dist robotos_edge`.
 
 Verify that the SDK imports cleanly:
 ```bash

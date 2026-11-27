@@ -89,7 +89,7 @@ Choose the section matching your shell:
 
 ```bash
 pip install -r requirements.txt
-pip install --no-index -f ../dist robotos_edge
+pip install -U --no-index -f ../dist robotos_edge
 ```
 
 > [!TIP]
@@ -97,7 +97,7 @@ pip install --no-index -f ../dist robotos_edge
 > You can always run `pip` through Python directly:
 > ```bash
 > python -m pip install -r requirements.txt
-> python -m pip install --no-index -f ../dist robotos_edge
+> python -m pip install -U --no-index -f ../dist robotos_edge
 > ```
 
 ### 1.4 Verify CLI

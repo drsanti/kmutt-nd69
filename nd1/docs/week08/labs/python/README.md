@@ -39,7 +39,7 @@ py -3.11 -m venv .venv && .venv\Scripts\activate.bat
 
 # Install lab packages and CLI wheel:
 pip install -r requirements.txt
-pip install --no-index -f ../dist robotos_edge
+pip install -U --no-index -f ../dist robotos_edge
 
 # (Universal fallback if 'pip' is not recognized: use 'python -m pip')
 ```

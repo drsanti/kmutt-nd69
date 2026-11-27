@@ -100,7 +100,7 @@ cd nd3/docs/week08/labs
 
 ```bash
 pip install -r requirements.txt
-pip install --no-index -f ./dist robotos_edge
+pip install -U --no-index -f ./dist robotos_edge
 ```
 
 > [!TIP]
@@ -117,9 +117,9 @@ pip install --no-index -f ./dist robotos_edge
 > You can run whichever alias matches your machine, or even invoke them directly by path:
 > ```bash
 > # Direct invocations if your shell PATH is confused:
-> .\.venv\Scripts\pip.exe install --no-index -f ./dist robotos_edge
+> .\.venv\Scripts\pip.exe install -U --no-index -f ./dist robotos_edge
 > # or using pip3 / pip3.11:
-> .\.venv\Scripts\pip3.exe install --no-index -f ./dist robotos_edge
+> .\.venv\Scripts\pip3.exe install -U --no-index -f ./dist robotos_edge
 > ```
 
 Verify that the CLI is ready:

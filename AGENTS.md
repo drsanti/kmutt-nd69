@@ -134,7 +134,7 @@ When working on **macOS (Apple Silicon / Intel)**:
   # Or from kmutt-nd69:
   python3 ../sdk/python-kws/publish_to_students.py
   ```
-- **Wheel Compatibility**: `robotos_edge` 0.2.0 is a compiled (Cython) wheel for CPython 3.11, one file per platform: `…-win_amd64.whl` (build on Windows) and `…-macosx_11_0_arm64.whl` (build on macOS). There is no Linux wheel yet, so Google Colab cannot install it. Student docs install by name (`pip install --no-index -f ../dist robotos_edge`), so pip picks the right file per OS; keep one wheel per platform in each `dist/`.
+- **Wheel Compatibility**: `robotos_edge` 0.2.0 is a compiled (Cython) wheel for CPython 3.11, one file per platform: `…-win_amd64.whl` (build on Windows) and `…-macosx_11_0_arm64.whl` (build on macOS). There is no Linux wheel yet, so Google Colab cannot install it. Student docs install by name (`pip install -U --no-index -f ../dist robotos_edge`), so pip picks the right file per OS; keep one wheel per platform in each `dist/`.
 - The pipeline script automatically detects POSIX paths (`.venv/bin/python`), updates wheels in all 3 tracks, audits against code leaks, and runs smoke tests.
 
 ### 4.3 Serial Port Naming on macOS (`/dev/cu.*` vs `/dev/tty.*`)

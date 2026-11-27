@@ -78,7 +78,7 @@ source .venv/bin/activate
 
 # 2. Install dependencies & precompiled wheel
 pip install -r requirements.txt
-pip install --no-index -f ../dist robotos_edge
+pip install -U --no-index -f ../dist robotos_edge
 
 # 3. Verify CLI is ready
 robotos-kws --help
