@@ -6,12 +6,12 @@
  * bars with a yellow threshold line, highlights a detected gesture, and lets you tap the bar area
  * to move the threshold.
  *
- *   python ../service/gesture_service.py          # terminal 1 (Week 08 Python venv)
+ *   python gesture_service.py                     # terminal 1: in ../service, with its .venv active
  *   npx tsx lab9_5_model_view.ts --replay         # terminal 2: any board as the screen
  *   npx tsx lab9_5_model_view.ts                  # terminal 2: ws28p, live IMU
  */
 import * as rk from "robotos-board";
-import { imuSource, onExit, parseArgs, run } from "./lab_common.ts";
+import { imuSource, intro, onExit, parseArgs, run } from "./lab_common.ts";
 
 const BARS = { x: 8, y: 50, w: 200, h: 168 };      // bar chart area
 const PLOT_H = BARS.h - 36;                         // bars() puts two 16 px label rows under the plot here
@@ -19,6 +19,11 @@ const USAGE = "npx tsx lab9_5_model_view.ts [--replay [file.csv ...]] [--seconds
 
 run(async () => {
   const args = parseArgs(USAGE);
+  intro(args, {
+    live: "First start the service in another terminal (cd ../service, activate .venv, python gesture_service.py). Then look at the board: a MODEL tab appears. Perform shake, circle and lift; tap high or low on the bars to move the yellow threshold line.",
+    replay: "First start the service in another terminal (cd ../service, activate .venv, python gesture_service.py). Then look at the board: a MODEL tab appears and the recorded gestures play; tap high or low on the bars to move the yellow threshold line.",
+    look: "Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right. The service terminal prints every detection.",
+  });
   const model = await rk.GestureClient.connect();             // ws://127.0.0.1:8765/ws
   onExit(() => model.close());
   const d = await rk.Display.open({ port: args.port, name: "MODEL" });

@@ -4,7 +4,7 @@ Takes one 2 s window (100 samples at 50 Hz) per gesture, computes the magnitude 
 |a|, finds the dominant frequency, and shows the normalised 100 x 6 window the model gets.
 
     python lab9_2_frequency.py                         # the 4 sample gestures in samples/
-    python lab9_2_frequency.py --replay my_take.csv    # your own recording(s)
+    python lab9_2_frequency.py --replay imu_dataset/shake/s01_me_ws28p_0000.csv   # your own take (collect-imu)
 """
 from pathlib import Path
 
@@ -12,7 +12,7 @@ import numpy as np
 
 import robotos_edge as rk
 from robotos_edge.imu import features as ic
-from lab_common import parse_args, replay_files
+from lab_common import intro, parse_args, replay_files
 
 FS = 50.0                                   # sample rate (Hz)
 
@@ -28,6 +28,9 @@ def spectrum(a_mag):
 
 def main():
     args = parse_args(__doc__)
+    intro(__doc__, args,
+          do='Nothing to do: it analyses the 4 recordings in samples/ (or the files after --replay) and opens a plot window.',
+          look='The dominant frequency of each gesture (printed, and a red line in the plot): shake peaks near 11.5 Hz. The bottom row is exactly what the gesture model receives (100 samples x 6 channels).')
     if args.replay is None:
         args.replay = []
     files = replay_files(args)

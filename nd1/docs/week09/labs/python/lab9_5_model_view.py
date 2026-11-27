@@ -1,6 +1,6 @@
 """Lab 9.5 — Seeing the model: live gesture probabilities and a tunable threshold on the device.
 
-Feeds the IMU into your gesture model (from Week 08), draws the four class probabilities as
+Feeds the IMU into your gesture model (imu_artifacts/, see Setup), draws the four class probabilities as
 bars with a yellow threshold line, highlights a detected gesture, and lets you tap the bar
 area to move the threshold.
 
@@ -14,7 +14,7 @@ from pathlib import Path
 import robotos_edge as rk
 from robotos_edge.hardware.display import TOUCH_DOWN
 from robotos_edge.imu import features as ic
-from lab_common import imu_source, parse_args
+from lab_common import imu_source, intro, parse_args
 
 BAR_X, BAR_Y, BAR_W, BAR_H = 8, 50, 200, 168        # bar chart
 PLOT_H = BAR_H - 36       # bars() needs two staggered 16 px label rows here ("circle" fills its 50 px slot)
@@ -23,6 +23,10 @@ MODEL = Path("imu_artifacts/model_int8.tflite")
 
 def main():
     args = parse_args(__doc__)
+    intro(__doc__, args,
+          live='Look at the board: a MODEL tab appears. Perform shake, circle and lift. Tap high or low on the bars to move the yellow threshold line. (Needs imu_artifacts/model_int8.tflite - see Setup.)',
+          replay='Look at the board: a MODEL tab appears and the recorded gestures play. Tap high or low on the bars to move the yellow threshold line. (Needs imu_artifacts/model_int8.tflite - see Setup.)',
+          look='Four probability bars; a bar turns orange when its gesture passes the threshold; the detection counters on the right.')
     if not MODEL.exists():
         raise SystemExit(f"{MODEL} not found — train one first: robotos-kws train-imu --synthetic --out imu_artifacts")
     det = rk.GestureDetector(str(MODEL), threshold=0.7, verbose=False)

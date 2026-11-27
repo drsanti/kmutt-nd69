@@ -5,12 +5,12 @@
  * |a|, finds the dominant frequency, and shows the normalised 100 x 6 window the model gets.
  *
  *   npx tsx lab9_2_frequency.ts                         # the 4 sample gestures in samples/
- *   npx tsx lab9_2_frequency.ts --replay my_take.csv    # your own recording(s)
+ *   npx tsx lab9_2_frequency.ts --replay ../service/imu_dataset/shake/s01_me_ws28p_0000.csv   # your own take
  */
 import { basename } from "node:path";
 
 import * as rk from "robotos-board";
-import { parseArgs, replayFiles, run } from "./lab_common.ts";
+import { intro, parseArgs, replayFiles, run } from "./lab_common.ts";
 
 const { rfft, abs, mean, argmax } = rk.dsp;
 const FS = 50;                                         // sample rate (Hz)
@@ -27,6 +27,10 @@ function spectrum(aMag: number[]): { freqs: number[]; mag: number[] } {
 
 run(async () => {
   const args = parseArgs(USAGE);
+  intro(args, {
+    "do": "Nothing to do: it analyses the 4 recordings in samples/ (or the files after --replay) and opens a page of plots in your browser.",
+    look: "The dominant frequency of each gesture (printed, and a red dashed line in the plot): shake peaks near 11.5 Hz. The heat maps at the bottom are exactly what the gesture model receives (100 samples x 6 channels).",
+  });
   if (args.replay === null) args.replay = [];
   const files = replayFiles(args);
   const fig = new rk.Figure("Lab 9.2 - spectrum of |a| (top) and the model's normalised 100 x 6 window (bottom)", { columns: files.length });

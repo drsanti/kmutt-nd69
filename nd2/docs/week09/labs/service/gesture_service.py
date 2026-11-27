@@ -1,4 +1,4 @@
-"""Gesture service for Week 09 Lab 9.5 — your Week 08 IMU model behind a WebSocket.
+"""Gesture service for Week 09 Lab 9.5 — your IMU gesture model behind a WebSocket.
 
 The model runs here, in Python (TensorFlow Lite + robotos_edge). A Node.js client sends IMU
 samples and gets the class probabilities back, the same split as a real product: an ML
@@ -25,7 +25,7 @@ import robotos_edge as rk
 from robotos_edge.imu import features as ic
 
 ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-ap.add_argument("--model", default="imu_artifacts/model_int8.tflite", help="TFLite gesture model (Week 08)")
+ap.add_argument("--model", default="imu_artifacts/model_int8.tflite", help="TFLite gesture model (from robotos-kws train-imu)")
 ap.add_argument("--host", default="127.0.0.1")
 ap.add_argument("--port", type=int, default=8765)
 ap.add_argument("--threshold", type=float, default=0.7)

@@ -10,7 +10,7 @@ import time
 
 import robotos_edge as rk
 from robotos_edge.scene import Box, BELT, STEEL
-from lab_common import Clock, imu_source, parse_args
+from lab_common import Clock, imu_source, intro, parse_args
 
 X0, X1, Y = 10, 300, 150                     # belt from X0 to X1, top at Y
 R = 8                                        # roller radius
@@ -22,6 +22,10 @@ SPAWN_S = 2.0
 
 def main():
     args = parse_args(__doc__, seconds=40)
+    intro(__doc__, args,
+          live='Tilt the board left and right: the belt runs that way; hold it level to stop it.',
+          replay='Nothing to do: the recorded motion tilts the belt for you - just watch.',
+          look='A new box every 2 s rides the belt and leaves at the end; the dots on the rollers turn exactly as fast as the belt moves (TODO 3).')
     d = rk.Display.open(args.port, name="CELL")
     imu = imu_source(args, d.session)
     d.clear()

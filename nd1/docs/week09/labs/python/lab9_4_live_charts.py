@@ -9,7 +9,7 @@ Bottom right: a "bubble" that moves with the board's tilt, like a spirit level.
 import time
 
 import robotos_edge as rk
-from lab_common import imu_source, parse_args
+from lab_common import imu_source, intro, parse_args
 
 G = 9.80665
 LEVEL_CX, LEVEL_CY, LEVEL_R = 260, 182, 34          # bubble level: centre and radius of the dial
@@ -18,6 +18,10 @@ BUBBLE_R = 7
 
 def main():
     args = parse_args(__doc__)
+    intro(__doc__, args,
+          live='Look at the board: a CHARTS tab appears. Tilt the board in all directions, then shake it.',
+          replay='Look at the board: a CHARTS tab appears; the recorded motion drives the chart and the bubble.',
+          look='Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).')
     d = rk.Display.open(args.port, name="CHARTS")
     src = imu_source(args, d.session)
 

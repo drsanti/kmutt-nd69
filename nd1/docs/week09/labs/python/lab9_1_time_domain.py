@@ -9,7 +9,7 @@ accelerometer, the magnitude |a| and the gyroscope, and prints basic signal stat
 import numpy as np
 
 import robotos_edge as rk
-from lab_common import imu_source, parse_args
+from lab_common import imu_source, intro, parse_args
 
 G = 9.80665
 
@@ -41,6 +41,10 @@ def record(args):
 
 def main():
     args = parse_args(__doc__, seconds=8)
+    intro(__doc__, args,
+          live='Move the board around for a few seconds, then hold it still until recording ends (8 s; change with --seconds). A plot window opens at the end.',
+          replay='Nothing to do: the recorded idle, shake, circle and lift motions are used. A plot window opens at the end.',
+          look='|a| stays near 9.81 m/s^2 when the board is still, whatever its tilt; during a lift it dips below, then rises above. The script prints the sample rate, lost samples and the axis along gravity.')
     t, acc, gyr, lost = record(args)
 
     # TODO 1: compute |a| for every sample (N values) from the 3 accel axes

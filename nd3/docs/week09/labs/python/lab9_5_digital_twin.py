@@ -13,7 +13,7 @@ import time
 import robotos_edge as rk
 from robotos_edge.hardware.display import TOUCH_DOWN
 from robotos_edge.scene import Arm, Conveyor, StackLight
-from lab_common import Clock, imu_source, parse_args
+from lab_common import Clock, imu_source, intro, parse_args
 
 PICK = (223, 154)            # gripper above the box at the end of the belt
 PLACE = (300, 182)           # gripper above the bin
@@ -29,6 +29,10 @@ def main():
     args = parse_args(__doc__, seconds=120,
                       extra=lambda ap: ap.add_argument("--auto-reset", action="store_true",
                                                        help="reset an e-stop after 3 s of calm (unattended demos)"))
+    intro(__doc__, args,
+          live='Watch the cell work. Then shake the board hard: EMERGENCY STOP (red light, belt stops). Tap the screen to resume.',
+          replay='Watch the cell work; the recording contains a shake that triggers the EMERGENCY STOP. Add --auto-reset so it resumes by itself (nobody taps during a replay).',
+          look="Stack light: green = running, yellow = arm busy, red = stopped. The 'placed' counter grows; after a stop the arm carries on from where it stopped.")
     d = rk.Display.open(args.port, name="CELL")
     imu = imu_source(args, d.session, default=["idle"] * 4 + ["shake"])
     belt, arm, light = Conveyor(), Arm(), StackLight()

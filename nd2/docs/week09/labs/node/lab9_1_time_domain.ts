@@ -8,7 +8,7 @@
  *   npx tsx lab9_1_time_domain.ts --seconds 10      # live ws28p, auto-detected port
  */
 import * as rk from "robotos-board";
-import { imuSource, parseArgs, replayFiles, run } from "./lab_common.ts";
+import { imuSource, intro, parseArgs, replayFiles, run } from "./lab_common.ts";
 
 const { mean, median, diff, std } = rk.dsp;
 const USAGE = "npx tsx lab9_1_time_domain.ts [--replay [file.csv ...]] [--seconds N] [--port PATH]";
@@ -36,6 +36,11 @@ async function record(args: ReturnType<typeof parseArgs>): Promise<{ samples: rk
 
 run(async () => {
   const args = parseArgs(USAGE, { seconds: 8 });
+  intro(args, {
+    live: "Move the board around for a few seconds, then hold it still until recording ends (8 s; change with --seconds). A page of plots opens in your browser at the end.",
+    replay: "Nothing to do: the recorded idle, shake, circle and lift motions are used. A page of plots opens in your browser at the end.",
+    look: "|a| stays near 9.81 m/s^2 when the board is still, whatever its tilt; during a lift it dips below, then rises above. The script prints the sample rate, lost samples and the axis along gravity.",
+  });
   const { samples, lost } = await record(args);
   const t = samples.map((s) => s.t);
   const axes = [samples.map((s) => s.ax), samples.map((s) => s.ay), samples.map((s) => s.az)];

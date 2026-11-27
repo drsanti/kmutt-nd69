@@ -10,7 +10,7 @@ import time
 
 import robotos_edge as rk
 from robotos_edge.hardware.display import TOUCH_DOWN
-from lab_common import Clock, parse_args
+from lab_common import Clock, intro, parse_args
 
 BASE = (160, 200)                            # shoulder, near the bottom middle
 L1, L2 = 70, 60                              # link lengths (px)
@@ -43,6 +43,9 @@ def arm_shapes(pose):
 
 def main():
     args = parse_args(__doc__, seconds=40)
+    intro(__doc__, args,
+          do='Tap a point on the screen: the arm reaches for it. Without taps it visits four preset targets in turn.',
+          look="Smooth joint motion with no trail (TODO 2), and 'out of reach!' when you tap too far from the shoulder (TODO 3).")
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(10, 50, "Lab 9.4 robot arm: tap a target", rk.Color.GRAY)

@@ -8,7 +8,7 @@ Every frame: measure dt, update the position, draw only what changed, flush.
 import time
 
 import robotos_edge as rk
-from lab_common import Clock, parse_args
+from lab_common import Clock, intro, parse_args
 
 X0, X1, Y = 10, 300, 120                     # track for the box
 BOX_W, BOX_H = 18, 14
@@ -19,6 +19,9 @@ SPEED = 60.0                                 # px per second
 def main():
     args = parse_args(__doc__, seconds=20,
                       extra=lambda ap: ap.add_argument("--fps", type=float, default=15.0))
+    intro(__doc__, args,
+          do='Look at the board: a box moves along a track and bounces at both ends. Then run it again with --fps 5.',
+          look='After TODO 1 the box crosses the track in the same time at any --fps (only less smoothly); after TODO 3 the flicker is gone.')
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(10, 50, f"Lab 9.2 animation loop @ {args.fps:.0f} fps", rk.Color.GRAY)

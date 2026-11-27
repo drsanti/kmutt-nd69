@@ -1,5 +1,5 @@
 /** Shared helpers for the Week 09 labs: command-line flags, live board or recorded IMU files, clean exit. */
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -67,4 +67,47 @@ export function run(main: () => Promise<void>): void {
     await cleanup();
     process.exit(1);
   });
+}
+
+// ---------------------------------------------------------------- start-up guide
+const WIDTH = 78;
+
+function wrap(text: string, first: string, rest: string): string[] {
+  const out: string[] = [];
+  let line = first;
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    if (line.length + word.length + 1 > WIDTH - 1 && line.trim() !== first.trim()) { out.push(line.trimEnd()); line = rest; }
+    line += (line === first || line === rest ? "" : " ") + word;
+  }
+  out.push(line.trimEnd());
+  return out;
+}
+
+export interface Guide { live?: string; replay?: string; do?: string; look?: string }
+
+/** Print what this lab is (from the comment at the top of the lab file), what it does, what to
+ *  do now (live board or --replay), what to look for, and the TODO tasks in the file. */
+export function intro(args: Args | null, g: Guide): void {
+  const file = process.argv[1] ?? "";
+  let src = "";
+  try { src = readFileSync(file, "utf8"); } catch { /* no file: skip the details */ }
+  const head = /\/\*\*([\s\S]*?)\*\//.exec(src)?.[1] ?? "";
+  const paras = head.split("\n").map((l) => l.replace(/^\s*\* ?/, "")).join("\n").trim().split(/\n\s*\n/);
+  const title = (paras[0] ?? basename(file)).split("\n")[0];
+  const what = (paras[1] ?? "").replace(/\s+/g, " ").trim();
+  const replay = args?.replay !== null && args?.replay !== undefined;
+  const lines: string[] = [];
+  if (what) lines.push(...wrap(what, " What it does: ", " ".repeat(15)));
+  if (g.live || g.replay) {
+    lines.push(...wrap(replay ? "recorded motion (--replay)" : "live board  - no ws28p? run it again with --replay", " Mode:         ", " ".repeat(15)));
+    lines.push(...wrap((replay ? g.replay : g.live) ?? "", " Do now:       ", " ".repeat(15)));
+  } else if (g.do) lines.push(...wrap(g.do, " Do now:       ", " ".repeat(15)));
+  if (g.look) lines.push(...wrap(g.look, " Look for:     ", " ".repeat(15)));
+  const todos = [...src.matchAll(/^\s*\/\/\s*(?:>>> )?TODO (\d+): (.*?)(?: \| starter: .*)?$/gm)];
+  if (todos.length) {
+    lines.push(" Your tasks (TODOs in this file):");
+    for (const m of todos) lines.push(...wrap(m[2].split(/(?<=[a-z0-9)]): |; |\. /)[0].replace(/\.$/, ""), `   TODO ${m[1]}: `, " ".repeat(11)));
+  }
+  lines.push(` Stop: Ctrl+C    Options: npx tsx ${basename(file)} --help`);
+  console.log(`${"=".repeat(WIDTH)}\n ${title}\n${"=".repeat(WIDTH)}\n${lines.join("\n")}\n${"-".repeat(WIDTH)}`);
 }

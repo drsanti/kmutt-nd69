@@ -9,7 +9,7 @@ updating only the part of the bar that changed (no flicker, few bytes over USB).
 import time
 
 import robotos_edge as rk
-from lab_common import imu_source, parse_args
+from lab_common import imu_source, intro, parse_args
 
 BAR_X, BAR_Y, BAR_W, BAR_H = 10, 110, 300, 30       # meter area (inside the page body)
 A_MAX = 30.0                                        # |a| at a full bar (m/s^2, about 3 g)
@@ -17,6 +17,10 @@ A_MAX = 30.0                                        # |a| at a full bar (m/s^2, 
 
 def main():
     args = parse_args(__doc__)
+    intro(__doc__, args,
+          live='Look at the board: a METER tab appears. Move and shake the board - the bar shows how hard.',
+          replay='Look at the board: a METER tab appears and the recorded motion drives the bar.',
+          look="Before TODO 3 the bar flickers; after it, it moves smoothly. At the end, compare 'commands' in the printed link stats before and after your fix.")
     d = rk.Display.open(args.port, name="METER")
     src = imu_source(args, d.session)
 

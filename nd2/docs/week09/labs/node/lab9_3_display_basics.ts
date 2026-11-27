@@ -8,7 +8,7 @@
  *   npx tsx lab9_3_display_basics.ts              # ws28p: live IMU + its screen
  */
 import * as rk from "robotos-board";
-import { imuSource, onExit, parseArgs, run } from "./lab_common.ts";
+import { imuSource, intro, onExit, parseArgs, run } from "./lab_common.ts";
 
 const [BAR_X, BAR_Y, BAR_W, BAR_H] = [10, 110, 300, 30];      // meter area (inside the page body)
 const A_MAX = 30;                                             // |a| at a full bar (m/s^2, about 3 g)
@@ -16,6 +16,11 @@ const USAGE = "npx tsx lab9_3_display_basics.ts [--replay [file.csv ...]] [--sec
 
 run(async () => {
   const args = parseArgs(USAGE);
+  intro(args, {
+    live: "Look at the board: a METER tab appears. Move and shake the board - the bar shows how hard.",
+    replay: "Look at the board: a METER tab appears and the recorded motion drives the bar.",
+    look: "Before TODO 3 the bar flickers; after it, it moves smoothly. At the end, compare 'commands' in the printed link stats before and after your fix.",
+  });
   const d = await rk.Display.open({ port: args.port, name: "METER" });
   onExit(() => d.close());
   const src = imuSource(args, d.session);

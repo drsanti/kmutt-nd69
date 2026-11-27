@@ -8,7 +8,7 @@ import math
 import time
 
 import robotos_edge as rk
-from lab_common import parse_args
+from lab_common import intro, parse_args
 
 BELT_X0, BELT_X1, BELT_Y = 10, 232, 172      # conveyor: left end, right end, top of the belt
 ROLLER_R = 7
@@ -22,6 +22,9 @@ L1, L2 = 58, 50
 
 def main():
     args = parse_args(__doc__, seconds=10)
+    intro(__doc__, args,
+          do='Look at the board: a CELL tab appears with your drawing (it stays for 10 s).',
+          look='The conveyor, three boxes sitting ON the belt, a stack light and the robot arm. The script prints how many drawing operations the picture needed (the board draws up to 32 per screen update).')
     d = rk.Display.open(args.port, name="CELL")
     d.clear()
     d.text(44, 50, "Lab 9.1 static cell", rk.Color.GRAY)

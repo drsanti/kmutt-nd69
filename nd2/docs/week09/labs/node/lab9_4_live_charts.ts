@@ -8,7 +8,7 @@
  *   npx tsx lab9_4_live_charts.ts              # ws28p: live IMU + its screen
  */
 import * as rk from "robotos-board";
-import { imuSource, onExit, parseArgs, run } from "./lab_common.ts";
+import { imuSource, intro, onExit, parseArgs, run } from "./lab_common.ts";
 
 const [LEVEL_CX, LEVEL_CY, LEVEL_R] = [260, 182, 34];      // bubble level: centre and radius of the dial
 const BUBBLE_R = 7;
@@ -16,6 +16,11 @@ const USAGE = "npx tsx lab9_4_live_charts.ts [--replay [file.csv ...]] [--second
 
 run(async () => {
   const args = parseArgs(USAGE);
+  intro(args, {
+    live: "Look at the board: a CHARTS tab appears. Tilt the board in all directions, then shake it.",
+    replay: "Look at the board: a CHARTS tab appears; the recorded motion drives the chart and the bubble.",
+    look: "Three lines (ax red, ay green, az blue) sweep left to right like a chart recorder; the yellow bubble moves like a spirit level and leaves no trail (TODO 3).",
+  });
   const d = await rk.Display.open({ port: args.port, name: "CHARTS" });
   onExit(() => d.close());
   const src = imuSource(args, d.session);
