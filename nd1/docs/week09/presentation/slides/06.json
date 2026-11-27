@@ -1,0 +1,228 @@
+{
+  "name": "Seeing the model · Lab 9.5",
+  "source": "labs/python/lab9_5_model_view.py",
+  "slides": [
+    {
+      "title": "A classifier needs a window of history",
+      "lead": "One instantaneous sample cannot describe a whole gesture.",
+      "points": [
+        "The newest nominal 2 s becomes 100 × 6 values",
+        "SDK buffering resamples timestamps onto a 50 Hz grid",
+        "The first decision waits for a full window"
+      ],
+      "code": "",
+      "demo": "tensor",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Keep preprocessing identical",
+      "lead": "Training and inference must agree on channel order, units and scale.",
+      "points": [
+        "Convert accelerations to g and gyros to units of 4 rad/s",
+        "Clip to ±4; keep gravity instead of subtracting each window’s mean",
+        "Fixed scaling preserves how hard a motion is"
+      ],
+      "code": "w[:, :3] /= 9.80665\nw[:, 3:] /= 4.0\nw = np.clip(w, -4, 4).astype(np.float32)",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": true
+    },
+    {
+      "title": "A small 1D CNN learns temporal patterns",
+      "lead": "Convolution applies short learned filters along the time axis.",
+      "points": [
+        "Early filters respond to local changes across channels",
+        "Later layers combine patterns into class scores",
+        "The lab guide describes about 1,800 parameters",
+        "The model receives the time series; the FFT is an analysis aid"
+      ],
+      "code": "",
+      "demo": "",
+      "notes": "Use shake stripes and the lift dip in the heatmap as intuition. Do not claim a particular learned filter without inspecting trained weights.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Synthetic accuracy answers a narrow question",
+      "lead": "A high score on generated gestures does not measure real-world reliability.",
+      "points": [
+        "Synthetic training tests the software pipeline",
+        "Different people, mounting, speed and sensor noise create a domain gap",
+        "Evaluate held-out people/sessions, not only more takes from the same person"
+      ],
+      "code": "",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Collect and train with real motion",
+      "lead": "Each take contains 100 rows × 6 channels plus timestamps.",
+      "points": [
+        "Press Enter, perform the gesture for 2 s, repeat",
+        "Use several people and independent sessions",
+        "The collector retries takes with too many missing samples",
+        "With one person, the trainer warns and splits per gesture"
+      ],
+      "code": "robotos-kws collect-imu --person yourname --takes 10\nrobotos-kws train-imu --data imu_dataset --out imu_artifacts",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": true
+    },
+    {
+      "title": "Why an int8 model?",
+      "lead": "Quantisation reduces storage and arithmetic precision.",
+      "points": [
+        "model_int8.tflite uses 8-bit values and is about 10 KB per lab guide",
+        "Scale and zero-point map quantised tensors to numerical values",
+        "A smaller model can suit an MCU; these labs still run it on the host",
+        "Do not convert model inputs to int8 by a plain cast"
+      ],
+      "code": "",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": true
+    },
+    {
+      "title": "Give the detector every sample",
+      "lead": "push updates the history and triggers inference when ready.",
+      "points": [
+        "Default hop=200 ms: about ten new samples per inference",
+        "Default smoothing averages up to three probability vectors",
+        "Default refractory interval=1000 ms suppresses rapid repeated hits",
+        "These defaults were checked in the SDK source"
+      ],
+      "code": "det = rk.GestureDetector(str(MODEL), threshold=0.7, verbose=False)\ndet.push(s.t, s.accel, s.gyro)",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": true
+    },
+    {
+      "title": "Read the probability bars",
+      "lead": "These are illustrative scores, not outputs of a loaded neural network.",
+      "points": [
+        "Choose a preset or adjust the scores; values are normalised to sum to 1",
+        "The lab highlights the overall top class only if non-idle and above threshold",
+        "A confident idle class blocks a weaker gesture class"
+      ],
+      "code": "",
+      "demo": "gesture",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Threshold creates a decision rule",
+      "lead": "Overall argmax → reject idle → compare score ≥ threshold.",
+      "points": [
+        "Do not choose the best non-idle class after ignoring a larger idle score",
+        "Bar highlight is a score condition",
+        "Actual detection counters also obey smoothing, warm-up and refractory timing"
+      ],
+      "code": "",
+      "demo": "gesture",
+      "notes": "Try idle=0.55, shake=0.30 with threshold=0.25. The result must remain no gesture because idle wins overall.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Tap to tune the threshold",
+      "lead": "Lab 9.5 maps only the bar plot area to [0,1].",
+      "points": [
+        "BAR_Y=50; PLOT_H=168−36=132",
+        "Top=1.0; bottom approaches 0.0",
+        "Only TOUCH_DOWN inside the plot updates the threshold",
+        "The emulator supports pointer taps and a keyboard-accessible slider"
+      ],
+      "code": "if t.event == TOUCH_DOWN and BAR_X <= t.x < BAR_X + BAR_W and BAR_Y <= t.y < BAR_Y + PLOT_H:\n    det.threshold = round(1.0 - (t.y - BAR_Y) / PLOT_H, 2)",
+      "demo": "gesture",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": true
+    },
+    {
+      "title": "Counts and probabilities answer different questions",
+      "lead": "A bar shows the latest smoothed score; a counter records accepted events.",
+      "points": [
+        "A high bar need not increment on every redraw",
+        "The refractory interval separates repeated hits",
+        "Repeated gestures can still trigger again after cooldown",
+        "Label time-window metrics separately from event-level detection metrics"
+      ],
+      "code": "",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": true
+    },
+    {
+      "title": "Build a confusion matrix from labelled trials",
+      "lead": "Move the threshold and recompute predictions for the same fixed examples.",
+      "points": [
+        "TP: gesture accepted on a positive trial",
+        "FP: accepted on a negative trial; FN: rejected positive; TN: rejected negative",
+        "This binary demo uses invented labelled scores, not measured lab accuracy"
+      ],
+      "code": "",
+      "demo": "metrics",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Precision and recall expose different errors",
+      "lead": "Precision=TP/(TP+FP); recall=TP/(TP+FN)",
+      "points": [
+        "Accuracy=(TP+TN)/all trials",
+        "At a stricter threshold, accepted trials shrink; recall cannot increase here",
+        "Precision need not improve monotonically on every dataset",
+        "An undefined ratio is shown as n/a, not a perfect score"
+      ],
+      "code": "",
+      "demo": "metrics",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Run Lab 9.5 and compare sources",
+      "lead": "Use the same threshold on synthetic replay and real motion.",
+      "points": [
+        "Check that imu_artifacts/model_int8.tflite exists",
+        "Tap MODEL on the board; tap high and low on its bars",
+        "If shake repeatedly becomes circle, investigate training-data mismatch",
+        "Choose thresholds from labelled evidence and application costs"
+      ],
+      "code": "python lab9_5_model_view.py --replay\npython lab9_5_model_view.py",
+      "demo": "",
+      "notes": "Do not recommend an emergency-stop threshold from this demo alone. Ask which failure costs more and what independent validation would be needed.",
+      "quiz": null,
+      "reference": false
+    },
+    {
+      "title": "Decision self-check",
+      "lead": "idle=0.55, shake=0.30, circle=0.10, lift=0.05; threshold=0.25.",
+      "points": [],
+      "code": "",
+      "demo": "",
+      "notes": "Ask students to predict the result before revealing or running it. Connect the observation to the lab source linked on this slide.",
+      "quiz": {
+        "options": [
+          "No gesture: idle is the overall top class",
+          "Shake: it is the best non-idle class",
+          "Circle: the threshold is low"
+        ],
+        "answer": 0,
+        "explanation": "Lab 9.5 and GestureDetector first select the overall argmax. Idle never triggers a gesture event."
+      },
+      "reference": false
+    }
+  ]
+}
