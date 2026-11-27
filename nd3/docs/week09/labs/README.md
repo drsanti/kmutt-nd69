@@ -30,6 +30,8 @@ Week 09 is **self-contained**: you need nothing from earlier weeks. Do this setu
 | macOS | `python3.11 --version` | `brew install python@3.11` |
 | Windows | `py -3.11 --version` | `winget install Python.Python.3.11` |
 
+> **What is `.venv`?** A *virtual environment*: a private folder of Python packages for this week's labs only. While it is activated, `python`, `pip` and the `robotos` commands use that folder, so nothing clashes with other projects or other weeks. To start over, delete the `.venv` folder and create it again.
+
 **Create the environment** (once):
 
 ```bash
@@ -59,6 +61,16 @@ pip install -r requirements.txt; pip install -U --no-index -f ../dist robotos_ed
 python -c "import robotos_edge as rk; from robotos_edge import scene; print(rk.__version__)"   # 0.2.2 or newer
 ```
 
+**What the install line does:**
+
+| Part | Meaning |
+|---|---|
+| `pip install -r requirements.txt` | install every library listed in `requirements.txt`, from the internet |
+| `pip install -U --no-index -f ../dist robotos_edge` | install the course SDK `robotos_edge`: `-U` upgrades an older copy, `--no-index` means *do not look on the internet*, `-f ../dist` means *look in the `labs/dist` folder* |
+| `python -c "import robotos_edge …"` | a check: prints the SDK version if everything is installed |
+
+The SDK is not on the internet (only in `labs/dist`), which is why its libraries must be installed first.
+
 Next time, only activate it again (`source .venv/bin/activate`, or `.\.venv\Scripts\Activate.ps1` on Windows).
 
 > **Windows:** if the second `pip install` says *No matching distribution found for robotos_edge*, the Windows wheel is not in `labs/dist` yet: run `git pull` in the course folder and try again.
@@ -80,6 +92,23 @@ robotos flash-firmware --board ws28p        # or: --board es3c28p
 It downloads the newest firmware, flashes it (about 1 minute), and checks the board. Run `robotos detect` again and confirm `robotos-fw/0.3.2`.
 
 > All Week 09 labs use one screen page called **CELL**, so you can run them in any order and stop them with Ctrl+C at any time.
+
+---
+
+## 2. Options every lab takes
+
+| Option | Meaning | Example |
+|---|---|---|
+| *(none)* | live: use the board that is plugged in | `python lab9_1_….py` |
+| `--replay` | no ws28p: play the recorded motion in `samples/` (idle, shake, circle, lift) instead | `… --replay` |
+| `--replay FILE …` | play only these recording(s) (CSV files with columns t_s,ax,ay,az,gx,gy,gz) | `… --replay samples/shake.csv` |
+| `--seconds N` | stop after N seconds (each lab has its own default) | `… --seconds 10` |
+| `--port PORT` | use this serial port instead of finding the board automatically (two boards plugged in, or detection fails; see `robotos detect`) | `… --port COM5` · `… --port /dev/cu.usbmodem101` |
+| `--help` | print the lab's options and exit | `… --help` |
+| `--fps N` | Lab 9.2 only: frames per second of the animation (default 15) | `python lab9_2_animation_loop.py --fps 5` |
+| `--auto-reset` | Lab 9.5 only: after an emergency stop, resume by itself after 3 s of calm (useful with `--replay`, where nobody taps) | `python lab9_5_digital_twin.py --replay --auto-reset` |
+
+Stop any lab with **Ctrl+C**.
 
 ---
 

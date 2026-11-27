@@ -29,6 +29,8 @@ Week 09 is **self-contained**: you need nothing from earlier weeks. Do this setu
 | macOS | `python3.11 --version` | `brew install python@3.11` |
 | Windows | `py -3.11 --version` | `winget install Python.Python.3.11` |
 
+> **What is `.venv`?** A *virtual environment*: a private folder of Python packages for this week's labs only. While it is activated, `python`, `pip` and the `robotos` commands use that folder, so nothing clashes with other projects or other weeks. To start over, delete the `.venv` folder and create it again.
+
 **Create the environment** (once):
 
 ```bash
@@ -58,6 +60,16 @@ pip install -r requirements.txt; pip install -U --no-index -f ../dist robotos_ed
 python -c "import robotos_edge as rk; print(rk.__version__)"   # 0.2.2 or newer
 ```
 
+**What the install line does:**
+
+| Part | Meaning |
+|---|---|
+| `pip install -r requirements.txt` | install every library listed in `requirements.txt`, from the internet |
+| `pip install -U --no-index -f ../dist robotos_edge` | install the course SDK `robotos_edge`: `-U` upgrades an older copy, `--no-index` means *do not look on the internet*, `-f ../dist` means *look in the `labs/dist` folder* |
+| `python -c "import robotos_edge …"` | a check: prints the SDK version if everything is installed |
+
+The SDK is not on the internet (only in `labs/dist`), which is why its libraries must be installed first.
+
 Next time, only activate it again (`source .venv/bin/activate`, or `.\.venv\Scripts\Activate.ps1` on Windows).
 
 > **Windows:** if the second `pip install` says *No matching distribution found for robotos_edge*, the Windows wheel is not in `labs/dist` yet: run `git pull` in the course folder and try again.
@@ -65,21 +77,59 @@ Next time, only activate it again (`source .venv/bin/activate`, or `.\.venv\Scri
 **Board check** (skip without a board):
 
 ```bash
-robotos detect                     # ws28p: caps 0x3c (IMU) · es3c28p: caps 0x33 (MIC)
-robotos check-imu                  # ws28p only: ~150 samples at 50 Hz, |a| about 9.8
+robotos detect
+robotos check-imu                  # ws28p only
 ```
 
-If `robotos detect` says the board needs flashing: `robotos flash-firmware --board ws28p` (or `--board es3c28p`). Always pass `--board`.
+| Command | What it does | Good result |
+|---|---|---|
+| `robotos detect` | finds the board on USB, talks to it, and shows its model, capabilities and firmware | `ws28p` with caps `0x3c (IMU…)`, or `es3c28p` with caps `0x33 (…MIC…)`, and `Firmware: robotos-fw/0.3.2` (0.3.0 or newer works for these labs) |
+| `robotos check-imu` | reads about 3 s of motion data from a ws28p | about 150 samples, `50.0 Hz, lost 0`, and \|a\| about 9.8 m/s² with the board lying still |
 
-**Gesture model for Lab 9.5** — train one now (about 1 minute), or copy a model you already trained into `imu_artifacts/model_int8.tflite`:
+- **No board found:** use a USB-C *data* cable, and close every other program that uses the board (another lab, a serial monitor, a browser tab with Web Serial).
+- **Board needs flashing, or old firmware:** `robotos flash-firmware --board ws28p` (or `--board es3c28p`). It downloads the newest firmware, writes it (about 1 minute) and checks the board. Always pass `--board`.
+- **`check-imu` says there is no IMU:** you have an es3c28p. That is fine: run the labs with `--replay`.
+
+**Gesture model for Lab 9.5.** Lab 9.5 needs a trained gesture model at `labs/python/imu_artifacts/model_int8.tflite`. There are two ways to get one.
+
+**A. Quick: a synthetic model** (about 1 minute, no board needed):
 
 ```bash
 robotos-kws train-imu --synthetic --out imu_artifacts
 ```
 
-> **Synthetic vs. your own model.** `--synthetic` trains only on simulated motion. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. A model trained on your own recordings (`robotos-kws collect-imu`, then `train-imu`) does better. If the synthetic model mislabels a gesture, that is a lesson in itself: the model only knows the data it was trained on.
+- **What it does:** it makes up 800 practice gestures from formulas for 8 imaginary people (shake = a fast 6 Hz side-to-side wave, circle = a 1.5 Hz circle, lift = one slow up-and-down, idle = a tiny drift). It then trains a small neural network on them: a 1-D CNN with about 1,800 parameters.
+- **What it prints:** a test accuracy and a confusion matrix. Expect about 100 %. That score is measured on more made-up gestures, so it says nothing about real motion.
+- **What it saves in `imu_artifacts/`:** `model_int8.tflite` (the model the lab uses: 8-bit numbers, about 10 KB, small enough for a microcontroller), plus the same model as `model_float.tflite` and `model.keras`, and its settings in `meta.json`.
+
+**B. Better: train on your own recordings** (needs a ws28p, about 10 minutes):
+
+```bash
+robotos-kws collect-imu --person yourname --takes 10
+robotos-kws train-imu --data imu_dataset --out imu_artifacts
+```
+
+- **`collect-imu`** asks for each gesture in turn (idle, shake, circle, lift) and records it `--takes` times: press **Enter**, then perform the gesture for 2 seconds. Each take is saved as `imu_dataset/<gesture>/s01_yourname_ws28p_<n>.csv` (100 samples × 6 channels). A take that lost too many samples is recorded again.
+- **`train-imu --data imu_dataset`** trains the same network on your recordings instead of the formulas. With only one person it warns and splits the data per gesture. That is fine; recordings from more people give a model that works for more people.
+
+> **Synthetic vs. your own model.** The synthetic model has only seen idealised formulas. On a real ws28p it can misread gestures: in our test a shake was reported as `circle` again and again. If that happens, it is a lesson in itself: a model only knows the data it was trained on. Try way B and compare.
 
 > The board's screen holds **3 pages** of your own (plus its built-in HOST tab). Each lab reuses its page name (METER, CHARTS, MODEL), so re-running a lab never adds pages.
+
+---
+
+## 2. Options every lab takes
+
+| Option | Meaning | Example |
+|---|---|---|
+| *(none)* | live: use the board that is plugged in | `python lab9_1_….py` |
+| `--replay` | no ws28p: play the recorded motion in `samples/` (idle, shake, circle, lift) instead | `… --replay` |
+| `--replay FILE …` | play your own recording(s) instead, e.g. a take from `collect-imu` | `… --replay imu_dataset/shake/s01_yourname_ws28p_0000.csv` |
+| `--seconds N` | stop after N seconds (each lab has its own default) | `… --seconds 10` |
+| `--port PORT` | use this serial port instead of finding the board automatically (two boards plugged in, or detection fails; see `robotos detect`) | `… --port COM5` · `… --port /dev/cu.usbmodem101` |
+| `--help` | print the lab's options and exit | `… --help` |
+
+Stop any lab with **Ctrl+C**.
 
 ---
 
@@ -110,7 +160,7 @@ python lab9_1_time_domain.py --seconds 10          # ws28p: move it around, then
 
 ```bash
 python lab9_2_frequency.py                         # the 4 sample gestures
-python lab9_2_frequency.py --replay my_take.csv    # your own recording(s) from collect-imu
+python lab9_2_frequency.py --replay imu_dataset/shake/s01_yourname_ws28p_0000.csv   # your own take (Setup, model B)
 ```
 
 | TODO | Task |
