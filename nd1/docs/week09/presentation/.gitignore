@@ -1,3 +1,26 @@
+# Source code, templates, and slides (internal authoring files)
+slides/
+components/
+styles/
+template.html
+assets/content.js
+assets/source-manifest.json
+
+# Build scripts & tests
+build.py
+build-desktop.py
+tests/
+package.json
+package-lock.json
+
+# Internal instructor & validation documentation
+INSTRUCTOR.md
+VALIDATION.md
+
+# Desktop app development environment & temporary files
+desktop/
 node_modules/
 __pycache__/
 test-results/
+.storage/
+*.log

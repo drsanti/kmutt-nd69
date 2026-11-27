@@ -1,22 +1,14 @@
 /* ND01 Week 09 Presentation — Offline Desktop PWA Service Worker */
-const CACHE_NAME = 'nd01-w09-v1';
+const CACHE_NAME = 'nd01-w09-v2';
 
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'styles/presentation.css',
-  'assets/content.js',
-  'assets/source-manifest.json',
   'assets/icons/icon.svg',
   'assets/icons/icon-192.png',
   'assets/icons/icon-512.png',
   'assets/icons/icon-maskable-512.png',
-  'components/core.js',
-  'components/signals.js',
-  'components/display.js',
-  'components/decisions.js',
-  'components/presentation.js',
   'dist/week09-presentation.html'
 ];
 
