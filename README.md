@@ -20,6 +20,29 @@
 > ⏳ **กำหนดการ:** ปิดรับและปิดแก้ไขข้อมูล **วันจันทร์ที่ 7 ธันวาคม 2026 เวลา 23:59 น.** (เวลาไทย)  
 > 📝 **แบบฟอร์มลงทะเบียน:** [ยืนยันเข้าร่วม On-site ครั้งที่ 2 (Google Form)](https://forms.gle/xDbBq7BiJg9rANkJ8)
 
+
+---
+
+> [!NOTE]
+> ### 🔬 Week 09: Visualization for Edge AI & Living Digital Twin (วันเสาร์ที่ 28 พ.ย. 2026)
+> เอกสาร คู่มือปฏิบัติการ และสื่อการสอนเชิงปฏิสัมพันธ์ประจำสัปดาห์ที่ 9 สำหรับทั้ง 3 สายการเรียนรู้
+> - 🟢 **ND01 (Embedded & Hardware):** Seeing the Signal — Visualization for Edge AI
+>   - 📖 [ภาพรวม Week 09 ND01](nd1/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs](nd1/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd1/docs/week09/checkpoint.md) · [Mini Challenge](nd1/docs/week09/mini-challenge.md)
+>   - 🖥️ **Interactive Presentation (85 สไลด์):** [Web/PWA (index.html)](nd1/docs/week09/presentation/index.html) · [Offline Single-file HTML](nd1/docs/week09/presentation/dist/week09-presentation.html) · [Windows Desktop App (.exe)](nd1/docs/week09/presentation/dist/ND01-Week09-Seeing-the-Signal-win_x64.exe) · [คู่มือสื่อการสอน](nd1/docs/week09/presentation/README.md)
+> - 🔵 **ND02 (Application Developers):** Seeing the Signal, from Node.js — Visualization for Edge AI
+>   - 📖 [ภาพรวม Week 09 ND02](nd2/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs (TypeScript/Node.js)](nd2/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd2/docs/week09/checkpoint.md) · [Mini Challenge](nd2/docs/week09/mini-challenge.md)
+> - 🟣 **ND03 (Automation & Robotics):** A Living Factory Cell — Drawing & Animating Automation on a Device
+>   - 📖 [ภาพรวม Week 09 ND03](nd3/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs (Digital Twin & Kinematics)](nd3/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd3/docs/week09/checkpoint.md) · [Mini Challenge](nd3/docs/week09/mini-challenge.md)
+
+---
+
+> [!NOTE]
+> ### 🔬 Week 08 Labs (Machine Learning)
+> เอกสารและคู่มือปฏิบัติการ Edge AI ประจำสัปดาห์ที่ 8 สำหรับทั้ง 3 สายการเรียนรู้
+> - 🟢 **ND01 Labs:** [คู่มือปฏิบัติการ Lab ND01](nd1/docs/week08/labs/README.md)
+> - 🔵 **ND02 Labs:** [คู่มือปฏิบัติการ Lab ND02](nd2/docs/week08/labs/README.md)
+> - 🟣 **ND03 Labs:** [คู่มือปฏิบัติการ Lab ND03](nd3/docs/week08/labs/README.md)
+
 ---
 
 > [!NOTE]
@@ -30,14 +53,6 @@
 > - 🟣 **ND03 Theory:** [Automation & Robotics](nd3/docs/week07/README.md)
 > - 📚 **Shared foundations:** [Sensors → ADC → DSP → ML → Inference](shared/week07/foundations/README.md)
 
----
-
-> [!NOTE]
-> ### 🔬 Week 08 Labs (Machine Learning)
-> เอกสารและคู่มือปฏิบัติการ Edge AI ประจำสัปดาห์ที่ 8 สำหรับทั้ง 3 สายการเรียนรู้
-> - 🟢 **ND01 Labs:** [คู่มือปฏิบัติการ Lab ND01](nd1/docs/week08/labs/README.md)
-> - 🔵 **ND02 Labs:** [คู่มือปฏิบัติการ Lab ND02](nd2/docs/week08/labs/README.md)
-> - 🟣 **ND03 Labs:** [คู่มือปฏิบัติการ Lab ND03](nd3/docs/week08/labs/README.md)
 
 ---
 
@@ -137,6 +152,8 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 06 — Self-learning and Mini-Project #1](nd1/docs/week06/README.md)
 - [Week 07 — Edge AI Theory](nd1/docs/week07/README.md)
 - [Week 08 — Edge AI Data, Training, Testing, and Firmware](nd1/docs/week08/README.md)
+- [Week 09 — Seeing the Signal: Visualization for Edge AI](nd1/docs/week09/README.md)
+- [Week 09 — Interactive Presentation (85 slides, Web + Desktop App)](nd1/docs/week09/presentation/README.md)
 - [Thai lessons](nd1/docs/week02/lessons/README.md)
 - [Thai illustrations](nd1/docs/week02/lessons/images/README.md)
 - [English edition](nd1/docs/week02/lessons/EN/README.md)
@@ -189,6 +206,9 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 08 Lesson 06 — Secure Edge AI: Protecting the Model and Firmware](nd1/docs/week08/lessons/06-secure-edge-ai.md)
 - [Week 08 Lesson 07 — Alternative Track: IMU Gesture Classifier (ws28p)](nd1/docs/week08/lessons/07-imu-gesture-alternative.md)
 - [Week 08 labs (firmware + Python)](nd1/docs/week08/labs/README.md)
+- [Week 09 Lesson 01 — Time and Frequency](nd1/docs/week09/lessons/01-time-and-frequency.md)
+- [Week 09 Lesson 02 — Drawing on a Device](nd1/docs/week09/lessons/02-drawing-on-a-device.md)
+- [Week 09 labs (signal processing, FFT, RGB565 display, gesture classifier)](nd1/docs/week09/labs/README.md)
 
 ---
 
@@ -204,6 +224,8 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 06 — Self-learning and Mini-Project #1](nd2/docs/week06/README.md)
 - [Week 07 — Edge AI Theory](nd2/docs/week07/README.md)
 - [Week 08 — Edge AI: Web Audio Analyser & Real-time KWS Inference (Web App Lab)](nd2/docs/week08/labs/README.md)
+- [Week 09 — Seeing the Signal, from Node.js: Visualization for Edge AI](nd2/docs/week09/README.md)
+- [Week 09 labs (TypeScript, Node.js 22+, robotos-board, WebSocket model service)](nd2/docs/week09/labs/README.md)
 - [Thai lessons](nd2/docs/week02/lessons/README.md)
 - [Thai illustrations](nd2/docs/week02/lessons/images/README.md)
 - [English edition](nd2/docs/week02/lessons/EN/README.md)
@@ -252,6 +274,8 @@ Each course totals **29.5 h**: Online 21 h + Onsite 8.5 h.
 - [Week 06 — Self-learning and Mini-Project #1](nd3/docs/week06/README.md)
 - [Week 07 — Edge AI Theory](nd3/docs/week07/README.md)
 - [Week 08 — Edge AI: 50 Hz IMU Gesture Recognition & Robot FSM (Robotics Lab)](nd3/docs/week08/labs/README.md)
+- [Week 09 — A Living Factory Cell: Drawing and Animating Automation on a Device](nd3/docs/week09/README.md)
+- [Week 09 labs (animation loops, tilt conveyor, 2-link robot arm kinematics, digital twin state machine)](nd3/docs/week09/labs/README.md)
 - [Thai lessons](nd3/docs/week02/lessons/README.md)
 - [Thai illustrations](nd3/docs/week02/lessons/images/README.md)
 - [English edition](nd3/docs/week02/lessons/EN/README.md)
