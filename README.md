@@ -27,12 +27,25 @@
 > ### 🔬 Week 09: Visualization for Edge AI & Living Digital Twin (วันเสาร์ที่ 28 พ.ย. 2026)
 > เอกสาร คู่มือปฏิบัติการ และสื่อการสอนเชิงปฏิสัมพันธ์ประจำสัปดาห์ที่ 9 สำหรับทั้ง 3 สายการเรียนรู้
 > - 🟢 **ND01 (Embedded & Hardware):** Seeing the Signal — Visualization for Edge AI
->   - 📖 [ภาพรวม Week 09 ND01](nd1/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs](nd1/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd1/docs/week09/checkpoint.md) · [Mini Challenge](nd1/docs/week09/mini-challenge.md)
->   - 🖥️ **Interactive Presentation (85 สไลด์):** [Web/PWA (index.html)](nd1/docs/week09/presentation/index.html) · [Offline Single-file HTML](nd1/docs/week09/presentation/dist/week09-presentation.html) · [Windows Desktop App (.exe)](nd1/docs/week09/presentation/dist/ND01-Week09-Seeing-the-Signal-win_x64.exe) · [คู่มือสื่อการสอน](nd1/docs/week09/presentation/README.md)
+>   - 📖 [ภาพรวม Week 09 ND01](nd1/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs](nd1/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd1/docs/week09/checkpoint.md)
 > - 🔵 **ND02 (Application Developers):** Seeing the Signal, from Node.js — Visualization for Edge AI
->   - 📖 [ภาพรวม Week 09 ND02](nd2/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs (TypeScript/Node.js)](nd2/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd2/docs/week09/checkpoint.md) · [Mini Challenge](nd2/docs/week09/mini-challenge.md)
+>   - 📖 [ภาพรวม Week 09 ND02](nd2/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs (TypeScript/Node.js)](nd2/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd2/docs/week09/checkpoint.md) 
 > - 🟣 **ND03 (Automation & Robotics):** A Living Factory Cell — Drawing & Animating Automation on a Device
->   - 📖 [ภาพรวม Week 09 ND03](nd3/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs (Digital Twin & Kinematics)](nd3/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd3/docs/week09/checkpoint.md) · [Mini Challenge](nd3/docs/week09/mini-challenge.md)
+>   - 📖 [ภาพรวม Week 09 ND03](nd3/docs/week09/README.md) · [คู่มือปฏิบัติการ Labs (Digital Twin & Kinematics)](nd3/docs/week09/labs/README.md) · [แบบทดสอบ Checkpoint](nd3/docs/week09/checkpoint.md)
+
+---
+
+> [!IMPORTANT]
+> ### 🎯 Mini-Project / Assignment #2 (Week 09) — การเก็บรวบรวมชุดข้อมูล (Data Collection)
+> ภารกิจจัดเตรียมชุดข้อมูล (Dataset) สำหรับฝึกฝน (Train) และทดสอบ (Test) โมเดล Edge AI เพื่อเตรียมพร้อมสู่กิจกรรม On-site Workshop:
+> - 🎙️ **1. บันทึกข้อมูลสัญญาณเสียงสั่งการ (Voice Commands / KWS):**
+>   - บันทึกเสียงคำสั่งจำนวน **5 คำ** (สามารถใช้ไมโครโฟนของคอมพิวเตอร์ได้)
+>   - บันทึกคำละ **30 ครั้ง** (รวมอย่างน้อย 150 ตัวอย่าง/ไฟล์)
+>   - *ตัวอย่างชุดคำ:* `"เดินหน้า"`, `"ถอยหลัง"`, `"เลี้ยวซ้าย"`, `"เลี้ยวขวา"`, `"หยุด"`
+> - 📱 **2. บันทึกสัญญาณรูปแบบการเคลื่อนไหว (IMU Motion Patterns):**
+>   - บันทึกสัญญาณความเร่งและการหมุนจากเซนเซอร์ IMU จำนวน **5 รูปแบบ**
+>   - บันทึกรูปแบบละ **30 ครั้ง** (รวมอย่างน้อย 150 ตัวอย่าง/ไฟล์)
+>   - *ตัวอย่างรูปแบบท่าทาง:* `"ไม่ขยับ"` (Idle), `"สั่น"` (Shake), `"ยกขึ้นลง"` (Lift), `"เดิน"` (Walk), `"วิ่ง"` (Run)
 
 ---
 
